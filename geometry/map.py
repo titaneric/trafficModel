@@ -1,6 +1,6 @@
 import tkinter as tk
 class  World(tk.Frame):
-    def __init__(self, root):
+    def __init__(self, root, canvas_height, canvas_width, distance):
         tk.Frame.__init__(self, root)
         self.canvas = tk.Canvas(self, width=300, height=300, background="bisque")
         self.xsb = tk.Scrollbar(self, orient="horizontal", command=self.canvas.xview)
@@ -26,7 +26,9 @@ class  World(tk.Frame):
         self.canvas.bind("<MouseWheel>",self.zoomer)
 
         self.scale = 1
-        self.distance = 30
+        self.distance = distance
+        self.canvas_height = canvas_height
+        self.canvas_width = canvas_width
     
     def scroll_start(self, event):
         itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -44,7 +46,7 @@ class  World(tk.Frame):
             self.canvas.scan_dragto(event.x, event.y, gain=1)
         #existed intersection
         elif self.canvas.itemcget(itemID, "fill") == "#808080":
-            print("Move")
+            print(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
     #windows zoom
     def zoomer(self,event):
         if (event.delta > 0):
@@ -68,6 +70,17 @@ class  World(tk.Frame):
     def update_coords(self, coords):
         new_coords = [coords_i * self.scale for coords_i in coords]
         return new_coords
+
+    def createIntersection(self, event, line_distance):
+        itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        self.canvas.itemconfig(itemID, fill = "#808080")
+   
+    def createGrid(self):
+        for y in range(0, self.canvas_height, self.distance):
+            for x in range(0, self.canvas_width, self.distance):
+                self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
+            
+
 
     
 

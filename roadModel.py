@@ -1,15 +1,6 @@
 from tkinter import *
 from geometry.map import World
 
-def createIntersection(event, line_distance):
-        itemID = world.canvas.find_closest(world.canvas.canvasx(event.x), world.canvas.canvasy(event.y))
-        world.canvas.itemconfig(itemID, fill = "#808080")
-   
-def createGrid(world, line_distance):
-    for y in range(0, canvas_height, line_distance):
-        for x in range(0, canvas_width, line_distance):
-            world.canvas.create_rectangle(x, y, x + line_distance, y + line_distance, fill = "bisque", outline = "#FFFFFF")
-        
 
 
 '''
@@ -31,9 +22,9 @@ canvas_width = 300
 distance = 30
 
 screen = Frame(root)
-world = World(screen)
+world = World(screen, canvas_height, canvas_width, distance)
 #world.canvas.bind("<Button-1>", checkCoords)
-world.canvas.bind("<Double-Button-1>", lambda event, line_distance = distance: createIntersection(event, line_distance))
+world.canvas.bind("<Double-Button-1>", lambda event, line_distance = distance: world.createIntersection(event, line_distance))
 #world.canvas.bind("<B1-Motion>", lambda event, line_distance = distance: createRoad(event, line_distance))
 world.pack(fill = "both", expand = True)
 #canvas.bind("<ButtonRelease>",lambda event, line_distance = distance: createRoad(event, line_distance))
@@ -42,7 +33,7 @@ world.pack(fill = "both", expand = True)
 #toolbar.pack(side = TOP, fill = X)
 
 #canvas.pack()
-createGrid(world, distance)
+world.createGrid()
 screen.pack(side = BOTTOM, fill = X)
 
 
