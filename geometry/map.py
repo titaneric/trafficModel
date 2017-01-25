@@ -14,11 +14,11 @@ class  World(tk.Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-        # This is what enables using the mouse:
-        '''
+        # This is what enables using the mouse to drag:
+        
         self.canvas.bind("<ButtonPress-1>", self.scroll_start)
         self.canvas.bind("<B1-Motion>", self.scroll_move)
-        '''
+        
         #linux scroll
         self.canvas.bind("<Button-4>", self.zoomerP)
         self.canvas.bind("<Button-5>", self.zoomerM)
@@ -27,13 +27,13 @@ class  World(tk.Frame):
 
         self.scale = 1
         self.distance = 30
-    '''
+    
     def scroll_start(self, event):
         self.canvas.scan_mark(event.x, event.y)
 
     def scroll_move(self, event):
         self.canvas.scan_dragto(event.x, event.y, gain=1)
-    '''
+    
     #windows zoom
     def zoomer(self,event):
         if (event.delta > 0):
