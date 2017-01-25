@@ -2,8 +2,6 @@ from tkinter import *
 from geometry.map import World
 
 def createIntersection(event, line_distance):
-        #x, y = determineCoords(event, line_distance)
-        #print(x, y)
         itemID = world.canvas.find_closest(world.canvas.canvasx(event.x), world.canvas.canvasy(event.y))
         world.canvas.itemconfig(itemID, fill = "#808080")
    
@@ -13,12 +11,6 @@ def createGrid(world, line_distance):
             world.canvas.create_rectangle(x, y, x + line_distance, y + line_distance, fill = "bisque", outline = "#FFFFFF")
         
 
-def createRoad(event, line_distance):
-    print(event.x, event.y)
-    x, y = determineCoords(event, line_distance)
-    #print(x, y)
-    tmpGrid = gridMatrix[x][y]
-    canvas.create_rectangle(tmpGrid.x0, tmpGrid.y0, firstSelectedCross.x1, firstSelectedCross.y1, fill = "#808080")
 
 '''
 def checkCoords(event):

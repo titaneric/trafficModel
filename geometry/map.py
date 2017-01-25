@@ -29,11 +29,22 @@ class  World(tk.Frame):
         self.distance = 30
     
     def scroll_start(self, event):
-        self.canvas.scan_mark(event.x, event.y)
+        itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        #the empty grid
+        if self.canvas.itemcget(itemID, "fill") == "bisque": 
+            self.canvas.scan_mark(event.x, event.y)
+        #existed intersection
+        elif self.canvas.itemcget(itemID, "fill") == "#808080":
+            print("HI")
 
     def scroll_move(self, event):
-        self.canvas.scan_dragto(event.x, event.y, gain=1)
-    
+        itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))  
+        #the empty grid      
+        if self.canvas.itemcget(itemID, "fill") == "bisque":         
+            self.canvas.scan_dragto(event.x, event.y, gain=1)
+        #existed intersection
+        elif self.canvas.itemcget(itemID, "fill") == "#808080":
+            print("Move")
     #windows zoom
     def zoomer(self,event):
         if (event.delta > 0):
