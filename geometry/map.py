@@ -18,17 +18,19 @@ class  World(tk.Frame):
         
         self.canvas.bind("<ButtonPress-1>", self.scroll_start)
         self.canvas.bind("<B1-Motion>", self.scroll_move)
-        
+        self.canvas.bind("<ButtonRelease>", self.ready2CreateRoad)
         #linux scroll
         self.canvas.bind("<Button-4>", self.zoomerP)
         self.canvas.bind("<Button-5>", self.zoomerM)
         #windows scroll
         self.canvas.bind("<MouseWheel>",self.zoomer)
-
+        self.canvas.bind("<Double-Button-1>", lambda event, line_distance = distance: self.createIntersection(event, line_distance))
+        self.buildable = False
         self.scale = 1
         self.distance = distance
         self.canvas_height = canvas_height
         self.canvas_width = canvas_width
+        self.createGrid()
     
     def scroll_start(self, event):
         itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -37,16 +39,23 @@ class  World(tk.Frame):
             self.canvas.scan_mark(event.x, event.y)
         #existed intersection
         elif self.canvas.itemcget(itemID, "fill") == "#808080":
-            print("HI")
+            self.srcX = self.canvas.canvasx(event.x)
+            self.srcY = self.canvas.canvasy(event.y)
+            self.buildable = True
 
     def scroll_move(self, event):
-        itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))  
-        #the empty grid      
-        if self.canvas.itemcget(itemID, "fill") == "bisque":         
+        if self.buildable is False:  
             self.canvas.scan_dragto(event.x, event.y, gain=1)
-        #existed intersection
-        elif self.canvas.itemcget(itemID, "fill") == "#808080":
-            print(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        else:
+            return
+    
+    def ready2CreateRoad(self, event):
+        itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        if self.buildable is False:
+            return
+        else:
+            self.createRoad(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+
     #windows zoom
     def zoomer(self,event):
         if (event.delta > 0):
@@ -80,7 +89,9 @@ class  World(tk.Frame):
             for x in range(0, self.canvas_width, self.distance):
                 self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
             
-
+    def createRoad(self, distX, distY):
+        self.canvas.create_rectangle(self.srcX, self.srcY, distX, distY, fill = "red")
+        self.buildable = False
 
     
 

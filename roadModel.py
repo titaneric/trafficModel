@@ -24,7 +24,6 @@ distance = 30
 screen = Frame(root)
 world = World(screen, canvas_height, canvas_width, distance)
 #world.canvas.bind("<Button-1>", checkCoords)
-world.canvas.bind("<Double-Button-1>", lambda event, line_distance = distance: world.createIntersection(event, line_distance))
 #world.canvas.bind("<B1-Motion>", lambda event, line_distance = distance: createRoad(event, line_distance))
 world.pack(fill = "both", expand = True)
 #canvas.bind("<ButtonRelease>",lambda event, line_distance = distance: createRoad(event, line_distance))
@@ -33,7 +32,7 @@ world.pack(fill = "both", expand = True)
 #toolbar.pack(side = TOP, fill = X)
 
 #canvas.pack()
-world.createGrid()
+
 screen.pack(side = BOTTOM, fill = X)
 
 
