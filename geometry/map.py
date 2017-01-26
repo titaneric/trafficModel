@@ -24,8 +24,9 @@ class  World(tk.Frame):
         self.canvas.bind("<Button-5>", self.zoomerM)
         #windows scroll
         self.canvas.bind("<MouseWheel>",self.zoomer)
-        self.canvas.bind("<Double-Button-1>", lambda event, line_distance = distance: self.createIntersection(event, line_distance))
+        self.canvas.bind("<Double-Button-1>", self.createIntersection)#lambda event, line_distance = distance: self.createIntersection(event, line_distance))
         self.buildable = False
+        self.movePath = []
         self.scale = 1
         self.distance = distance
         self.canvas_height = canvas_height
@@ -47,6 +48,7 @@ class  World(tk.Frame):
         if self.buildable is False:  
             self.canvas.scan_dragto(event.x, event.y, gain=1)
         else:
+            self.movePath.append((self.canvas.canvasx(event.x), self.canvas.canvasy(event.y)))
             return
     
     def ready2CreateRoad(self, event):
@@ -54,7 +56,8 @@ class  World(tk.Frame):
         if self.buildable is False:
             return
         else:
-            self.createRoad(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+            self.createIntersection(event)
+            self.createRoad(event)
 
     #windows zoom
     def zoomer(self,event):
@@ -80,7 +83,7 @@ class  World(tk.Frame):
         new_coords = [coords_i * self.scale for coords_i in coords]
         return new_coords
 
-    def createIntersection(self, event, line_distance):
+    def createIntersection(self, event):
         itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         self.canvas.itemconfig(itemID, fill = "#808080")
    
@@ -89,9 +92,16 @@ class  World(tk.Frame):
             for x in range(0, self.canvas_width, self.distance):
                 self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
             
-    def createRoad(self, distX, distY):
-        self.canvas.create_rectangle(self.srcX, self.srcY, distX, distY, fill = "red")
+    def createRoad(self, event):
+        distX = self.canvas.canvasx(event.x)
+        distY = self.canvas.canvasy(event.y)
+        for move_x, move_y in self.movePath:
+            itemID = self.canvas.find_closest(move_x, move_y)
+            if self.canvas.itemcget(itemID, "fill") == "bisque":
+                self.canvas.itemconfig(itemID, fill = "red")
+        #self.canvas.create_rectangle(self.srcX, self.srcY, distX, distY, fill = "red")
         self.buildable = False
+        self.movePath.clear()
 
     
 
