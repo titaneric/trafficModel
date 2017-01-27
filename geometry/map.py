@@ -95,13 +95,29 @@ class  World(tk.Frame):
     def createRoad(self, event):
         distX = self.canvas.canvasx(event.x)
         distY = self.canvas.canvasy(event.y)
+        roadCoords = []
         for move_x, move_y in self.movePath:
             itemID = self.canvas.find_closest(move_x, move_y)
             if self.canvas.itemcget(itemID, "fill") == "bisque":
-                self.canvas.itemconfig(itemID, fill = "red")
-        #self.canvas.create_rectangle(self.srcX, self.srcY, distX, distY, fill = "red")
+                self.canvas.itemconfig(itemID, fill = "#808080")
+                roadCoords.append(self.canvas.coords(itemID))
+        
+        if len(roadCoords) >= 2:
+            #the horizontal road
+            if roadCoords[0][1] == roadCoords[-1][1]:
+                mid = (roadCoords[0][1] + roadCoords[-1][3]) // 2
+                self.canvas.create_line(roadCoords[0][0], mid, roadCoords[-1][2], mid, fill = "yellow", dash = (10, 10), width = 3)
+            #the vertical road
+            if roadCoords[0][0] == roadCoords[-1][0]:
+                mid = (roadCoords[0][0] + roadCoords[-1][2]) // 2
+                self.canvas.create_line(mid, roadCoords[0][1], mid, roadCoords[-1][3], fill = "yellow", dash = (10, 10), width = 3)                
+        '''
+        for x0, y0, x1, y1 in roadCoords:
+            self.canvas.create_line(x0, y0, x1, y1, fill = "yellow", dash = (10, 10), width = 3)
+        '''
         self.buildable = False
         self.movePath.clear()
+        roadCoords.clear()
 
     
 
