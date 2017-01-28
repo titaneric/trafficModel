@@ -49,7 +49,6 @@ class  World(tk.Frame):
             self.canvas.scan_dragto(event.x, event.y, gain=1)
         else:
             self.movePath.append((self.canvas.canvasx(event.x), self.canvas.canvasy(event.y)))
-            return
     
     def ready2CreateRoad(self, event):
         itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -111,10 +110,7 @@ class  World(tk.Frame):
             if roadCoords[0][0] == roadCoords[-1][0]:
                 mid = (roadCoords[0][0] + roadCoords[-1][2]) // 2
                 self.canvas.create_line(mid, roadCoords[0][1], mid, roadCoords[-1][3], fill = "yellow", dash = (10, 10), width = 3)                
-        '''
-        for x0, y0, x1, y1 in roadCoords:
-            self.canvas.create_line(x0, y0, x1, y1, fill = "yellow", dash = (10, 10), width = 3)
-        '''
+        
         self.buildable = False
         self.movePath.clear()
         roadCoords.clear()

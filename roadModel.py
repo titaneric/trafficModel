@@ -8,15 +8,9 @@ def checkCoords(event):
     print(event.x, event.y)
 '''
 root = Tk()
-#menu = Menu(root)
-#root.config(menu = menu)
-'''
-------------Canvas--------------
-app:
-    createIntersection
-    createGrid
-'''
-#toolbar = Frame(root)
+menu = Menu(root)
+root.config(menu = menu)
+toolbar = Frame(root)
 canvas_height = 300
 canvas_width = 300
 distance = 30
@@ -26,9 +20,17 @@ world = World(screen, canvas_height, canvas_width, distance)
 
 world.pack(fill = "both", expand = True)
 
-#crossBtn = Button(toolbar, text = "add", command = lambda: createIntersection(canvas))
-#crossBtn.pack(side = LEFT, padx = 2, pady = 2)
-#toolbar.pack(side = TOP, fill = X)
+play = Button(toolbar, text = "Action")
+playPNG = PhotoImage(file = "png/play-button.png")
+play.config(compound = LEFT, image=playPNG,width="50",height="24",bg = "#FFFFFF")
+play.pack(side = LEFT, padx = 2, pady = 2)
+
+pause = Button(toolbar, text = "Pause")
+pausePNG = PhotoImage(file = "png/pause.png")
+pause.config(compound = LEFT, image=pausePNG,width="50",height="24",bg = "#FFFFFF")
+pause.pack(side = LEFT, padx = 2, pady = 2)
+toolbar.config(bg = "#FFFFFF")
+toolbar.pack(side = TOP, fill = X)
 
 #canvas.pack()
 
