@@ -12,9 +12,9 @@ class World():
     def __init__(self):
         self.set()
     def set(self):
-        self.intersections = []#Intersection(obj.intersections)
-        self.roads = []#Road(obj.roads)
-        self.cars = []#Car(obj.cars)
+        self.intersections = {}#Intersection(obj.intersections)
+        self.roads = {}#Road(obj.roads)
+        self.cars = {}#Car(obj.cars)
         self.carsNumber = 0
         self.time = 0
 
@@ -27,12 +27,13 @@ class World():
             rect = Rect(info["position"]["x"], info["position"]["y"], info["position"]["width"], info["position"]["height"])
             #print(info["position"]["x"], info["position"]["y"], info["position"]["width"], info["position"]["height"])
             intersection = Intersection(rect)
-            self.intersections.append(intersection)
+            self.intersections[ID] = intersection
 
         for ID, info in map["roads"].items():
-            road = Road(info["source"], info["target"])
+            road = Road(self.intersections[info["source"]], self.intersections[info["target"]])
             #print(info["source"], info["target"])
-            self.roads.append(road)
+            self.roads[ID] = road
+
 
             
 

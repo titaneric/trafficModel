@@ -88,7 +88,7 @@ class  Operation(tk.Frame):
         self.canvas.itemconfig(itemID, fill = "#808080")
 
     def buildIntersection(self, intersection):
-        self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, intersection.rect.y + intersection.rect.height, fill = "#808080")
+        self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, intersection.rect.y + intersection.rect.height, fill = "#808080", outline = "#FFFFFF")
    
     def drawGrid(self):
         for y in range(0, self.canvas_height, self.distance):
@@ -107,9 +107,9 @@ class  Operation(tk.Frame):
             #the horizontal road
             if roadCoords[0][1] == roadCoords[-1][1]:
                 mid = (roadCoords[0][1] + roadCoords[-1][3]) // 2
-                topMid = (roadCoords[0][1] + mid) // 2
+                #topMid = (roadCoords[0][1] + mid) // 2
                 self.canvas.create_line(roadCoords[0][0], mid, roadCoords[-1][2], mid, fill = "yellow", dash = (10, 10), width = 3)
-                self.canvas.create_rectangle(roadCoords[0][0], topMid - 2, roadCoords[0][0] + 10, topMid + 2, fill = "red", tag = "testCar")
+                #self.canvas.create_rectangle(roadCoords[0][0], topMid - 2, roadCoords[0][0] + 10, topMid + 2, fill = "red", tag = "testCar")
                 
             #the vertical road
             if roadCoords[0][0] == roadCoords[-1][0]:
@@ -120,16 +120,28 @@ class  Operation(tk.Frame):
         self.movePath.clear()
         roadCoords.clear()
 
-    #def buildRoad(self, road):
-
+    def buildRoad(self, road):
+        source = road.source
+        target = road.target
+        #the vertical road
+        if source.rect.x == target.rect.x and source.rect.y < target.rect.y:
+            self.canvas.create_rectangle(source.rect.x, source.rect.y, target.rect.x + target.rect.width, target.rect.y + target.rect.height, fill = "#808080", outline = "#FFFFFF")                        
+            mid = (source.rect.x + target.rect.x + target.rect.width) // 2
+            self.canvas.create_line(mid, source.rect.y + source.rect.height, mid, target.rect.y, fill = "yellow", dash = (10, 10), width = 3)
+        #the horizontal road
+        if source.rect.y == target.rect.y and source.rect.x < target.rect.x:
+            self.canvas.create_rectangle(source.rect.x + source.rect.width, source.rect.y, target.rect.x, target.rect.y + target.rect.height, fill = "#808080", outline = "#FFFFFF")            
+            mid = (source.rect.y + target.rect.y + target.rect.height) // 2
+            self.canvas.create_line(source.rect.x + source.rect.width, mid, target.rect.x, mid, fill = "yellow", dash = (10, 10), width = 3)
 
     def drawWorld(self):
-        for intersection in self.world.intersections:
+        for intersection in self.world.intersections.values():
             self.buildIntersection(intersection)
 
-        #for road in self.world.roads:
-            #self.buildRoad(road)
-    #def drawCar(self):
+        for road in self.world.roads.values():
+            self.buildRoad(road)
+
+        
 
     '''
     def moveCar(self, tag):
