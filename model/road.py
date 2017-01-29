@@ -1,15 +1,18 @@
-from lane import Lane
+#from lane import Lane
+import itertools
 import copy
 class Road():
+    id_generator = itertools.count(1)
     def __init__(self, source, target):
-        self.id = uniqueId ('road')
+        self.id = "road_" + str(next(self.id_generator))
         self.source = source
         self.target = target
-        self.lanes = []
-        self.lanesNumber = None
-        self.update()
+        #self.lanes = []
+        #self.lanesNumber = None
+        #self.update()
     def copy(self):
         return copy.deepcopy(self)
+    '''
     @property
     def length(self):
         return self.targetSide.target.subtract(self.sourceSide.source).length
@@ -51,4 +54,4 @@ class Road():
           self.lanes[i].leftmostAdjacent = self.lanes[self.lanesNumber - 1]
           self.lanes[i].rightmostAdjacent = self.lanes[0]
           self.lanes[i].update()
-        
+    '''

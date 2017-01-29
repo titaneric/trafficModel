@@ -1,6 +1,7 @@
 import tkinter as tk
-class  World(tk.Frame):
-    def __init__(self, root, canvas_height, canvas_width, distance):
+from model.world import World
+class  Operation(tk.Frame):
+    def __init__(self, root, canvas_height, canvas_width, distance, world):
         tk.Frame.__init__(self, root)
         self.canvas = tk.Canvas(self, width=300, height=300, background="bisque")
         self.xsb = tk.Scrollbar(self, orient="horizontal", command=self.canvas.xview)
@@ -24,14 +25,16 @@ class  World(tk.Frame):
         self.canvas.bind("<Button-5>", self.zoomerM)
         #windows scroll
         self.canvas.bind("<MouseWheel>",self.zoomer)
-        self.canvas.bind("<Double-Button-1>", self.createIntersection)#lambda event, line_distance = distance: self.createIntersection(event, line_distance))
+        self.canvas.bind("<Double-Button-1>", self.drawIntersection)#lambda event, line_distance = distance: self.createIntersection(event, line_distance))
         self.buildable = False
         self.movePath = []
         self.scale = 1
+        self.world = world
         self.distance = distance
         self.canvas_height = canvas_height
         self.canvas_width = canvas_width
-        self.createGrid()
+        self.drawGrid()
+        self.drawWorld()
     
     def scroll_start(self, event):
         itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -40,8 +43,6 @@ class  World(tk.Frame):
             self.canvas.scan_mark(event.x, event.y)
         #existed intersection
         elif self.canvas.itemcget(itemID, "fill") == "#808080":
-            self.srcX = self.canvas.canvasx(event.x)
-            self.srcY = self.canvas.canvasy(event.y)
             self.buildable = True
 
     def scroll_move(self, event):
@@ -51,12 +52,12 @@ class  World(tk.Frame):
             self.movePath.append((self.canvas.canvasx(event.x), self.canvas.canvasy(event.y)))
     
     def ready2CreateRoad(self, event):
-        itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        #itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         if self.buildable is False:
             return
         else:
-            self.createIntersection(event)
-            self.createRoad(event)
+            self.drawIntersection(event)
+            self.drawRoad(event)
 
     #windows zoom
     def zoomer(self,event):
@@ -82,18 +83,19 @@ class  World(tk.Frame):
         new_coords = [coords_i * self.scale for coords_i in coords]
         return new_coords
 
-    def createIntersection(self, event):
+    def drawIntersection(self, event):
         itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         self.canvas.itemconfig(itemID, fill = "#808080")
+
+    def buildIntersection(self, intersection):
+        self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, intersection.rect.y + intersection.rect.height, fill = "#808080")
    
-    def createGrid(self):
+    def drawGrid(self):
         for y in range(0, self.canvas_height, self.distance):
             for x in range(0, self.canvas_width, self.distance):
                 self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
             
-    def createRoad(self, event):
-        distX = self.canvas.canvasx(event.x)
-        distY = self.canvas.canvasy(event.y)
+    def drawRoad(self, event):
         roadCoords = []
         for move_x, move_y in self.movePath:
             itemID = self.canvas.find_closest(move_x, move_y)
@@ -105,7 +107,10 @@ class  World(tk.Frame):
             #the horizontal road
             if roadCoords[0][1] == roadCoords[-1][1]:
                 mid = (roadCoords[0][1] + roadCoords[-1][3]) // 2
+                topMid = (roadCoords[0][1] + mid) // 2
                 self.canvas.create_line(roadCoords[0][0], mid, roadCoords[-1][2], mid, fill = "yellow", dash = (10, 10), width = 3)
+                self.canvas.create_rectangle(roadCoords[0][0], topMid - 2, roadCoords[0][0] + 10, topMid + 2, fill = "red", tag = "testCar")
+                
             #the vertical road
             if roadCoords[0][0] == roadCoords[-1][0]:
                 mid = (roadCoords[0][0] + roadCoords[-1][2]) // 2
@@ -115,7 +120,25 @@ class  World(tk.Frame):
         self.movePath.clear()
         roadCoords.clear()
 
-    
+    #def buildRoad(self, road):
+
+
+    def drawWorld(self):
+        for intersection in self.world.intersections:
+            self.buildIntersection(intersection)
+
+        #for road in self.world.roads:
+            #self.buildRoad(road)
+    #def drawCar(self):
+
+    '''
+    def moveCar(self, tag):
+        itemID = self.canvas.find_withtag(tag)
+        beforePos = self.canvas.coords(itemID)
+        afterPos = (beforePos[0] + 20, beforePos[1], beforePos[2] + 20, beforePos[3])
+        self.canvas.coords(itemID, afterPos[0], afterPos[1], afterPos[2], afterPos[3])
+
+    '''
 
     
 
