@@ -1,8 +1,10 @@
 import random
 from trajectory import Trajectory
+import itertools
 class Car():
+    id_generator = itertools.count(1)
     def __init__(self):
-        self.id = ""
+        self.id = "car_" + str(next(self.id_generator))
         self.start = 0
         self.end = 0 
         self.path = []
@@ -27,9 +29,10 @@ class Car():
         if speed < 0:speed = 0 
         if speed > self.maxSpeed:speed = self.maxSpeed 
         self._speed = speed
+    '''
     @property
     def coords(self):
-        return self.trajectory.coods
+        return self.trajectory.coords
     @property
     def direction(self):
         return self.trajectory.direction
@@ -100,6 +103,7 @@ class Car():
         self.nextLane = None
         self.preferedLane = None
         return nextLane
+    '''
 
 
 

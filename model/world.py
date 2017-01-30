@@ -12,9 +12,9 @@ class World():
     def __init__(self):
         self.set()
     def set(self):
-        self.intersections = {}#Intersection(obj.intersections)
-        self.roads = {}#Road(obj.roads)
-        self.cars = {}#Car(obj.cars)
+        self.intersections = {}
+        self.roads = {}
+        self.cars = {}
         self.carsNumber = 0
         self.time = 0
 
