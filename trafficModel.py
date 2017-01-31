@@ -18,12 +18,12 @@ distance = 30
 world = World()
 world.load()
 screen = Frame(root)
-grap = Operation(screen, canvas_height, canvas_width, distance, world)
-grap.pack(fill = "both", expand = True)
+op = Operation(screen, canvas_height, canvas_width, distance, world)
+op.pack(fill = "both", expand = True)
 
 play = Button(toolbar, text = "Action")
 playPNG = PhotoImage(file = "png/play-button.png")
-play.config(compound = LEFT, image=playPNG,width="50",height="24",bg = "#FFFFFF")#, command = lambda tag = "testCar": grap.moveCar(tag))
+play.config(compound = LEFT, image=playPNG,width="50",height="24",bg = "#FFFFFF", command = lambda : op.runModel())
 play.pack(side = LEFT, padx = 2, pady = 2)
 
 pause = Button(toolbar, text = "Pause")

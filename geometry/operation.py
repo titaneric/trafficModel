@@ -2,10 +2,12 @@ import tkinter as tk
 from model.world import World
 from model.intersection import Intersection
 from model.road import Road
+from model.car import Car
 from geometry.rect import Rect
 class  Operation(tk.Frame):
     def __init__(self, root, canvas_height, canvas_width, distance, world):
         tk.Frame.__init__(self, root)
+        self.root = root
         self.canvas = tk.Canvas(self, width=300, height=300, background="bisque")
         self.xsb = tk.Scrollbar(self, orient="horizontal", command=self.canvas.xview)
         self.ysb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
@@ -31,6 +33,7 @@ class  Operation(tk.Frame):
         self.canvas.bind("<Double-Button-1>", self.drawIntersection)#lambda event, line_distance = distance: self.createIntersection(event, line_distance))
         self.buildable = False
         self.movePath = []
+        self._running = False
         self.scale = 1
         self.world = world
         self.distance = distance
@@ -38,6 +41,7 @@ class  Operation(tk.Frame):
         self.canvas_width = canvas_width
         self.drawGrid()
         self.drawWorld()
+        
     
     def scroll_start(self, event):
         itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -178,6 +182,26 @@ class  Operation(tk.Frame):
         for intersection in self.world.intersections.values():
             if coords[0] == intersection.rect.x and coords[1] == intersection.rect.y:
                 return intersection.id
+
+    #def drawCar(self, car):
+
+    
+        
+    @property
+    def running(self):
+        return self._running
+    @running.setter
+    def running(self, running):
+        self._running = running
+
+
+    def runModel(self):
+        self.running = True
+        self.display()
+    
+    def display(self):
+        
+
 
         
 

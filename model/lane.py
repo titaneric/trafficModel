@@ -65,6 +65,6 @@ class Lane():
             distance = other.position - carPosition.position
             if not other.free and 0 < distance < bestDistance:
                 bestDistance = distance
-                next = o
+                next = other
         
         

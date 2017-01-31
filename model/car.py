@@ -1,6 +1,7 @@
 import random
-from trajectory import Trajectory
+#from trajectory import Trajectory
 import itertools
+import matplotlib.colors as colors
 class Car():
     id_generator = itertools.count(1)
     def __init__(self):
@@ -12,14 +13,14 @@ class Car():
         #Inter = 0, 0
         #self.currentRoad = Inter
         #self.nextRoad = self.pickNextRoad()
-        self.color = (300 + 240 * random.random()) % 360
+        self.color = colors.rgb2hex((random.random(), random.random(), random.random()))
         self._speed = 0
-        self.width = 1.7
-        self.length = 3 + 2 * random.random()
+        self.width = 4
+        self.length = 10 + random.randint(0, 5)
         self.maxSpeed = 30
         self.maxAcceleration = 1
         self.slowProb  = 0.3
-        self.trajectory = Trajectory(lane, position)
+        #self.trajectory = Trajectory(lane, position)
         self.alive = True
     @property
     def speed(self):
