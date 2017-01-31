@@ -23,17 +23,14 @@ class World():
             map = json.load(data_file)
         
         self.carsNumber = map["carsNumber"]
-        for ID, info in map["intersections"].items():
+        for info in map["intersections"].values():
             rect = Rect(info["position"]["x"], info["position"]["y"], info["position"]["width"], info["position"]["height"])
-            #print(info["position"]["x"], info["position"]["y"], info["position"]["width"], info["position"]["height"])
             intersection = Intersection(rect)
-            self.intersections[ID] = intersection
+            self.intersections[intersection.id] = intersection
 
-        for ID, info in map["roads"].items():
+        for info in map["roads"].values():
             road = Road(self.intersections[info["source"]], self.intersections[info["target"]])
-            
-            #print(info["source"], info["target"])
-            self.roads[ID] = road
+            self.roads[road.id] = road
 
 
             
