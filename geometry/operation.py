@@ -82,6 +82,7 @@ class  Operation(tk.Frame):
         self.canvas.configure(scrollregion = self.canvas.bbox("all"))
         self.scale *= 0.9
         
+        
     def update_coords(self, coords):
         new_coords = [coords_i * self.scale for coords_i in coords]
         return new_coords
@@ -90,7 +91,7 @@ class  Operation(tk.Frame):
         itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         if self.canvas.itemcget(itemID, "fill") == "bisque":
             coords = self.canvas.coords(itemID)
-            rect = Rect(coords[0], coords[1], self.distance, self.distance)
+            rect = Rect(coords[0], coords[1], self.distance * self.scale, self.distance * self.scale)
             intersection = Intersection(rect)
             self.buildIntersection(intersection)
             self.world.intersections[intersection.id] = intersection
@@ -106,20 +107,23 @@ class  Operation(tk.Frame):
                 self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
             
     def drawRoad(self, event):
-        itemID = self.canvas.find_closest(self.movePath[0][0], self.movePath[0][1])
-        sourceCoords = self.canvas.coords(itemID)
-        sourceID = self.findIntersectionID(sourceCoords)
-        itemID = self.canvas.find_closest(self.movePath[-1][0], self.movePath[-1][1])
-        targetCoords = self.canvas.coords(itemID)
-        targetID = self.findIntersectionID(targetCoords)
-        road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
-        self.world.roads[road.id] = road
-        self.buildRoad(road)        
-        road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
-        self.world.roads[road.id] = road
-        self.buildRoad(road)
-        self.buildable = False
-        self.movePath.clear()
+        if len(self.movePath) > 2:
+            itemID = self.canvas.find_closest(self.movePath[0][0], self.movePath[0][1])
+            sourceCoords = self.canvas.coords(itemID)
+            sourceID = self.findIntersectionID(sourceCoords)
+            itemID = self.canvas.find_closest(self.movePath[-1][0], self.movePath[-1][1])
+            targetCoords = self.canvas.coords(itemID)
+            targetID = self.findIntersectionID(targetCoords)
+            road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
+            self.world.roads[road.id] = road
+            self.buildRoad(road)        
+            road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
+            self.world.roads[road.id] = road
+            self.buildRoad(road)
+            self.buildable = False
+            self.movePath.clear()
+        else:
+            return
 
     def buildRoad(self, road):
         source = road.source
