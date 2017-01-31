@@ -31,6 +31,7 @@ class World():
 
         for ID, info in map["roads"].items():
             road = Road(self.intersections[info["source"]], self.intersections[info["target"]])
+            
             #print(info["source"], info["target"])
             self.roads[ID] = road
 

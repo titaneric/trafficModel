@@ -88,11 +88,14 @@ class  Operation(tk.Frame):
 
     def drawIntersection(self, event):
         itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
-        coords = self.canvas.coords(itemID)
-        rect = Rect(coords[0], coords[1], self.distance, self.distance)
-        intersection = Intersection(rect)
-        self.buildIntersection(intersection)
-        self.world.intersections[intersection.id] = intersection
+        if self.canvas.itemcget(itemID, "fill") == "bisque":
+            coords = self.canvas.coords(itemID)
+            rect = Rect(coords[0], coords[1], self.distance, self.distance)
+            intersection = Intersection(rect)
+            self.buildIntersection(intersection)
+            self.world.intersections[intersection.id] = intersection
+        else:
+            return
 
     def buildIntersection(self, intersection):
         self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, intersection.rect.y + intersection.rect.height, fill = "#808080", outline = "#FFFFFF")
@@ -111,6 +114,9 @@ class  Operation(tk.Frame):
         targetID = self.findIntersectionID(targetCoords)
         road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
         self.world.roads[road.id] = road
+        self.buildRoad(road)        
+        road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
+        self.world.roads[road.id] = road
         self.buildRoad(road)
         self.buildable = False
         self.movePath.clear()
@@ -118,19 +124,45 @@ class  Operation(tk.Frame):
     def buildRoad(self, road):#Fixed me
         source = road.source
         target = road.target
-        print(source.id, target.id)
         #the vertical road
-        if source.rect.x == target.rect.x and source.rect.y < target.rect.y:
-            self.canvas.create_rectangle(source.rect.x, source.rect.y + source.rect.height, target.rect.x + target.rect.width, target.rect.y, fill = "#808080", outline = "#FFFFFF")                        
+        if source.rect.x == target.rect.x:
             mid = (source.rect.x + target.rect.x + target.rect.width) // 2
-            self.canvas.create_line(mid, source.rect.y + source.rect.height, mid, target.rect.y, fill = "yellow", dash = (10, 10), width = 3)
-        
-        #the horizontal road
-        if source.rect.y == target.rect.y and source.rect.x < target.rect.x:
-            self.canvas.create_rectangle(source.rect.x + source.rect.width, source.rect.y, target.rect.x, target.rect.y + target.rect.height, fill = "#808080", outline = "#FFFFFF")            
-            mid = (source.rect.y + target.rect.y + target.rect.height) // 2
-            self.canvas.create_line(source.rect.x + source.rect.width, mid, target.rect.x, mid, fill = "yellow", dash = (10, 10), width = 3)
-        
+            x0, y0, x1, y1 = (0, 0, 0, 0)   
+            if source.rect.y < target.rect.y:
+                x0 = source.rect.x
+                y0 = source.rect.y + source.rect.height
+                x1 = target.rect.x + target.rect.width
+                y1 = target.rect.y     
+                self.canvas.create_rectangle(x1, y1, mid, y0, fill = "#808080", outline = "#FFFFFF")                                                                         
+            elif source.rect.y > target.rect.y:
+                x0 = target.rect.x
+                y0 = target.rect.y + target.rect.height
+                x1 = source.rect.x + source.rect.width
+                y1 = source.rect.y
+                self.canvas.create_rectangle(x0, y0, mid, y1, fill = "#808080", outline = "#FFFFFF")                        
+                
+
+            self.canvas.create_line(mid, y0, mid, y1, fill = "yellow", dash = (10, 10), width = 3)
+         #the horizontal road
+        elif source.rect.y == target.rect.y:
+            mid = (source.rect.y + target.rect.y + target.rect.height) // 2 
+            x0, y0, x1, y1 = (0, 0, 0, 0)          
+            if source.rect.x < target.rect.x:
+                x0 = source.rect.x + source.rect.width
+                y0 = source.rect.y
+                x1 = target.rect.x
+                y1 = target.rect.y + target.rect.height
+                self.canvas.create_rectangle(x0, y0, x1, mid, fill = "#808080", outline = "#FFFFFF")                                       
+            elif source.rect.x > target.rect.x:
+                x0 = target.rect.x + target.rect.width
+                y0 = target.rect.y
+                x1 = source.rect.x
+                y1 = source.rect.y + source.rect.height
+                self.canvas.create_rectangle(x1, y1, x0, mid, fill = "#808080", outline = "#FFFFFF")                                       
+                
+
+            self.canvas.create_line(x0, mid, x1, mid, fill = "yellow", dash = (10, 10), width = 3)
+     
     def drawWorld(self):
         for intersection in self.world.intersections.values():
             self.buildIntersection(intersection)
