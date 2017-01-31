@@ -199,7 +199,7 @@ class  Operation(tk.Frame):
         self.running = True
         self.display()
     
-    def display(self):
+    #def display(self):
         
 
 
