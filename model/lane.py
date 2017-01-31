@@ -1,7 +1,7 @@
 import sys
 import math
 sys.path.append("../geometry")
-from segment import Segment
+from geometry.segment import Segment
 class Lane():
     def __init__(self, sourceSegment, targetSegment, road):
         self.sourceSegment = sourceSegment
@@ -13,7 +13,7 @@ class Lane():
         self.rightmostAdjacent = None
         self.carsPositions = {}
         self.update()
-    
+
     @property 
     def sourceSideId(self):
         return self.road.sourceSideId
@@ -37,11 +37,13 @@ class Lane():
     @property 
     def rightBorder(self):
         return Segment(self.sourceSegment.target, self.targetSegment.source)
+
     def update(self):
         self.middleLine = Segment(self.sourceSegment.center, self.targetSegment.center)
         self.length = self.middleLine.length
         self.direction = self.middleLine.direction
-    def getTurnDirection(selfother):
+
+    def getTurnDirection(self, other):
         return self.road.getTurnDirection(other.road)
 
     def getDirection(self):
@@ -55,16 +57,15 @@ class Lane():
         self.carsPositions[carPosition.id] = carPosition
 
     def removeCar(self, carPosition):
-        assert carPosition.id not in self.carsPositions.keys()
+        assert carPosition.id in self.carsPositions.keys()
         del self.carsPositions[carPosition.id]
 
     def getNext(self, carPosition):
         next = None
-        bestDistance = math.inf
-        for id, other in self.carsPositions.items():
+        bestDistance = float("inf")
+        for ID, other in self.carsPositions.items():
             distance = other.position - carPosition.position
             if not other.free and 0 < distance < bestDistance:
                 bestDistance = distance
                 next = other
-        
-        
+        return next

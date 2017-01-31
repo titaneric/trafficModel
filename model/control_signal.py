@@ -33,7 +33,7 @@ class ControlSignals():
     def flip(self):
         self.stateNum += 1
 
-    def onTick(delta):
+    def onTick(self, delta):
         self.time += delta
         if self.time > self.flipInterval:
           self.flip()

@@ -1,41 +1,53 @@
 import math
+import itertools
+from model.lane import Lane
 class LanePosition():
-    def __init__(self, lane, position):
-        self.id = _.uniqueId('laneposition')
+    id_generator = itertools.count(1)
+    def __init__(self, car, lane = None, position = None):
+        self.car = car
+        self.id = "laneposition_" + str(next(self.id_generator))
         self.free = True
-        self.lane = lane
+        self.position = position
+        self._lane = lane
+
     @property
     def lane(self):
         return self._lane
+
     @lane.setter
     def lane(self, lane):
         self.release()
         self._lane = lane
+
     @property
     def relativePosition(self):
-        return self.position // self.lane.length
+        return self.position / self.lane.length
+
     def acquire(self):
-        if self.lane and self.lane.addCarPosition():
+        if type(self.lane) is Lane:
             self.free = False
             self.lane.addCarPosition(self)
+
     def release(self):
-        if not self.free and self.lane and self.lane.removeCar():
-          self.free = True
-          self.lane.removeCar(this)
+        if not self.free and self.lane and type(self.lane) is Lane:
+            self.free = True
+            self.lane.removeCar(this)
+
     def getNext(self):
-        if self.lane and not self.free:
-            return self.lane.getNext(self) 
+        if type(self.lane) is Lane and not self.free:
+            return self.lane.getNext(self)
+
     @property
     def nextCarDistance(self):
         next = self.getNext()
-        if next:
-            rearPosition = next.position - next.car.length // 2
-            frontPosition = self.position + self.car.length // 2
-            result ={car: next.car,
-                     distance: rearPosition - frontPosition}
+        if next is not None:
+            rearPosition = next.position - next.car.length / 2
+            frontPosition = self.position + self.car.length / 2
+            result ={"car": next.car,
+                     "distance": rearPosition - frontPosition}
             return result
-        result ={car: null,
-                distance: math.inf}
+        result ={"car": None,
+                 "distance": float("inf")}
         return result
 
 
