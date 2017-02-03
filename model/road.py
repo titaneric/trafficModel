@@ -33,7 +33,8 @@ class Road():
         side1 = self.targetSideId
         side2 = other.sourceSideId
         # 0 - left, 1 - forward, 2 - right
-        turnNumber = (side2 - side1 - 1 + 8) % 4
+        turnNumber = (side2 - side1 - 1 + 8) % 3
+        return turnNumber
 
     def update(self):
         #throw Error 'incomplete road' unless @source and @target

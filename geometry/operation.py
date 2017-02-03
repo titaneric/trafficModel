@@ -42,7 +42,7 @@ class  Operation(tk.Frame):
         self.canvas_width = canvas_width
         self.drawGrid()
         #self.runModel()
-        #self.drawWorld()
+        self.drawWorld()
 
     def scroll_start(self, event):
         itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -181,10 +181,17 @@ class  Operation(tk.Frame):
     def drawCar(self, car):
         angle = car.direction
         center = car.coords
-        print(center)
-        rect = Rect(0, 0, car.width, car.height)
-        rect.center(Point(0, 0))
-        #self.canvas.create_rectangle(0, 0, car.width, car.height)
+        print("{0}: ({1}, {2})".format(car.id, center.x, center.y))
+        #rect = Rect(0, 0, car.width, car.height)
+        #rect.center(Point(0, 0))
+        if not self.canvas.find_withtag(car.id):
+            self.canvas.create_rectangle(center.x - car.length // 2,
+                center.y - car.width // 2, center.x + car.length // 2, center.y + car.width // 2,
+                    fill = car.color, tag = car.id)
+        else:
+            ID = self.canvas.find_withtag(car.id)
+            self.canvas.coords(ID, center.x - car.length // 2,
+                center.y - car.width // 2, center.x + car.length // 2, center.y + car.width // 2)
 
     @property
     def running(self):
@@ -202,6 +209,8 @@ class  Operation(tk.Frame):
         #self.canvas.delete("all")
         #self.drawGrid()
         #self.drawWorld()
+        for car in self.world.cars.values():
+            self.drawCar(car)
         self.world.onTick(0.5)
         if self.running is True:
             self.root.after(500, self.display)

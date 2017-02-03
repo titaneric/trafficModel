@@ -1,5 +1,5 @@
 from model.lane_position import LanePosition
-import math
+#import math
 from geometry.curve import Curve
 
 
@@ -28,7 +28,7 @@ class Trajectory():
 
     @property
     def direction(self):
-        return self.lane.getDirection(self.relativePosition)
+        return self.lane.getDirection()# self.relativePosition)
 
     @property
     def coords(self):
@@ -55,7 +55,7 @@ class Trajectory():
         return self.current.lane.road.source
 
     def isValidTurn(self):
-        # TODO right turn is only allowed from the right lane
+        # right turn is only allowed from the right lane
         nextLane = self.car.nextLane
         sourceLane = self.current.lane
         if nextLane is None:
@@ -71,7 +71,7 @@ class Trajectory():
 
     def canEnterIntersection(self):
         nextLane = self.car.nextLane
-        sourceLane = self.current.lane
+        # sourceLane = self.current.lane
         if not nextLane:
             return True
         '''
@@ -92,18 +92,23 @@ class Trajectory():
     def moveForward(self, distance):
         distance = max(distance, 0)
         self.current.position += distance
-        self.next.position += distance
-        self.temp.position += distance
+        if self.next.position is not None:
+            self.next.position += distance
+        if self.temp.position is not None:
+            self.temp.position += distance
         if self.timeToMakeTurn() and self.canEnterIntersection() and self.isValidTurn():
             self._startChangingLanes(self.car.popNextLane(), 0)
-        tempRelativePosition = self.temp.position / self.temp.lane.length
+        if self.temp.position is not None:
+            tempRelativePosition = self.temp.position / self.temp.lane.length
         gap = 2 * self.car.length
-        if self.isChangingLanes and (self.temp.position > gap) and not self.current.free:
+        if self.isChangingLanes and self.temp.position is not None and \
+        (self.temp.position > gap) and not self.current.free:
             self.current.release()
-        if self.isChangingLanes and self.next.free \
+        if self.isChangingLanes and self.next.free and self.temp.position is not None \
             and ((self.temp.position + gap) > self.temp.lane.length):
             self.next.acquire()
-        if self.isChangingLanes and (tempRelativePosition >= 1):
+        if self.isChangingLanes and tempRelativePosition is not None and \
+            (tempRelativePosition >= 1):
             self._finishChangingLanes()
         if self.current.lane and not self.isChangingLanes and not self.car.nextLane:
             self.car.pickNextLane()
@@ -150,7 +155,7 @@ class Trajectory():
     def _finishChangingLanes(self):
         assert not self.isChangingLanes, 'no lane changing is going on'
         self.isChangingLanes = False
-        # TODO swap current and next
+        # swap current and next
         self.current.lane = self.next.lane
         self.current.position = self.next.position or 0
         self.current.acquire()
@@ -158,7 +163,7 @@ class Trajectory():
         self.next.position = None
         self.temp.lane = None
         self.temp.position = None
-        self.current.lane
+        # self.current.lane
 
     def release(self):
         self.current.release()

@@ -15,7 +15,7 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 30
+        self.maxSpeed = 10
         self.maxAcceleration = 1
         self.maxDeceleration = 3
         self.slowProb = 0.3
@@ -89,7 +89,7 @@ class Car():
     def pickNextRoad(self):
         intersection = self.trajectory.nextIntersection
         currentLane = self.trajectory.current.lane
-        possibleRoads = [road is not currentLane.road.source for road in intersection.roads]
+        possibleRoads = [road for road in intersection.roads if road is not currentLane.road.source]
         nextRoad = random.choice(possibleRoads)
         return nextRoad
 
@@ -106,7 +106,7 @@ class Car():
         elif turnNumber == 2:
             laneNumber = 0
         self.nextLane = nextRoad.lanes[laneNumber]
-        assert self.nextLane > 0
+        assert self.nextLane is not None
         return self.nextLane
 
     def popNextLane(self):
