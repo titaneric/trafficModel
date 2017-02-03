@@ -32,7 +32,7 @@ class Trajectory():
 
     @property
     def coords(self):
-        return self.lane.getPoint(self.relativePosition
+        return self.lane.getPoint(self.relativePosition)
 
     @property
     def nextCarDistance(self):

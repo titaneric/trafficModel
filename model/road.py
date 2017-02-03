@@ -41,19 +41,20 @@ class Road():
         self.sourceSide = self.source.rect.getSide(self.sourceSideId).subsegment(0.5, 1.0)
         self.targetSideId = self.target.rect.getSectorId(self.source.rect.center())
         self.targetSide = self.target.rect.getSide(self.targetSideId).subsegment(0, 0.5)
-        self.lanesNumber = min(self.sourceSide.length, self.targetSide.length) or 0
+        #self.lanesNumber = min(self.sourceSide.length, self.targetSide.length) or 0
         #self.lanesNumber = max(2, self.lanesNumber // settings.gridSize) or 0
+        self.lanesNumber = 1
         sourceSplits = self.sourceSide.split(self.lanesNumber, True)
-        targetSplits = self.targetSide.split(self.lanesNumber)
+        targetSplits = self.targetSide.split(self.lanesNumber, True)
         if self.lanes is not None or len(self.lanes) < self.lanesNumber:
             self.lanes = []
             for i in range(self.lanesNumber):
-                self.lanes[i] = Lane(sourceSplits[i], targetSplits[i], self)
+                self.lanes.append(Lane(sourceSplits[i], targetSplits[i], self))
         for i in range(self.lanesNumber):
             self.lanes[i].sourceSegment = sourceSplits[i]
             self.lanes[i].targetSegment = targetSplits[i]
-            self.lanes[i].leftAdjacent = self.lanes[i + 1]
-            self.lanes[i].rightAdjacent = self.lanes[i - 1]
+            #self.lanes[i].leftAdjacent = self.lanes[i + 1]
+            #self.lanes[i].rightAdjacent = self.lanes[i - 1]
             self.lanes[i].leftmostAdjacent = self.lanes[-1]
             self.lanes[i].rightmostAdjacent = self.lanes[0]
             self.lanes[i].update()

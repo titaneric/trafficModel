@@ -28,27 +28,27 @@ class Rect():
     def height(self, height):
         self._height = height
 
-    def left(self, left):
+    def left(self, left = None):
         if left is not None:
             self.x = left
         return self.x
 
-    def right(self, right):
+    def right(self, right = None):
         if right is not None:
             self.x = right - self.width
         return self.x + self.width
 
-    def top(self, top):
+    def top(self, top = None):
         if top is not None:
             self.y = top
         return self.y
 
-    def bottom(self, bottom):
+    def bottom(self, bottom = None):
         if bottom is not None:
             self.y = bottom - self.height
         return self.y + self.height
 
-    def center(self, center):
+    def center(self, center = None):
         if center is not None:
             self.x = center.x - self.width / 2
             self.y = center.y - self.height / 2
@@ -56,7 +56,7 @@ class Rect():
 
     def containsPoint(self, point):
         return self.left() <= point.x <= self.right() and self.top() <= point.y <= self.bottom()
-    
+
     def containsRect(self, rect):
         return self.left() <= rect.left() and rect.right() <= self.right() and self.top() <= rect.top() and rect.bottom() <= self.bottom()
 
@@ -79,5 +79,4 @@ class Rect():
         if offset.y >= 0 and abs(offset.x) <= abs(offset.y):
             return 2
         if offset.x <= 0 and abs(offset.x) >= abs(offset.y):
-            return 3 
-        
+            return 3

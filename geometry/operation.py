@@ -40,9 +40,9 @@ class  Operation(tk.Frame):
         self.canvas_height = canvas_height
         self.canvas_width = canvas_width
         self.drawGrid()
-        self.drawWorld()
-        
-    
+        self.runModel()
+        #self.drawWorld()
+
     def scroll_start(self, event):
         itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         #the empty grid
@@ -53,11 +53,11 @@ class  Operation(tk.Frame):
             self.buildable = True
 
     def scroll_move(self, event):
-        if self.buildable is False:  
+        if self.buildable is False:
             self.canvas.scan_dragto(event.x, event.y, gain=1)
         else:
             self.movePath.append((self.canvas.canvasx(event.x), self.canvas.canvasy(event.y)))
-    
+
     def ready2CreateRoad(self, event):
         #itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         if self.buildable is False:
@@ -75,18 +75,16 @@ class  Operation(tk.Frame):
         self.canvas.configure(scrollregion = self.canvas.bbox("all"))
 
     #linux zoom
-    def zoomerP(self,event):
+    def zoomerP(self, event):
         self.canvas.scale("all", event.x, event.y, 1.1, 1.1)
         self.canvas.configure(scrollregion = self.canvas.bbox("all"))
         self.scale *= 1.1
-        
 
-    def zoomerM(self,event):
+    def zoomerM(self, event):
         self.canvas.scale("all", event.x, event.y, 0.9, 0.9)
         self.canvas.configure(scrollregion = self.canvas.bbox("all"))
         self.scale *= 0.9
-        
-        
+
     def update_coords(self, coords):
         new_coords = [coords_i * self.scale for coords_i in coords]
         return new_coords
@@ -104,12 +102,12 @@ class  Operation(tk.Frame):
 
     def buildIntersection(self, intersection):
         self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, intersection.rect.y + intersection.rect.height, fill = "#808080", outline = "#FFFFFF")
-   
+
     def drawGrid(self):
         for y in range(0, self.canvas_height, self.distance):
             for x in range(0, self.canvas_width, self.distance):
                 self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
-            
+
     def drawRoad(self, event):
         if len(self.movePath) > 2:
             itemID = self.canvas.find_closest(self.movePath[0][0], self.movePath[0][1])
@@ -120,7 +118,7 @@ class  Operation(tk.Frame):
             targetID = self.findIntersectionID(targetCoords)
             road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
             self.world.roads[road.id] = road
-            self.buildRoad(road)        
+            self.buildRoad(road)
             road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
             self.world.roads[road.id] = road
             self.buildRoad(road)
@@ -132,15 +130,15 @@ class  Operation(tk.Frame):
     def buildRoad(self, road):
         source = road.source
         target = road.target
-        #the vertical road
+        # the vertical road
         if source.rect.x == target.rect.x:
             mid = (source.rect.x + target.rect.x + target.rect.width) // 2
-            x0, y0, x1, y1 = (0, 0, 0, 0)   
+            x0, y0, x1, y1 = (0, 0, 0, 0)
             if source.rect.y < target.rect.y:
                 x0 = source.rect.x
                 y0 = source.rect.y + source.rect.height
                 x1 = target.rect.x + target.rect.width
-                y1 = target.rect.y     
+                y1 = target.rect.y
                 self.canvas.create_rectangle(x1, y1, mid, y0, fill = "#808080", outline = "#FFFFFF")                                                                         
             elif source.rect.y > target.rect.y:
                 x0 = target.rect.x
@@ -148,13 +146,11 @@ class  Operation(tk.Frame):
                 x1 = source.rect.x + source.rect.width
                 y1 = source.rect.y
                 self.canvas.create_rectangle(x0, y0, mid, y1, fill = "#808080", outline = "#FFFFFF")                        
-                
-
             self.canvas.create_line(mid, y0, mid, y1, fill = "yellow", dash = (10, 10), width = 3)
-         #the horizontal road
+         # the horizontal road
         elif source.rect.y == target.rect.y:
-            mid = (source.rect.y + target.rect.y + target.rect.height) // 2 
-            x0, y0, x1, y1 = (0, 0, 0, 0)          
+            mid = (source.rect.y + target.rect.y + target.rect.height) // 2
+            x0, y0, x1, y1 = (0, 0, 0, 0)
             if source.rect.x < target.rect.x:
                 x0 = source.rect.x + source.rect.width
                 y0 = source.rect.y
@@ -167,10 +163,8 @@ class  Operation(tk.Frame):
                 x1 = source.rect.x
                 y1 = source.rect.y + source.rect.height
                 self.canvas.create_rectangle(x1, y1, x0, mid, fill = "#808080", outline = "#FFFFFF")                                       
-                
-
             self.canvas.create_line(x0, mid, x1, mid, fill = "yellow", dash = (10, 10), width = 3)
-     
+
     def drawWorld(self):
         for intersection in self.world.intersections.values():
             self.buildIntersection(intersection)
@@ -183,27 +177,21 @@ class  Operation(tk.Frame):
             if coords[0] == intersection.rect.x and coords[1] == intersection.rect.y:
                 return intersection.id
 
-    #def drawCar(self, car):
-
-    
-        
     @property
     def running(self):
         return self._running
+
     @running.setter
     def running(self, running):
         self._running = running
 
-
     def runModel(self):
         self.running = True
         self.display()
-    
-    #def display(self):
-        
 
-
-        
+    def display(self):
+        self.drawWorld()
+        self.root.after(1000, self.display)
 
     '''
     def moveCar(self, tag):
@@ -214,5 +202,4 @@ class  Operation(tk.Frame):
 
     '''
 
-    
 

@@ -17,19 +17,18 @@ class Segment():
 
     @property
     def center(self):
-        self.getPoint(0.5)
+        return self.getPoint(0.5)
 
     def getPoint(self, scale):
         return self.source + (self.vector * scale)
 
-    def subsegment(a, b):
+    def subsegment(self, a, b):
         offset = self.vector
         start = self.source + (offset * a)
-        end = self.source +  (offset * b)
+        end = self.source + (offset * b)
         return Segment(start, end)
 
-    def split(n, reverse):
+    def split(self, n, reverse):
         order = reversed(list(range(n))) if reverse else list(range(n))
-        splitResult = [self.subsegment(k / n, (k + 1) / n) for k in order]
+        splitResult = [self.subsegment(k // n, (k + 1) // n) for k in order]
         return splitResult
-        

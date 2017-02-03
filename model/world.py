@@ -65,7 +65,7 @@ class World():
     def addRoad(self, road):
         self.roads[road.id] = road
         road.source.roads.append(road)
-        road.target.inroads.append(road)
+        road.target.inRoads.append(road)
         road.update()
 
     def getRoad(self, ID):
