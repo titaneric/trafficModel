@@ -28,7 +28,7 @@ play.pack(side = LEFT, padx = 2, pady = 2)
 
 pause = Button(toolbar, text = "Pause")
 pausePNG = PhotoImage(file = "png/pause.png")
-pause.config(compound = LEFT, image=pausePNG,width="50",height="24",bg = "#FFFFFF")
+pause.config(compound = LEFT, image=pausePNG,width="50",height="24",bg = "#FFFFFF", command = lambda : op.stop())
 pause.pack(side = LEFT, padx = 2, pady = 2)
 
 toolbar.config(bg = "#FFFFFF")

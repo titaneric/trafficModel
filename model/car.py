@@ -22,6 +22,7 @@ class Car():
         self.trajectory = Trajectory(self, lane, position)
         self.alive = True
         self.preferedLane = None
+        self.nextLane = None
 
     @property
     def speed(self):
@@ -48,7 +49,7 @@ class Car():
 
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
-        distanceToNextCar = max(nextCarDistance.distance, 0)
+        distanceToNextCar = max(nextCarDistance["distance"], 0)
         if self.speed + 1 <= self.maxSpeed and distanceToNextCar > (self.speed + 1):
             return 1
         else:
@@ -56,7 +57,7 @@ class Car():
 
     def getDecelaration(self):
         nextCarDistance = self.trajectory.nextCarDistance
-        distanceToNextCar = max(nextCarDistance.distance, 0)
+        distanceToNextCar = max(nextCarDistance["distance"], 0)
         if random.random() < self.slowProb:
             return -1
         elif distanceToNextCar <= self.speed:

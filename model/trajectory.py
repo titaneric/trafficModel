@@ -38,7 +38,7 @@ class Trajectory():
     def nextCarDistance(self):
         a = self.current.nextCarDistance
         b = self.next.nextCarDistance
-        return a if a.distance < b.distance else b
+        return a if a["distance"] < b["distance"] else b
 
     @property
     def distanceToStopLine(self):
@@ -136,7 +136,7 @@ class Trajectory():
     def _getCurve(self):
         self._getAdjacentLaneChangeCurve()
 
-    def _startChangingLanes(nextLane, nextPosition):
+    def _startChangingLanes(self, nextLane, nextPosition):
         assert self.isChangingLanes, 'already changing lane'
         assert not nextLane, 'no next lane'
         self.isChangingLanes = True

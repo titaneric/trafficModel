@@ -1,6 +1,8 @@
 import copy
 from geometry.point import Point
 from geometry.segment import Segment
+
+
 class Rect():
     def __init__(self, x, y, width = 0, height = 0):
         self.x = x
@@ -55,13 +57,16 @@ class Rect():
         return Point(self.x + self.width / 2, self.y + self.height / 2)
 
     def containsPoint(self, point):
-        return self.left() <= point.x <= self.right() and self.top() <= point.y <= self.bottom()
+        return self.left() <= point.x <= self.right() \
+            and self.top() <= point.y <= self.bottom()
 
     def containsRect(self, rect):
-        return self.left() <= rect.left() and rect.right() <= self.right() and self.top() <= rect.top() and rect.bottom() <= self.bottom()
+        return self.left() <= rect.left() and rect.right() <= self.right() \
+            and self.top() <= rect.top() and rect.bottom() <= self.bottom()
 
     def getVertices(self):
-        return [Point(self.left(), self.top()), Point(self.right(), self.top()), Point(self.right(), self.bottom()), Point(self.left(), self.bottom())]
+        return [Point(self.left(), self.top()), Point(self.right(), self.top()), \
+            Point(self.right(), self.bottom()), Point(self.left(), self.bottom())]
 
     def getSide(self, i):
         vertices = self.getVertices()

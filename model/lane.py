@@ -1,40 +1,40 @@
-import sys
 import math
-sys.path.append("../geometry")
 from geometry.segment import Segment
+
+
 class Lane():
     def __init__(self, sourceSegment, targetSegment, road):
         self.sourceSegment = sourceSegment
         self.targetSegment = targetSegment
         self.road = road
-        #self.leftAdjacent = None
-        #self.rightAdjacent = None
+        # self.leftAdjacent = None
+        # self.rightAdjacent = None
         self.leftmostAdjacent = None
         self.rightmostAdjacent = None
         self.carsPositions = {}
         self.update()
 
-    @property 
+    @property
     def sourceSideId(self):
         return self.road.sourceSideId
 
-    @property 
+    @property
     def targetSideId(self):
         return self.road.targetSideId
 
-    @property 
+    @property
     def isRightmost(self):
         return self is self.rightmostAdjacent
 
-    @property 
+    @property
     def isLeftmost(self):
         return self is self.leftmostAdjacent
 
-    @property 
+    @property
     def leftBorder(self):
         return Segment(self.sourceSegment.source, self.targetSegment.target)
 
-    @property 
+    @property
     def rightBorder(self):
         return Segment(self.sourceSegment.target, self.targetSegment.source)
 

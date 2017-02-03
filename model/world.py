@@ -39,9 +39,9 @@ class World():
             self.removeRandomCar()
 
     def addRandomCar(self):
-        road = random.choice(self.roads.values())
+        road = random.choice(list(self.roads.values()))
         if road is not None:
-            lane = random.choice(road.lanes)
+            lane = random.choice(list(road.lanes))
             if lane is not None:
                 self.addCar(Car(lane, 0))
 
@@ -49,7 +49,7 @@ class World():
         self.cars[car.id] = car
 
     def removeRandomCar(self):
-        car = random.choice(self.cars.values)
+        car = random.choice(list(self.cars.values))
         if car is not None:
             self.removeCar(car)
 

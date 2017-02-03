@@ -4,6 +4,7 @@ from model.intersection import Intersection
 from model.road import Road
 from model.car import Car
 from geometry.rect import Rect
+from geometry.point import Point
 class  Operation(tk.Frame):
     def __init__(self, root, canvas_height, canvas_width, distance, world):
         tk.Frame.__init__(self, root)
@@ -21,7 +22,7 @@ class  Operation(tk.Frame):
         self.grid_columnconfigure(0, weight=1)
 
         # This is what enables using the mouse to drag:
-        
+
         self.canvas.bind("<ButtonPress-1>", self.scroll_start)
         self.canvas.bind("<B1-Motion>", self.scroll_move)
         self.canvas.bind("<ButtonRelease>", self.ready2CreateRoad)
@@ -40,7 +41,7 @@ class  Operation(tk.Frame):
         self.canvas_height = canvas_height
         self.canvas_width = canvas_width
         self.drawGrid()
-        self.runModel()
+        #self.runModel()
         #self.drawWorld()
 
     def scroll_start(self, event):
@@ -177,6 +178,14 @@ class  Operation(tk.Frame):
             if coords[0] == intersection.rect.x and coords[1] == intersection.rect.y:
                 return intersection.id
 
+    def drawCar(self, car):
+        angle = car.direction
+        center = car.coords
+        print(center)
+        rect = Rect(0, 0, car.width, car.height)
+        rect.center(Point(0, 0))
+        #self.canvas.create_rectangle(0, 0, car.width, car.height)
+
     @property
     def running(self):
         return self._running
@@ -190,8 +199,15 @@ class  Operation(tk.Frame):
         self.display()
 
     def display(self):
-        self.drawWorld()
-        self.root.after(1000, self.display)
+        #self.canvas.delete("all")
+        #self.drawGrid()
+        #self.drawWorld()
+        self.world.onTick(0.5)
+        if self.running is True:
+            self.root.after(500, self.display)
+
+    def stop(self):
+        self.running = False
 
     '''
     def moveCar(self, tag):
