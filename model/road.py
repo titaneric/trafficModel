@@ -1,25 +1,28 @@
 from model.lane import Lane
 import itertools
 import copy
+
+
 class Road():
     id_generator = itertools.count(1)
     def __init__(self, source, target):
         self.id = "road_" + str(next(self.id_generator))
         self.source = source
         self.target = target
-        #self.lanes = []
-        #self.lanesNumber = None
-        #self.update()
+        self.lanes = []
+        self.lanesNumber = None
+        self.update()
+
     def copy(self):
         return copy.deepcopy(self)
-    
+
     @property
     def length(self):
-        return self.targetSide.target.subtract(self.sourceSide.source).length
+        return (self.targetSide.target - self.sourceSide.source).length
 
     @property
     def leftmostLane(self):
-        return self.lanes[self.lanesNumber - 1]
+        return self.lanes[-1]
 
     @property
     def rightmostLane(self):
@@ -44,13 +47,13 @@ class Road():
         targetSplits = self.targetSide.split(self.lanesNumber)
         if self.lanes is not None or len(self.lanes) < self.lanesNumber:
             self.lanes = []
-            for i in range(0, self.lanesNumber - 1):
+            for i in range(self.lanesNumber):
                 self.lanes[i] = Lane(sourceSplits[i], targetSplits[i], self)
-        for i in range(0, self.lanesNumber - 1):
+        for i in range(self.lanesNumber):
             self.lanes[i].sourceSegment = sourceSplits[i]
             self.lanes[i].targetSegment = targetSplits[i]
             self.lanes[i].leftAdjacent = self.lanes[i + 1]
             self.lanes[i].rightAdjacent = self.lanes[i - 1]
-            self.lanes[i].leftmostAdjacent = self.lanes[self.lanesNumber - 1]
+            self.lanes[i].leftmostAdjacent = self.lanes[-1]
             self.lanes[i].rightmostAdjacent = self.lanes[0]
             self.lanes[i].update()
