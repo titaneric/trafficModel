@@ -30,7 +30,6 @@ class World():
             road = Road(self.intersections[info["source"]], self.intersections[info["target"]])
             self.addRoad(road)
 
-        self.carsNumber = 1
 
     def refreshCar(self):
         if len(self.cars) < self.carsNumber:

@@ -15,8 +15,8 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 10
-        self.maxAcceleration = 1
+        self.maxSpeed = 30
+        self.maxAcceleration = 5
         self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)

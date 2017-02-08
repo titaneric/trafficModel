@@ -31,7 +31,7 @@ class LanePosition():
     def release(self):
         if not self.free and self.lane and type(self.lane) is Lane:
             self.free = True
-            self.lane.removeCar(this)
+            self.lane.removeCar(self)
 
     def getNext(self):
         if type(self.lane) is Lane and not self.free:
@@ -43,12 +43,9 @@ class LanePosition():
         if next is not None:
             rearPosition = next.position - next.car.length / 2
             frontPosition = self.position + self.car.length / 2
-            result ={"car": next.car,
-                     "distance": rearPosition - frontPosition}
+            result = {"car": next.car,
+                      "distance": rearPosition - frontPosition}
             return result
-        result ={"car": None,
-                 "distance": float("inf")}
+        result = {"car": None,
+                  "distance": float("inf")}
         return result
-
-
-        

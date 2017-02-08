@@ -45,11 +45,12 @@ class  Operation(tk.Frame):
         self.drawWorld()
 
     def scroll_start(self, event):
-        itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
-        #the empty grid
-        if self.canvas.itemcget(itemID, "fill") == "bisque": 
+        itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        # the empty grid
+        if self.canvas.itemcget(itemID, "fill") == "bisque":
             self.canvas.scan_mark(event.x, event.y)
-        #existed intersection
+            self.canvas.focus_set()
+        # existed intersection
         elif self.canvas.itemcget(itemID, "fill") == "#808080":
             self.buildable = True
 
@@ -68,7 +69,7 @@ class  Operation(tk.Frame):
             self.drawRoad(event)
 
     #windows zoom
-    def zoomer(self,event):
+    def zoomer(self, event):
         if (event.delta > 0):
             self.canvas.scale("all", event.x, event.y, 1.1, 1.1)
         elif (event.delta < 0):
@@ -102,7 +103,8 @@ class  Operation(tk.Frame):
             return
 
     def buildIntersection(self, intersection):
-        self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, intersection.rect.y + intersection.rect.height, fill = "#808080", outline = "#FFFFFF")
+        self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, 
+            intersection.rect.y + intersection.rect.height, fill = "#808080", outline = "#FFFFFF", tag = intersection.id)
 
     def drawGrid(self):
         for y in range(0, self.canvas_height, self.distance):
@@ -110,25 +112,22 @@ class  Operation(tk.Frame):
                 self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
 
     def drawRoad(self, event):
-        if len(self.movePath) > 2:
-            itemID = self.canvas.find_closest(self.movePath[0][0], self.movePath[0][1])
-            sourceCoords = self.canvas.coords(itemID)
-            sourceID = self.findIntersectionID(sourceCoords)
-            itemID = self.canvas.find_closest(self.movePath[-1][0], self.movePath[-1][1])
-            targetCoords = self.canvas.coords(itemID)
-            targetID = self.findIntersectionID(targetCoords)
-            road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
-            self.world.roads[road.id] = road
-            self.buildRoad(road)
-            road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
-            self.world.roads[road.id] = road
-            self.buildRoad(road)
-            self.buildable = False
-            self.movePath.clear()
-        else:
-            return
+        itemID = self.canvas.find_closest(self.movePath[0][0], self.movePath[0][1])
+        sourceID = self.canvas.gettags(itemID)[0]
+        assert sourceID in self.world.intersections.keys(), "SourceID Error where ID is {sourceID}".format(**locals())
+        itemID = self.canvas.find_closest(self.movePath[-1][0], self.movePath[-1][1])
+        targetID = self.canvas.gettags(itemID)[0]
+        assert targetID in self.world.intersections.keys(), "TargetID Error where ID is {sourceID}".format(**locals())
+        road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
+        self.world.roads[road.id] = road
+        self.buildRoad(road)
+        road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
+        self.world.roads[road.id] = road
+        self.buildRoad(road)
+        self.buildable = False
+        self.movePath.clear()
 
-    def buildRoad(self, road):
+    def buildRoad(self, road):# Fix me
         source = road.source
         target = road.target
         # the vertical road
@@ -173,25 +172,28 @@ class  Operation(tk.Frame):
         for road in self.world.roads.values():
             self.buildRoad(road)
 
-    def findIntersectionID(self, coords):
-        for intersection in self.world.intersections.values():
-            if coords[0] == intersection.rect.x and coords[1] == intersection.rect.y:
-                return intersection.id
-
     def drawCar(self, car):
         angle = car.direction
         center = car.coords
-        print("{0}: ({1}, {2})".format(car.id, center.x, center.y))
+        print("{0}: ({1}, {2}), {3}".format(car.id, center.x, center.y, car.speed))
         #rect = Rect(0, 0, car.width, car.height)
         #rect.center(Point(0, 0))
+        new_coords_1 = self.update_coords([self.canvas.canvasx(center.x - car.length // 2),
+                self.canvas.canvasy(center.y - car.width // 2)])
+        new_coords_2 = self.update_coords([self.canvas.canvasx(center.x + car.length // 2),
+                self.canvas.canvasy(center.y + car.width // 2)])
+        #coords = (center.x, center.y)
         if not self.canvas.find_withtag(car.id):
-            self.canvas.create_rectangle(center.x - car.length // 2,
-                center.y - car.width // 2, center.x + car.length // 2, center.y + car.width // 2,
+            self.canvas.create_rectangle(new_coords_1[0],
+                new_coords_1[1], new_coords_2[0], new_coords_2[1],
                     fill = car.color, tag = car.id)
         else:
             ID = self.canvas.find_withtag(car.id)
-            self.canvas.coords(ID, center.x - car.length // 2,
-                center.y - car.width // 2, center.x + car.length // 2, center.y + car.width // 2)
+            if car.alive:
+                self.canvas.coords(ID, new_coords_1[0],
+                    new_coords_1[1], new_coords_2[0], new_coords_2[1])
+            else:
+                self.canvas.delete(ID)
 
     @property
     def running(self):
@@ -206,25 +208,14 @@ class  Operation(tk.Frame):
         self.display()
 
     def display(self):
-        #self.canvas.delete("all")
-        #self.drawGrid()
-        #self.drawWorld()
         for car in self.world.cars.values():
             self.drawCar(car)
-        self.world.onTick(0.5)
+        self.world.onTick(0.001)
         if self.running is True:
-            self.root.after(500, self.display)
+            self.root.after(1, self.display)
 
     def stop(self):
         self.running = False
 
-    '''
-    def moveCar(self, tag):
-        itemID = self.canvas.find_withtag(tag)
-        beforePos = self.canvas.coords(itemID)
-        afterPos = (beforePos[0] + 20, beforePos[1], beforePos[2] + 20, beforePos[3])
-        self.canvas.coords(itemID, afterPos[0], afterPos[1], afterPos[2], afterPos[3])
-
-    '''
 
 

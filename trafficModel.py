@@ -3,10 +3,6 @@ from geometry.operation import Operation
 from model.world import World
 
 
-'''
-def checkCoords(event):
-    print(event.x, event.y)
-'''
 root = Tk()
 
 #menu = Menu(root)

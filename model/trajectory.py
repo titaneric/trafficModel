@@ -139,7 +139,7 @@ class Trajectory():
         return curve
 
     def _getCurve(self):
-        self._getAdjacentLaneChangeCurve()
+        return self._getAdjacentLaneChangeCurve()
 
     def _startChangingLanes(self, nextLane, nextPosition):
         assert self.isChangingLanes, 'already changing lane'
