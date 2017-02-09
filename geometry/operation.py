@@ -145,7 +145,7 @@ class Operation(tk.Frame):
         self.buildable = False
         self.movePath.clear()
 
-    def drawRoad(self, road):# Fix me
+    def drawRoad(self, road):
         sourceSide = road.sourceSide
         targetSide = road.targetSide
         leftLine = road.leftmostLane.leftBorder
@@ -164,23 +164,28 @@ class Operation(tk.Frame):
     def drawCar(self, car):
         angle = car.direction
         center = car.coords
+        # coords = (center.x * self.scale, center.y * self.scale)
         print("{0}: ({1}, {2}), {3}".format(car.id, center.x, center.y, car.speed))
-        #rect = Rect(0, 0, car.width, car.height)
-        #rect.center(Point(0, 0))
-        new_coords_1 = self.update_coords([self.canvas.canvasx(center.x - car.length // 2),
-                self.canvas.canvasy(center.y - car.width // 2)])
-        new_coords_2 = self.update_coords([self.canvas.canvasx(center.x + car.length // 2),
-                self.canvas.canvasy(center.y + car.width // 2)])
-        #coords = (center.x, center.y)
+        rect = Rect(0, 0, car.length, car.width)
+        rect.center(Point(0, 0))
         if not self.canvas.find_withtag(car.id):
-            self.canvas.create_rectangle(new_coords_1[0],
-                new_coords_1[1], new_coords_2[0], new_coords_2[1],
+            self.canvas.create_rectangle(center.x + rect.left(),
+                center.y + rect.top(), center.x + rect.right(), center.y + rect.bottom(),
                     fill = car.color, tag = car.id)
+            '''
+            self.canvas.create_rectangle(coords[0] + rect.left(),
+                coords[1] + rect.top(), coords[0] + rect.right(), coords[1] + rect.bottom(),
+                    fill = car.color, tag = car.id)
+            '''
         else:
             ID = self.canvas.find_withtag(car.id)
             if car.alive:
-                self.canvas.coords(ID, new_coords_1[0],
-                    new_coords_1[1], new_coords_2[0], new_coords_2[1])
+                self.canvas.coords(ID, center.x + rect.left(),
+                center.y + rect.top(), center.x + rect.right(), center.y + rect.bottom())
+                '''
+                self.canvas.coords(ID, coords[0] + rect.left(),
+                coords[1] + rect.top(), coords[0] + rect.right(), coords[1] + rect.bottom())
+                '''
             else:
                 self.canvas.delete(ID)
 
