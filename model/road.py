@@ -37,7 +37,7 @@ class Road():
         return turnNumber
 
     def update(self):
-        #throw Error 'incomplete road' unless @source and @target
+        # throw Error 'incomplete road' unless @source and @target
         self.sourceSideId = self.source.rect.getSectorId(self.target.rect.center())
         self.sourceSide = self.source.rect.getSide(self.sourceSideId).subsegment(0.5, 1.0)
         self.targetSideId = self.target.rect.getSectorId(self.source.rect.center())

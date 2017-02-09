@@ -67,8 +67,8 @@ class Operation(tk.Frame):
         if self.buildable is False:
             return
         else:
-            self.drawIntersection(event)
-            self.drawRoad(event)
+            self.buildIntersection(event)
+            self.buildRoad(event)
 
     #windows zoom
     def zoomer(self, event):
@@ -92,6 +92,10 @@ class Operation(tk.Frame):
         self.scale *= 0.9
         self.update_member()
 
+    def drawPolyLine(self, pointList: list):
+        convertList = [(point.x, point.y) for point in pointList]
+        self.canvas.create_polygon(convertList, fill="#808080", outline="#FFFFFF")
+
     def update_member(self):
         for intersection in self.world.intersections.values():
             copyIntersection = intersection
@@ -101,21 +105,22 @@ class Operation(tk.Frame):
             copyIntersection.rect.y = coords[1]
             copyIntersection.rect.width = coords[2] - coords[0]
             copyIntersection.rect.height = coords[3] - coords[1]
+            copyIntersection.update()
             del(self.world.intersections[copyIntersection.id])
             self.world.intersections[copyIntersection.id] = copyIntersection
 
-    def drawIntersection(self, event):
+    def buildIntersection(self, event):
         itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         if self.canvas.itemcget(itemID, "fill") == "bisque":
             coords = self.canvas.coords(itemID)
             rect = Rect(coords[0], coords[1], self.distance * self.scale, self.distance * self.scale)
             intersection = Intersection(rect)
-            self.buildIntersection(intersection)
+            self.drawIntersection(intersection)
             self.world.intersections[intersection.id] = intersection
         else:
             return
 
-    def buildIntersection(self, intersection):
+    def drawIntersection(self, intersection):
         self.canvas.create_rectangle(intersection.rect.x, intersection.rect.y, intersection.rect.x + intersection.rect.width, 
             intersection.rect.y + intersection.rect.height, fill = "#808080", outline = "#FFFFFF", tag = intersection.id)
 
@@ -124,7 +129,7 @@ class Operation(tk.Frame):
             for x in range(0, self.canvas_width, self.distance):
                 self.canvas.create_rectangle(x, y, x + self.distance, y + self.distance, fill = "bisque", outline = "#FFFFFF")
 
-    def drawRoad(self, event):
+    def buildRoad(self, event):
         itemID = self.canvas.find_closest(self.movePath[0][0], self.movePath[0][1])
         sourceID = self.canvas.gettags(itemID)[0]
         assert sourceID in self.world.intersections.keys(), "SourceID Error where ID is {sourceID}".format(**locals())
@@ -133,57 +138,28 @@ class Operation(tk.Frame):
         assert targetID in self.world.intersections.keys(), "TargetID Error where ID is {sourceID}".format(**locals())
         road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
         self.world.roads[road.id] = road
-        self.buildRoad(road)
+        self.drawRoad(road)
         road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
         self.world.roads[road.id] = road
-        self.buildRoad(road)
+        self.drawRoad(road)
         self.buildable = False
         self.movePath.clear()
 
-    def buildRoad(self, road):# Fix me
-        source = road.source
-        target = road.target
-        # the vertical road
-        if source.rect.x == target.rect.x:
-            mid = (source.rect.x + target.rect.x + target.rect.width) // 2
-            x0, y0, x1, y1 = (0, 0, 0, 0)
-            if source.rect.y < target.rect.y:
-                x0 = source.rect.x
-                y0 = source.rect.y + source.rect.height
-                x1 = target.rect.x + target.rect.width
-                y1 = target.rect.y
-                self.canvas.create_rectangle(x1, y1, mid, y0, fill = "#808080", outline = "#FFFFFF")                                                                         
-            elif source.rect.y > target.rect.y:
-                x0 = target.rect.x
-                y0 = target.rect.y + target.rect.height
-                x1 = source.rect.x + source.rect.width
-                y1 = source.rect.y
-                self.canvas.create_rectangle(x0, y0, mid, y1, fill = "#808080", outline = "#FFFFFF")                        
-            self.canvas.create_line(mid, y0, mid, y1, fill = "yellow", dash = (10, 10), width = 3)
-         # the horizontal road
-        elif source.rect.y == target.rect.y:
-            mid = (source.rect.y + target.rect.y + target.rect.height) // 2
-            x0, y0, x1, y1 = (0, 0, 0, 0)
-            if source.rect.x < target.rect.x:
-                x0 = source.rect.x + source.rect.width
-                y0 = source.rect.y
-                x1 = target.rect.x
-                y1 = target.rect.y + target.rect.height
-                self.canvas.create_rectangle(x0, y0, x1, mid, fill = "#808080", outline = "#FFFFFF")                                       
-            elif source.rect.x > target.rect.x:
-                x0 = target.rect.x + target.rect.width
-                y0 = target.rect.y
-                x1 = source.rect.x
-                y1 = source.rect.y + source.rect.height
-                self.canvas.create_rectangle(x1, y1, x0, mid, fill = "#808080", outline = "#FFFFFF")                                       
-            self.canvas.create_line(x0, mid, x1, mid, fill = "yellow", dash = (10, 10), width = 3)
+    def drawRoad(self, road):# Fix me
+        sourceSide = road.sourceSide
+        targetSide = road.targetSide
+        leftLine = road.leftmostLane.leftBorder
+        self.canvas.create_line(leftLine.source.x, leftLine.source.y, leftLine.target.x, leftLine.target.y, fill = "yellow", dash = (10, 10), width = 3)
+        rightLine = road.rightmostLane.rightBorder
+        self.canvas.create_line(rightLine.source.x, rightLine.source.y, rightLine.target.x, rightLine.target.y, fill = "#FFFFFF")
+        self.drawPolyLine([sourceSide.source, sourceSide.target, targetSide.source, targetSide.target])
 
     def drawWorld(self):
         for intersection in self.world.intersections.values():
-            self.buildIntersection(intersection)
+            self.drawIntersection(intersection)
 
         for road in self.world.roads.values():
-            self.buildRoad(road)
+            self.drawRoad(road)
 
     def drawCar(self, car):
         angle = car.direction

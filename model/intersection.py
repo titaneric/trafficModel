@@ -14,7 +14,7 @@ class Intersection():
 
     def copy(self):
         return copy.deepcopy(self)
-    
+
     def update(self):
         for road in self.roads:
             road.update()
