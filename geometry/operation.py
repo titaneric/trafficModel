@@ -187,6 +187,8 @@ class Operation(tk.Frame):
                 coords[1] + rect.top(), coords[0] + rect.right(), coords[1] + rect.bottom())
                 '''
             else:
+                print("delete")
+                self.world.removeCar(car)
                 self.canvas.delete(ID)
 
     @property
@@ -202,7 +204,7 @@ class Operation(tk.Frame):
         self.display()
 
     def display(self):
-        for car in self.world.cars.values():
+        for car in list(self.world.cars.values()):
             self.drawCar(car)
         self.world.onTick(0.001)
         if self.running is True:

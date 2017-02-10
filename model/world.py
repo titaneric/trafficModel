@@ -73,10 +73,13 @@ class World():
     def onTick(self, delta):
         self.time += delta
         self.refreshCar()
-        for car in self.cars.values():
+        for car in list(self.cars.values()):
             car.move(delta)
+            '''
             if not car.alive:
                 self.removeCar(car)
+            '''
+
 
 
 

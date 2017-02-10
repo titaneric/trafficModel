@@ -40,7 +40,7 @@ class Road():
         # throw Error 'incomplete road' unless @source and @target
         self.sourceSideId = self.source.rect.getSectorId(self.target.rect.center())
         self.sourceSide = self.source.rect.getSide(self.sourceSideId).subsegment(0.5, 1.0)
-        self.targetSideId = self.target.rect.getSectorId(self.source.rect.center())
+        self.targetSideId = self.target.rect.getSectorId(self.source.rect.center()) 
         self.targetSide = self.target.rect.getSide(self.targetSideId).subsegment(0, 0.5)
         #self.lanesNumber = min(self.sourceSide.length, self.targetSide.length) or 0
         #self.lanesNumber = max(2, self.lanesNumber // settings.gridSize) or 0

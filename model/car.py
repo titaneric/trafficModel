@@ -69,6 +69,7 @@ class Car():
         acce = self.getAcceleration()
         dece = self.getDecelaration()
         self.speed += (acce + dece) * delta
+        '''
         if not self.trajectory.isChangingLanes and self.nextLane:
             currentLane = self.trajectory.current.lane
             turnNumber = currentLane.getTurnDirection(self.nextLane)
@@ -80,6 +81,7 @@ class Car():
                 preferedLane = currentLane
             if preferedLane is not currentLane:
                 self.trajectory.changeLane(preferedLane)
+        '''
         step = self.speed * delta + 0.5 * (acce + dece) * delta ** 2
         if self.trajectory.timeToMakeTurn(step):
             if not self.nextLane:
@@ -89,7 +91,9 @@ class Car():
     def pickNextRoad(self):
         intersection = self.trajectory.nextIntersection
         currentLane = self.trajectory.current.lane
-        possibleRoads = [road for road in intersection.roads if road is not currentLane.road.source]
+        possibleRoads = [road for road in intersection.roads if road.target is not currentLane.road.source]
+        if not possibleRoads:
+            return None
         nextRoad = random.choice(possibleRoads)
         return nextRoad
 
@@ -97,6 +101,7 @@ class Car():
         self.nextLane = None
         nextRoad = self.pickNextRoad()
         if not nextRoad:
+            self.nextLane = None
             return None
         turnNumber = self.trajectory.current.lane.road.getTurnDirection(nextRoad)
         if turnNumber == 0:
