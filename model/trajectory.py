@@ -92,7 +92,7 @@ class Trajectory():
     def moveForward(self, distance):
         distance = max(distance, 0)
         self.current.position += distance
-        '''
+
         if self.next.position is not None:
             self.next.position += distance
         if self.temp.position is not None:
@@ -111,7 +111,7 @@ class Trajectory():
         if self.isChangingLanes and tempRelativePosition is not None and \
             (tempRelativePosition >= 1):
             self._finishChangingLanes()
-        '''
+
         if self.current.lane and not self.isChangingLanes and not self.car.nextLane:
             self.car.pickNextLane()
 

@@ -208,10 +208,20 @@ class Operation(tk.Frame):
             self.drawCar(car)
         self.world.onTick(0.001)
         if self.running is True:
-            self.root.after(1, self.display)
+            self.animationID = self.root.after(1, self.display)
 
     def stop(self):
         self.running = False
+
+    def refresh(self):
+        if self.animationID is not None:
+            self.root.after_cancel(self.animationID)
+            self.animationID = None
+            for car in list(self.world.cars.values()):
+                self.world.removeCar(car)
+                ID = self.canvas.find_withtag(car.id)
+                self.canvas.delete(ID)
+            self.runModel()
 
 
 

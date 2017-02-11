@@ -75,10 +75,6 @@ class World():
         self.refreshCar()
         for car in list(self.cars.values()):
             car.move(delta)
-            '''
-            if not car.alive:
-                self.removeCar(car)
-            '''
 
 
 
