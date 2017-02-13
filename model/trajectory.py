@@ -28,7 +28,7 @@ class Trajectory():
 
     @property
     def direction(self):
-        return self.lane.getDirection()# self.relativePosition)
+        return self.lane.getDirection()
 
     @property
     def coords(self):
@@ -44,7 +44,7 @@ class Trajectory():
     def distanceToStopLine(self):
         if not self.canEnterIntersection():
             return self.getDistanceToIntersection()
-        return float("inf")
+        return self.lane.length - self.absolutePosition
 
     @property
     def nextIntersection(self):
@@ -60,14 +60,16 @@ class Trajectory():
         sourceLane = self.current.lane
         if nextLane is None:
             print('no road to enter')
-        turnNumber = sourceLane.getTurnDirection(nextLane)
-        if turnNumber is 3:
-            print('no U-turns are allowed')
-        if turnNumber is 0 and not sourceLane.isLeftmost:
-            print('no left turns from this lane')
-        if turnNumber is 2 and not sourceLane.isRightmost:
-            print('no right turns from this lane')
-        return True
+            return False
+        if nextLane is not None:
+            turnNumber = sourceLane.getTurnDirection(nextLane)
+            if turnNumber is 3:
+                print('no U-turns are allowed')
+            if turnNumber is 0 and not sourceLane.isLeftmost:
+                print('no left turns from this lane')
+            if turnNumber is 2 and not sourceLane.isRightmost:
+                print('no right turns from this lane')
+            return True
 
     def canEnterIntersection(self):
         nextLane = self.car.nextLane
@@ -86,8 +88,8 @@ class Trajectory():
             self.car.length / 2 - self.current.position
         return max(distance, 0) if not self.isChangingLanes else float("inf")
 
-    def timeToMakeTurn(self, plannedStep = 0):
-        return (self.getDistanceToIntersection() <= plannedStep)
+    def timeToMakeTurn(self, plannedStep=0):
+        return self.getDistanceToIntersection() <= plannedStep
 
     def moveForward(self, distance):
         distance = max(distance, 0)

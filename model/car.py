@@ -15,7 +15,7 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 30
+        self.maxSpeed = 10
         self.maxAcceleration = 5
         self.maxDeceleration = 3
         self.slowProb = 0.3
@@ -23,6 +23,7 @@ class Car():
         self.alive = True
         self.preferedLane = None
         self.nextLane = None
+        self.prePosition = None
 
     @property
     def speed(self):
@@ -50,25 +51,36 @@ class Car():
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
         distanceToNextCar = max(nextCarDistance["distance"], 0)
+        distanceToStopLine = self.trajectory.distanceToStopLine
+        if distanceToStopLine < 30:
+            return -1
+        if random.random() < self.slowProb:
+            return -1
         if self.speed + 1 <= self.maxSpeed and distanceToNextCar > (self.speed + 1):
             return 1
+        elif distanceToNextCar <= self.speed:
+            return self.speed - distanceToNextCar - 1
         else:
             return 0
 
+    '''
     def getDecelaration(self):
         nextCarDistance = self.trajectory.nextCarDistance
         distanceToNextCar = max(nextCarDistance["distance"], 0)
+        distanceToStopLine = self.trajectory.distanceToStopLine
+        if distanceToStopLine < 30:
+            return -1
         if random.random() < self.slowProb:
             return -1
         elif distanceToNextCar <= self.speed:
             return self.speed - (distanceToNextCar - 1)
         else:
             return 0
+    '''
 
     def move(self, delta):
         acce = self.getAcceleration()
-        dece = self.getDecelaration()
-        self.speed += (acce + dece) * delta
+        self.speed += acce * delta
         '''
         if not self.trajectory.isChangingLanes and self.nextLane:
             currentLane = self.trajectory.current.lane
@@ -82,7 +94,9 @@ class Car():
             if preferedLane is not currentLane:
                 self.trajectory.changeLane(preferedLane)
         '''
-        step = self.speed * delta + 0.5 * (acce + dece) * delta ** 2
+        self.prePosition = self.coords
+
+        step = self.speed * delta + 0.5 * acce * delta ** 2
         if self.trajectory.timeToMakeTurn(step):
             if not self.nextLane:
                 self.alive = False

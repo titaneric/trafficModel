@@ -70,9 +70,17 @@ class World():
     def getRoad(self, ID):
         return self.roads[ID]
 
+    def syncLane(self):
+        for car in self.cars.values():
+            for road in self.roads.values():
+                for lane in road.lanes:
+                    if car.trajectory.lane.id == lane.id:
+                        car.trajectory.current.lane = lane
+
     def onTick(self, delta):
         self.time += delta
         self.refreshCar()
+        self.syncLane()
         for car in list(self.cars.values()):
             car.move(delta)
 

@@ -48,7 +48,7 @@ class Road():
         sourceSplits = self.sourceSide.split(self.lanesNumber, True)
         targetSplits = self.targetSide.split(self.lanesNumber, True)
         if self.lanes is not None or len(self.lanes) < self.lanesNumber:
-            self.lanes = []
+            self.lanes.clear()
             for i in range(self.lanesNumber):
                 self.lanes.append(Lane(sourceSplits[i], targetSplits[i], self))
         for i in range(self.lanesNumber):
@@ -58,4 +58,5 @@ class Road():
             #self.lanes[i].rightAdjacent = self.lanes[i - 1]
             self.lanes[i].leftmostAdjacent = self.lanes[-1]
             self.lanes[i].rightmostAdjacent = self.lanes[0]
+            self.lanes[i].id += str(i + 1)
             self.lanes[i].update()

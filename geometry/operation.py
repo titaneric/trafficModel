@@ -38,6 +38,7 @@ class Operation(tk.Frame):
         self.movePath = []
         self._running = False
         self.scale = 1
+        self.debug = False
         self.world = world
         self.distance = distance
         self.canvas_height = canvas_height
@@ -105,9 +106,11 @@ class Operation(tk.Frame):
             copyIntersection.rect.y = coords[1]
             copyIntersection.rect.width = coords[2] - coords[0]
             copyIntersection.rect.height = coords[3] - coords[1]
-            copyIntersection.update()
             del(self.world.intersections[copyIntersection.id])
             self.world.intersections[copyIntersection.id] = copyIntersection
+
+        for road in self.world.roads.values():
+            road.update()
 
     def buildIntersection(self, event):
         itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -116,7 +119,7 @@ class Operation(tk.Frame):
             rect = Rect(coords[0], coords[1], self.distance * self.scale, self.distance * self.scale)
             intersection = Intersection(rect)
             self.drawIntersection(intersection)
-            self.world.intersections[intersection.id] = intersection
+            self.world.addIntersection(intersection)
         else:
             return
 
@@ -137,10 +140,10 @@ class Operation(tk.Frame):
         targetID = self.canvas.gettags(itemID)[0]
         assert targetID in self.world.intersections.keys(), "TargetID Error where ID is {sourceID}".format(**locals())
         road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
-        self.world.roads[road.id] = road
+        self.world.addRoad(road)
         self.drawRoad(road)
         road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
-        self.world.roads[road.id] = road
+        self.world.addRoad(road)
         self.drawRoad(road)
         self.buildable = False
         self.movePath.clear()
@@ -164,28 +167,20 @@ class Operation(tk.Frame):
     def drawCar(self, car):
         angle = car.direction
         center = car.coords
-        # coords = (center.x * self.scale, center.y * self.scale)
-        print("{0}: ({1}, {2}), {3}".format(car.id, center.x, center.y, car.speed))
-        rect = Rect(0, 0, car.length, car.width)
+        prePosition = car.prePosition
+        print("{0}: ({1}, {2}), {3}".format(car.id, center.x, center.y, car.speed * 3.6 * 3))
+        rect = Rect(0, 0, car.length * self.scale, car.width * self.scale)
         rect.center(Point(0, 0))
+        # self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
         if not self.canvas.find_withtag(car.id):
             self.canvas.create_rectangle(center.x + rect.left(),
                 center.y + rect.top(), center.x + rect.right(), center.y + rect.bottom(),
                     fill = car.color, tag = car.id)
-            '''
-            self.canvas.create_rectangle(coords[0] + rect.left(),
-                coords[1] + rect.top(), coords[0] + rect.right(), coords[1] + rect.bottom(),
-                    fill = car.color, tag = car.id)
-            '''
         else:
             ID = self.canvas.find_withtag(car.id)
             if car.alive:
                 self.canvas.coords(ID, center.x + rect.left(),
                 center.y + rect.top(), center.x + rect.right(), center.y + rect.bottom())
-                '''
-                self.canvas.coords(ID, coords[0] + rect.left(),
-                coords[1] + rect.top(), coords[0] + rect.right(), coords[1] + rect.bottom())
-                '''
             else:
                 print("delete")
                 self.world.removeCar(car)
@@ -204,9 +199,11 @@ class Operation(tk.Frame):
         self.display()
 
     def display(self):
+        # self.update_member()
         for car in list(self.world.cars.values()):
             self.drawCar(car)
         self.world.onTick(0.001)
+
         if self.running is True:
             self.animationID = self.root.after(1, self.display)
 
