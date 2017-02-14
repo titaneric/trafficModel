@@ -47,7 +47,7 @@ class Lane():
     def getTurnDirection(self, other):
         return self.road.getTurnDirection(other.road)
 
-    def getDirection(self):
+    def getDirection(self, pos=None):
         return self.direction
 
     def getPoint(self, a):

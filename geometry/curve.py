@@ -13,7 +13,7 @@ class Curve():
 
     @property
     def length(self):
-        if self._length is not None:
+        if self._length is None:
             pointsNumber = 10
             prevoiusPoint = None
             self._length = 0
@@ -21,7 +21,8 @@ class Curve():
                 point = self.getPoint(i / pointsNumber)
                 if prevoiusPoint is not None:
                     self._length += (point - prevoiusPoint).length
-                    prevoiusPoint = point
+
+                prevoiusPoint = point
         return self._length
 
     def getPoint(self, a):

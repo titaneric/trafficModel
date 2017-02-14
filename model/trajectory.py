@@ -28,7 +28,7 @@ class Trajectory():
 
     @property
     def direction(self):
-        return self.lane.getDirection()
+        return self.lane.getDirection(self.relativePosition)
 
     @property
     def coords(self):
@@ -74,7 +74,7 @@ class Trajectory():
     def canEnterIntersection(self):
         nextLane = self.car.nextLane
         # sourceLane = self.current.lane
-        if not nextLane:
+        if nextLane:
             return True
         '''
         intersection = self.nextIntersection
@@ -118,17 +118,12 @@ class Trajectory():
             self.car.pickNextLane()
 
     def changeLane(self, nextLane):
-        if self.isChangingLanes:
-            print('already changing lane')
-        if not nextLane:
-            print('no next lane')
-        if nextLane is self.lane:
-            print('next lane == current lane')
-        if self.lane.road is not nextLane.road:
-            print('not neighboring lanes')
+        assert not self.isChangingLanes, 'already changing lane'
+        assert nextLane, 'no next lane'
+        assert nextLane is not self.lane, 'next lane == current lane'
+        assert self.lane.road is nextLane.road, 'not neighboring lanes'
         nextPosition = self.current.position + 3 * self.car.length
-        if not (nextPosition < self.lane.length):
-            print('too late to change lane')
+        assert (nextPosition < self.lane.length), 'too late to change lane'
         self._startChangingLanes(nextLane, nextPosition)
 
     def _getAdjacentLaneChangeCurve(self):
@@ -146,8 +141,8 @@ class Trajectory():
         return self._getAdjacentLaneChangeCurve()
 
     def _startChangingLanes(self, nextLane, nextPosition):
-        assert self.isChangingLanes, 'already changing lane'
-        assert not nextLane, 'no next lane'
+        assert not self.isChangingLanes, 'already changing lane'
+        assert nextLane, 'no next lane'
         self.isChangingLanes = True
         self.next.lane = nextLane
         self.next.position = nextPosition
@@ -157,7 +152,7 @@ class Trajectory():
         self.next.position -= self.temp.lane.length
 
     def _finishChangingLanes(self):
-        assert not self.isChangingLanes, 'no lane changing is going on'
+        assert self.isChangingLanes, 'no lane changing is going on'
         self.isChangingLanes = False
         # swap current and next
         self.current.lane = self.next.lane

@@ -33,7 +33,7 @@ class Operation(tk.Frame):
         self.canvas.bind("<Button-5>", self.zoomerM)
         # windows scroll
         self.canvas.bind("<MouseWheel>", self.zoomer)
-        self.canvas.bind("<Double-Button-1>", self.drawIntersection)
+        self.canvas.bind("<Double-Button-1>", self.buildIntersection)
         self.buildable = False
         self.movePath = []
         self._running = False

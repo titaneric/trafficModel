@@ -4,6 +4,7 @@ from model.car import Car
 from model.road import Road
 from model.intersection import Intersection
 from geometry.rect import Rect
+from geometry.curve import Curve
 
 
 class World():
@@ -24,10 +25,13 @@ class World():
         for info in map["intersections"].values():
             rect = Rect(info["position"]["x"], info["position"]["y"], info["position"]["width"], info["position"]["height"])
             intersection = Intersection(rect)
+            intersection.id = info['id']
             self.addIntersection(intersection)
+
 
         for info in map["roads"].values():
             road = Road(self.intersections[info["source"]], self.intersections[info["target"]])
+            road.id = info['id']
             self.addRoad(road)
 
 
@@ -74,8 +78,9 @@ class World():
         for car in self.cars.values():
             for road in self.roads.values():
                 for lane in road.lanes:
-                    if car.trajectory.lane.id == lane.id:
-                        car.trajectory.current.lane = lane
+                    if type(car.trajectory.lane) is not Curve:
+                        if car.trajectory.lane.id == lane.id:
+                            car.trajectory.current.lane = lane
 
     def onTick(self, delta):
         self.time += delta

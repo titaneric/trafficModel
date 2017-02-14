@@ -14,7 +14,7 @@ class Point():
 
     @property
     def normalized(self):
-        return self / self.length
+        return Point(self.x / self.length, self.y / self.length)
 
     def __add__(self, other):
         return Point(self.x + other.x, self.y + other.y)
@@ -22,8 +22,8 @@ class Point():
     def __sub__(self, other):
         return Point(self.x - other.x, self.y - other.y)
 
-    def __mul__(self, other):
+    def __mul__(self, other: float):
         return Point(self.x * other, self.y * other)
 
-    def __div__(self, other):
+    def __div__(self, other: float):
         return Point(self.x / other, self.y / other)
