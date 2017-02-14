@@ -1,4 +1,5 @@
 import tkinter as tk
+import numpy as np
 from model.world import World
 from model.intersection import Intersection
 from model.road import Road
@@ -97,6 +98,19 @@ class Operation(tk.Frame):
         convertList = [(point.x, point.y) for point in pointList]
         self.canvas.create_polygon(convertList, fill="#808080", outline="#FFFFFF")
 
+    def rotate(self, angle, coords, center):
+        for point in coords:
+            point.x -= center.x
+            point.y -= center.y
+            R = np.matrix([[np.cos(-angle), -np.sin(-angle)], [np.sin(-angle), np.cos(-angle)]])
+            P = np.matrix([point.x, point.y])
+            transform = np.dot(P, R)
+            point.x = transform[0, 0] + center.x
+            point.y = transform[0, 1] + center.y
+
+        newCoords = [point for point in coords]
+        return newCoords
+
     def update_member(self):
         for intersection in self.world.intersections.values():
             copyIntersection = intersection
@@ -168,19 +182,22 @@ class Operation(tk.Frame):
         angle = car.direction
         center = car.coords
         prePosition = car.prePosition
-        print("{0}: ({1}, {2}), {3}".format(car.id, center.x, center.y, car.speed * 3.6 * 3))
+        # print("{0}: ({1}, {2}), {3}".format(car.id, center.x, center.y, car.speed * 3.6 * 3))
         rect = Rect(0, 0, car.length * self.scale, car.width * self.scale)
         rect.center(Point(0, 0))
-        # self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
+        coords = [Point(center.x + rect.left(), center.y + rect.top()),
+            Point(center.x + rect.right(), center.y + rect.bottom())]
+        newCoords = self.rotate(angle, coords, center)
+        self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
         if not self.canvas.find_withtag(car.id):
-            self.canvas.create_rectangle(center.x + rect.left(),
-                center.y + rect.top(), center.x + rect.right(), center.y + rect.bottom(),
-                    fill = car.color, tag = car.id)
+            self.canvas.create_rectangle(newCoords[0].x,
+                newCoords[0].y, newCoords[1].x, newCoords[1].y,
+                    fill=car.color, tag=car.id)
         else:
             ID = self.canvas.find_withtag(car.id)
             if car.alive:
-                self.canvas.coords(ID, center.x + rect.left(),
-                center.y + rect.top(), center.x + rect.right(), center.y + rect.bottom())
+                self.canvas.coords(ID, newCoords[0].x,
+                newCoords[0].y, newCoords[1].x, newCoords[1].y)
             else:
                 print("delete")
                 self.world.removeCar(car)
