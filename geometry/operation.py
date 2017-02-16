@@ -181,14 +181,14 @@ class Operation(tk.Frame):
     def drawCar(self, car):
         angle = car.direction
         center = car.coords
-        prePosition = car.prePosition
+        # prePosition = car.prePosition
         # print("{0}: ({1}, {2}), {3}".format(car.id, center.x, center.y, car.speed * 3.6 * 3))
         rect = Rect(0, 0, car.length * self.scale, car.width * self.scale)
         rect.center(Point(0, 0))
         coords = [Point(center.x + rect.left(), center.y + rect.top()),
             Point(center.x + rect.right(), center.y + rect.bottom())]
         newCoords = self.rotate(angle, coords, center)
-        self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
+        # self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
         if not self.canvas.find_withtag(car.id):
             self.canvas.create_rectangle(newCoords[0].x,
                 newCoords[0].y, newCoords[1].x, newCoords[1].y,

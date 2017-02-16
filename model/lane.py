@@ -64,7 +64,7 @@ class Lane():
     def getNext(self, carPosition):
         next = None
         bestDistance = float("inf")
-        for ID, other in self.carsPositions.items():
+        for other in self.carsPositions.values():
             distance = other.position - carPosition.position
             if not other.free and 0 < distance < bestDistance:
                 bestDistance = distance

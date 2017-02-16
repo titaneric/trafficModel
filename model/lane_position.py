@@ -29,7 +29,7 @@ class LanePosition():
             self.lane.addCarPosition(self)
 
     def release(self):
-        if not self.free and self.lane and type(self.lane) is Lane:
+        if not self.free and type(self.lane) is Lane:
             self.free = True
             self.lane.removeCar(self)
 

@@ -2,6 +2,7 @@ from model.trajectory import Trajectory
 import random
 import itertools
 import matplotlib.colors as colors
+import math
 
 
 class Car():
@@ -15,8 +16,8 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 10
-        self.maxAcceleration = 5
+        self.maxSpeed = 20
+        self.maxAcceleration = 1
         self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
@@ -24,6 +25,9 @@ class Car():
         self.preferedLane = None
         self.nextLane = None
         self.prePosition = None
+
+        self.timeHeadway = 1.5
+        self.s0 = 2
 
     @property
     def speed(self):
@@ -54,29 +58,32 @@ class Car():
         distanceToStopLine = self.trajectory.distanceToStopLine
         if distanceToStopLine < 30:
             return -1
-        if random.random() < self.slowProb:
-            return -1
-        if self.speed + 1 <= self.maxSpeed and distanceToNextCar > (self.speed + 1):
+        else:
+            a = self.maxAcceleration
+            b = self.maxDeceleration
+            deltaSpeed = (self.speed - nextCarDistance["car"].speed) if nextCarDistance["car"] is not None else 0
+            freeRoadCoeff = (self.speed / self.maxSpeed) ** 4
+            distanceGap = self.s0
+            timeGap = self.speed * self.timeHeadway
+            breakGap = self.speed * deltaSpeed / (2 * math.sqrt(a * b))
+            safeDistance = distanceGap + timeGap + breakGap
+            busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2
+            safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
+            intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2
+            coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
+            return self.maxAcceleration * coeff
+        '''
+        elif self.speed + 1 <= self.maxSpeed and distanceToNextCar > (self.speed + 1):
             return 1
         elif distanceToNextCar <= self.speed:
             return self.speed - distanceToNextCar - 1
+        elif random.random() < self.slowProb:
+            return -1
         else:
             return 0
+        '''
+        
 
-    '''
-    def getDecelaration(self):
-        nextCarDistance = self.trajectory.nextCarDistance
-        distanceToNextCar = max(nextCarDistance["distance"], 0)
-        distanceToStopLine = self.trajectory.distanceToStopLine
-        if distanceToStopLine < 30:
-            return -1
-        if random.random() < self.slowProb:
-            return -1
-        elif distanceToNextCar <= self.speed:
-            return self.speed - (distanceToNextCar - 1)
-        else:
-            return 0
-    '''
 
     def move(self, delta):
         acce = self.getAcceleration()
