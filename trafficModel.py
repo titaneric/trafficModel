@@ -8,13 +8,10 @@ root = Tk()
 #menu = Menu(root)
 #root.config(menu = menu)
 toolbar = Frame(root)
-canvas_height = 300
-canvas_width = 300
-distance = 30
 world = World()
 world.load()
 screen = Frame(root)
-op = Operation(screen, canvas_height, canvas_width, distance, world)
+op = Operation(screen, world)
 op.pack(fill = "both", expand = True)
 
 play = Button(toolbar, text = "Action")
