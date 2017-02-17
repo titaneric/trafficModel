@@ -137,7 +137,7 @@ class Trajectory():
         curve = Curve(p1, p2, control1, control2)
         return curve
 
-    def _getCurve(self):
+    def getCurve(self):
         return self._getAdjacentLaneChangeCurve()
 
     def _startChangingLanes(self, nextLane, nextPosition):
@@ -146,7 +146,7 @@ class Trajectory():
         self.isChangingLanes = True
         self.next.lane = nextLane
         self.next.position = nextPosition
-        curve = self._getCurve()
+        curve = self.getCurve()
         self.temp.lane = curve
         self.temp.position = 0  # @current.lane.length - @current.position
         self.next.position -= self.temp.lane.length

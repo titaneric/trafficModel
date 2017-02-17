@@ -186,18 +186,22 @@ class Operation(tk.Frame):
         rect = Rect(0, 0, car.length * self.scale, car.width * self.scale)
         rect.center(Point(0, 0))
         coords = [Point(center.x + rect.left(), center.y + rect.top()),
-            Point(center.x + rect.right(), center.y + rect.bottom())]
+            Point(center.x + rect.left(), center.y + rect.bottom()),
+            Point(center.x + rect.right(), center.y + rect.bottom()),
+            Point(center.x + rect.right(), center.y + rect.top())]
         newCoords = self.rotate(angle, coords, center)
+        splitCoords = [(point.x, point.y) for point in newCoords]
+        otherCoords = []
+        for point in newCoords:
+            otherCoords.append(point.x)
+            otherCoords.append(point.y)
         # self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
         if not self.canvas.find_withtag(car.id):
-            self.canvas.create_rectangle(newCoords[0].x,
-                newCoords[0].y, newCoords[1].x, newCoords[1].y,
-                    fill=car.color, tag=car.id)
+            self.canvas.create_polygon(splitCoords, fill=car.color, tag=car.id)
         else:
             ID = self.canvas.find_withtag(car.id)
             if car.alive:
-                self.canvas.coords(ID, newCoords[0].x,
-                newCoords[0].y, newCoords[1].x, newCoords[1].y)
+                self.canvas.coords(ID, *otherCoords)
             else:
                 print("delete")
                 self.world.removeCar(car)

@@ -54,7 +54,7 @@ class Car():
 
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
-        distanceToNextCar = max(nextCarDistance["distance"], 0)
+        distanceToNextCar = max(nextCarDistance["distance"], 1)
         distanceToStopLine = self.trajectory.distanceToStopLine
         if distanceToStopLine < 30:
             return -1
@@ -82,7 +82,7 @@ class Car():
         else:
             return 0
         '''
-        
+
 
 
     def move(self, delta):
