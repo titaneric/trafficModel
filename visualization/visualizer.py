@@ -69,7 +69,6 @@ class Visualizer:
         angle = car.direction
         center = car.coords
         # prePosition = car.prePosition
-        # print("{0}: ({1}, {2}), {3}, {4}".format(car.id, center.x, center.y, car.speed * 3.6, angle))
         rect = Rect(0, 0, car.length * self.scale, car.width * self.scale)
         rect.center(Point(0, 0))
         coords = [Point(center.x + rect.left(), center.y + rect.top()),
@@ -84,16 +83,12 @@ class Visualizer:
             otherCoords.append(point.y)
         # self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
         if not self.canvas.find_withtag(car.id):
-            # self.drawCircle(center, 5, car.id)
             self.canvas.create_polygon(splitCoords, fill=car.color, tag=car.id)
         else:
             ID = self.canvas.find_withtag(car.id)
             if car.alive:
                 self.canvas.coords(ID, *otherCoords)
-                # circleCoords = self.drawCircle(center, 5, car.id)
-                # self.canvas.coords('circle_' + str(ID[0]), *circleCoords)
             else:
-                # print("delete")
                 self.world.removeCar(car)
                 self.canvas.delete(ID)
 
@@ -104,11 +99,3 @@ class Visualizer:
         elif self.selectedCar is car and not car.alive:
             self.text.delete('1.0', tk.END)
 
-
-    def drawCircle(self, center: Point, delimeter, ID):
-        coord = (center.x - delimeter, center.y - delimeter,
-            center.x + delimeter, center.y + delimeter)
-        if not self.canvas.find_withtag('circle_' + ID):
-            self.canvas.create_oval(*coord, fill=settings.setDict["color"]["road_mark"], tag='circle_' + ID)
-        else:
-            return coord

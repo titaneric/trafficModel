@@ -10,7 +10,7 @@ import settings
 
 
 class Operation(tk.Frame):
-    def __init__(self, root, text, world):
+    def __init__(self, root, text, slider, world):
         tk.Frame.__init__(self, root)
         self.root = root
         self.canvas = tk.Canvas(self, width=settings.setDict["canvas_width"], height=settings.setDict["canvas_height"], background="bisque")
@@ -40,9 +40,11 @@ class Operation(tk.Frame):
         self.movePath = []
         self._running = False
         self.scale = 1
-        self.text = text
-        self.debug = False
         self.world = world
+        self.text = text
+        self.slider = slider
+        self.slider.set(self.world.carsNumber)
+        self.debug = False
         self.animationID = None
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
@@ -52,16 +54,17 @@ class Operation(tk.Frame):
     def scroll_start(self, event):
         coords = (self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         itemID = self.canvas.find_closest(*coords)
+        tag = self.canvas.gettags(itemID)
         # the empty grid
         if self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["background"]:
             self.canvas.scan_mark(event.x, event.y)
             self.canvas.focus_set()
         # existed intersection
-        elif self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["road"]:
+        elif (self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["road"] and
+            len(tag) > 0 and tag[0] in self.world.intersections.keys()):
             self.buildable = True
 
         if self.running is True:
-            self.builable = False
             searchRange = 10
             rectCoords = (self.canvas.canvasx(event.x) - searchRange, self.canvas.canvasy(event.y) - searchRange, 
             self.canvas.canvasx(event.x) + searchRange, self.canvas.canvasy(event.y) + searchRange)
@@ -173,6 +176,7 @@ class Operation(tk.Frame):
         for car in list(self.world.cars.values()):
             self.visualizer.drawCar(car)
         self.world.onTick(0.001)
+        self.world.carsNumber = self.slider.get()
 
         if self.running is True:
             self.animationID = self.root.after(1, self.display)
