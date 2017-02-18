@@ -1,4 +1,5 @@
 import numpy as np
+import tkinter as tk
 from model.world import World
 from model.intersection import Intersection
 from model.road import Road
@@ -9,13 +10,15 @@ import settings
 
 
 class Visualizer:
-    def __init__(self, world, canvas, scale):
+    def __init__(self, world, canvas, scale, text):
         self.world = world
         self.canvas = canvas
+        self.text = text
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
         self.distance = settings.setDict["grid_size"]
         self.scale = scale
+        self.selectedCar = None
         self.drawGrid()
         self.drawWorld()
 
@@ -93,6 +96,14 @@ class Visualizer:
                 # print("delete")
                 self.world.removeCar(car)
                 self.canvas.delete(ID)
+
+        if self.selectedCar is car and car.alive:
+            self.text.delete('1.0', tk.END)
+            info = "\n\t\tCar ID: {0}\t\tCar Speed: {1}".format(car.id, car.speed)
+            self.text.insert(tk.INSERT, info)
+        elif self.selectedCar is car and not car.alive:
+            self.text.delete('1.0', tk.END)
+
 
     def drawCircle(self, center: Point, delimeter, ID):
         coord = (center.x - delimeter, center.y - delimeter,

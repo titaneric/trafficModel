@@ -13,7 +13,7 @@ info = Frame(toolbar)
 world = World()
 world.load()
 
-text = Text(info, height = 6)
+text = Text(info, height = 3)
 text.pack()
 
 screen = Frame(root)
@@ -35,13 +35,13 @@ refreshPNG = PhotoImage(file = "png/refresh-button.png")
 refresh.config(compound = LEFT, image=refreshPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.refresh())
 refresh.pack(side = LEFT, padx = 2, pady = 2)
 
-function.config(bg = "#FFFFFF")
+function.config(bg = "#90C3D4")
 function.pack(side=LEFT)
 
 info.config(bg="#FFFFFF")
 info.pack(side=RIGHT, padx=10, pady=10)
 
-toolbar.config(bg = "gray")
+toolbar.config(bg = "#90C3D4")
 toolbar.pack(side = TOP, fill = X)
 
 screen.pack(side = BOTTOM, fill = X)
