@@ -1,46 +1,49 @@
 from tkinter import *
 from geometry.operation import Operation
 from model.world import World
+import settings
 
 
 root = Tk()
-
 #menu = Menu(root)
 #root.config(menu = menu)
 toolbar = Frame(root)
+function = Frame(toolbar)
+info = Frame(toolbar)
 world = World()
 world.load()
+
+text = Text(info, height = 6)
+text.pack()
+
 screen = Frame(root)
-op = Operation(screen, world)
+op = Operation(screen, text, world)
 op.pack(fill = "both", expand = True)
 
-play = Button(toolbar, text = "Action")
+play = Button(function, text = "Action")
 playPNG = PhotoImage(file = "png/play-button.png")
-play.config(compound = LEFT, image=playPNG, width="50", height="24", bg = "#FFFFFF", command = lambda : op.runModel())
+play.config(compound = LEFT, image=playPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.runModel())
 play.pack(side = LEFT, padx = 2, pady = 2)
 
-pause = Button(toolbar, text = "Pause")
+pause = Button(function, text = "Pause")
 pausePNG = PhotoImage(file = "png/pause.png")
-pause.config(compound = LEFT, image=pausePNG, width="50", height="24", bg = "#FFFFFF", command = lambda : op.stop())
+pause.config(compound = LEFT, image=pausePNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.stop())
 pause.pack(side = LEFT, padx = 2, pady = 2)
 
-refresh = Button(toolbar, text = "Reload")
+refresh = Button(function, text = "Reload")
 refreshPNG = PhotoImage(file = "png/refresh-button.png")
-refresh.config(compound = LEFT, image=refreshPNG, width="50", height="24", bg = "#FFFFFF", command = lambda : op.refresh())
+refresh.config(compound = LEFT, image=refreshPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.refresh())
 refresh.pack(side = LEFT, padx = 2, pady = 2)
 
-toolbar.config(bg = "#FFFFFF")
+function.config(bg = "#FFFFFF")
+function.pack(side=LEFT)
+
+info.config(bg="#FFFFFF")
+info.pack(side=RIGHT, padx=10, pady=10)
+
+toolbar.config(bg = "gray")
 toolbar.pack(side = TOP, fill = X)
 
-#canvas.pack()
-
 screen.pack(side = BOTTOM, fill = X)
-
-
-
-
-
-
-
 
 root.mainloop()

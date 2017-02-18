@@ -4,19 +4,20 @@ from model.intersection import Intersection
 from model.road import Road
 from model.car import Car
 from geometry.rect import Rect
+from geometry.point import Point
 from visualization.visualizer import Visualizer
 import settings
 
 
 class Operation(tk.Frame):
-    def __init__(self, root, world):
+    def __init__(self, root, text, world):
         tk.Frame.__init__(self, root)
         self.root = root
-        self.canvas = tk.Canvas(self, width=300, height=300, background="bisque")
+        self.canvas = tk.Canvas(self, width=settings.setDict["canvas_width"], height=settings.setDict["canvas_height"], background="bisque")
         self.xsb = tk.Scrollbar(self, orient="horizontal", command=self.canvas.xview)
         self.ysb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.canvas.configure(yscrollcommand=self.ysb.set, xscrollcommand=self.xsb.set)
-        self.canvas.configure(scrollregion=(0, 0, 1000, 1000))
+        self.canvas.configure(scrollregion=(0, 0, 3000, 3000))
 
         self.xsb.grid(row=1, column=0, sticky="ew")
         self.ysb.grid(row=0, column=1, sticky="ns")
@@ -39,6 +40,7 @@ class Operation(tk.Frame):
         self.movePath = []
         self._running = False
         self.scale = 1
+        self.text = text
         self.debug = False
         self.world = world
         self.animationID = None
@@ -48,7 +50,8 @@ class Operation(tk.Frame):
         self.visualizer = Visualizer(self.world, self.canvas, self.scale)
 
     def scroll_start(self, event):
-        itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        coords = (self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        itemID = self.canvas.find_closest(*coords)
         # the empty grid
         if self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["background"]:
             self.canvas.scan_mark(event.x, event.y)
@@ -56,6 +59,15 @@ class Operation(tk.Frame):
         # existed intersection
         elif self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["road"]:
             self.buildable = True
+        if self.running is True:
+            searchRange = 10
+            rectCoords = (self.canvas.canvasx(event.x) - searchRange, self.canvas.canvasy(event.y) - searchRange, 
+            self.canvas.canvasx(event.x) + searchRange, self.canvas.canvasy(event.y) + searchRange)
+            itemList = list(self.canvas.find_enclosed(*rectCoords))
+            carID_list = [self.canvas.gettags(item)[0] for item in itemList
+            if self.canvas.gettags(item)[0] in self.world.cars.keys()]
+            if carID_list:
+                self.showCarInfo(carID_list, Point(coords[0], coords[1]))
 
     def scroll_move(self, event):
         if self.buildable is False:
@@ -133,6 +145,18 @@ class Operation(tk.Frame):
             self.visualizer.drawRoad(road)
             self.buildable = False
             self.movePath.clear()
+
+    def showCarInfo(self, tag_list, coords):
+        distance = float("inf")
+        selectedCar = None
+        for carID in tag_list:
+            car = self.world.cars[carID]
+            if (car.coords - coords).length < distance:
+                distance = (car.coords - coords).length
+                selectedCar = car
+
+        info = '''id: {}\n'''.format(selectedCar.id)
+        self.text.insert(tk.INSERT, info)
 
     @property
     def running(self):

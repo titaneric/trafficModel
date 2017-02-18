@@ -1,4 +1,4 @@
-{"carsNumber": 2, 
+{"carsNumber": 4, 
 "roads": {"road_2": {"source": "intersection_2", "id": "road_2", "target": "intersection_1", "dual": "road_1"}, 
 "road_1": {"source": "intersection_1", "id": "road_1", "target": "intersection_2", "dual": "road_2"},
 "road_3": {"source": "intersection_2", "id": "road_3", "target": "intersection_3", "dual": "road_4"}, 
