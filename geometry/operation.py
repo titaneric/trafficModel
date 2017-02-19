@@ -169,7 +169,20 @@ class Operation(tk.Frame):
     def showRoadInfo(self):
         if self.selectedRoad is not None:
             self.roadText.delete('1.0', tk.END)
-            self.roadText.insert(tk.INSERT, 'Road ID: {0}'.format(self.selectedRoad.id))
+            carsNumber = 0
+            totalVelocity = 0.0
+            for lane in self.selectedRoad.lanes:
+                carsNumber += len(lane.carsPositions)
+                for carsPosition in lane.carsPositions.values():
+                    totalVelocity += carsPosition.car.speed
+            if carsNumber == 0:
+                avgVelocity = 0.0
+            else:
+                avgVelocity = totalVelocity / carsNumber
+            density = carsNumber / self.selectedRoad.length
+            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3}'.format(self.selectedRoad.id, avgVelocity, density))
+
+
 
 
     @property

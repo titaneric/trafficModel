@@ -95,7 +95,7 @@ class Visualizer:
 
         if self.selectedCar is car and car.alive:
             self.carText.delete('1.0', tk.END)
-            info = "Car ID: {0}\nCar Speed: {1:.3}".format(car.id, car.speed)
+            info = "Car ID: {0}\nCar Speed: {1}".format(car.id, car.speed)
             self.carText.insert(tk.INSERT, info)
         elif self.selectedCar is car and not car.alive:
             self.carText.delete('1.0', tk.END)

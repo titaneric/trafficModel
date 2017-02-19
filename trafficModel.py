@@ -16,7 +16,7 @@ world.load()
 carText = Text(info, height=2, width=15)
 carText.pack(side=RIGHT)
 
-roadText = Text(info, height=2, width=30)
+roadText = Text(info, height=2, width=35)
 roadText.pack(side=LEFT)
 
 play = Button(function, text = "Action")
