@@ -13,8 +13,11 @@ info = Frame(toolbar)
 world = World()
 world.load()
 
-text = Text(info, height = 3)
-text.pack()
+carText = Text(info, height=2, width=15)
+carText.pack(side=RIGHT)
+
+roadText = Text(info, height=2, width=30)
+roadText.pack(side=LEFT)
 
 play = Button(function, text = "Action")
 playPNG = PhotoImage(file = "png/play-button.png")
@@ -36,14 +39,14 @@ slider = Scale(function, from_=0, to=30, orient=HORIZONTAL,
 slider.pack(side = LEFT, padx = 2, pady = 2)
 
 screen = Frame(root)
-op = Operation(screen, text, slider, world)
+op = Operation(screen, carText, roadText, slider, world)
 op.pack(fill = "both", expand = True)
 
 function.config(bg = "#90C3D4")
 function.pack(side=LEFT)
 
 info.config(bg="#FFFFFF")
-info.pack(side=RIGHT, padx=10, pady=10)
+info.pack(side=RIGHT)
 
 toolbar.config(bg = "#90C3D4")
 toolbar.pack(side = TOP, fill = X)

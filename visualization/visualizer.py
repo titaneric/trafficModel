@@ -10,10 +10,10 @@ import settings
 
 
 class Visualizer:
-    def __init__(self, world, canvas, text):
+    def __init__(self, world, canvas, carText):
         self.world = world
         self.canvas = canvas
-        self.text = text
+        self.carText = carText
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
         self.distance = settings.setDict["grid_size"]
@@ -22,9 +22,10 @@ class Visualizer:
         self.drawGrid()
         self.drawWorld()
 
-    def drawPolyLine(self, pointList: list):
+    def drawPolyLine(self, pointList: list, ID):
         convertList = [(point.x, point.y) for point in pointList]
-        self.canvas.create_polygon(convertList, fill=settings.setDict["color"]["road"], outline=settings.setDict["color"]["grid"])
+        self.canvas.create_polygon(convertList, fill=settings.setDict["color"]["road"],
+        outline=settings.setDict["color"]["grid"], tag=ID)
 
     def rotate(self, angle, coords, center):
         for point in coords:
@@ -55,7 +56,7 @@ class Visualizer:
             fill=settings.setDict["color"]["road_mark"], dash=(10 * self.scale, 10 * self.scale), width=3)
         rightLine = road.rightmostLane.rightBorder
         self.canvas.create_line(rightLine.source.x, rightLine.source.y, rightLine.target.x, rightLine.target.y, fill=settings.setDict["color"]["grid"])
-        self.drawPolyLine([sourceSide.source, sourceSide.target, targetSide.source, targetSide.target])
+        self.drawPolyLine([sourceSide.source, sourceSide.target, targetSide.source, targetSide.target], road.id)
         self.canvas.create_line(leftLine.source.x, leftLine.source.y, leftLine.target.x, leftLine.target.y, fill=settings.setDict["color"]["road"])
 
     def drawWorld(self):
@@ -93,9 +94,9 @@ class Visualizer:
                 self.canvas.delete(ID)
 
         if self.selectedCar is car and car.alive:
-            self.text.delete('1.0', tk.END)
-            info = "\n\t\tCar ID: {0}\t\tCar Speed: {1}".format(car.id, car.speed)
-            self.text.insert(tk.INSERT, info)
+            self.carText.delete('1.0', tk.END)
+            info = "Car ID: {0}\nCar Speed: {1:.3}".format(car.id, car.speed)
+            self.carText.insert(tk.INSERT, info)
         elif self.selectedCar is car and not car.alive:
-            self.text.delete('1.0', tk.END)
+            self.carText.delete('1.0', tk.END)
 

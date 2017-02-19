@@ -10,7 +10,7 @@ import settings
 
 
 class Operation(tk.Frame):
-    def __init__(self, root, text, slider, world):
+    def __init__(self, root, carText, roadText, slider, world):
         tk.Frame.__init__(self, root)
         self.root = root
         self.canvas = tk.Canvas(self, width=settings.setDict["canvas_width"], height=settings.setDict["canvas_height"], background="bisque")
@@ -41,7 +41,9 @@ class Operation(tk.Frame):
         self._running = False
         self.scale = 1
         self.world = world
-        self.text = text
+        self.carText = carText
+        self.roadText = roadText
+        self.selectedRoad = None
         self.slider = slider
         self.slider.set(self.world.carsNumber)
         self.debug = False
@@ -49,7 +51,7 @@ class Operation(tk.Frame):
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
-        self.visualizer = Visualizer(self.world, self.canvas, self.text)
+        self.visualizer = Visualizer(self.world, self.canvas, self.carText)
 
     def scroll_start(self, event):
         coords = (self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -60,9 +62,10 @@ class Operation(tk.Frame):
             self.canvas.scan_mark(event.x, event.y)
             self.canvas.focus_set()
         # existed intersection
-        elif (self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["road"] and
-            len(tag) > 0 and tag[0] in self.world.intersections.keys()):
+        elif len(tag) > 0 and tag[0] in self.world.intersections.keys():
             self.buildable = True
+        elif len(tag) > 0 and tag[0] in self.world.roads.keys():
+            self.selectedRoad = self.world.roads[tag[0]]
 
         if self.running is True:
             searchRange = 10
@@ -163,6 +166,11 @@ class Operation(tk.Frame):
                 distance = (car.coords - coords).length
                 self.visualizer.selectedCar = car
 
+    def showRoadInfo(self):
+        if self.selectedRoad is not None:
+            self.roadText.delete('1.0', tk.END)
+            self.roadText.insert(tk.INSERT, 'Road ID: {0}'.format(self.selectedRoad.id))
+
 
     @property
     def running(self):
@@ -181,7 +189,7 @@ class Operation(tk.Frame):
         for car in list(self.world.cars.values()):
             self.visualizer.drawCar(car)
         self.world.carsNumber = self.slider.get()
-
+        self.showRoadInfo()
         if self.running is True:
             self.animationID = self.root.after(1, self.display)
 
@@ -190,7 +198,8 @@ class Operation(tk.Frame):
 
     def refresh(self):
         if self.animationID is not None:
-            self.text.delete('1.0', tk.END)
+            self.carText.delete('1.0', tk.END)
+            self.roadText.delete('1.0', tk.END)
             self.root.after_cancel(self.animationID)
             self.animationID = None
             for car in list(self.world.cars.values()):
