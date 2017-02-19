@@ -16,8 +16,13 @@ world.load()
 carText = Text(info, height=2, width=15)
 carText.pack(side=RIGHT)
 
+systemText = Text(info, height=2, width=15)
+systemText.pack(side=LEFT)
+
 roadText = Text(info, height=2, width=35)
 roadText.pack(side=LEFT)
+
+
 
 play = Button(function, text = "Action")
 playPNG = PhotoImage(file = "png/play-button.png")
@@ -34,12 +39,16 @@ refreshPNG = PhotoImage(file = "png/refresh-button.png")
 refresh.config(compound = LEFT, image=refreshPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.refresh())
 refresh.pack(side = LEFT, padx = 2, pady = 2)
 
-slider = Scale(function, from_=0, to=30, orient=HORIZONTAL, 
+sliderName = Entry(function, width='10')
+sliderName.pack(padx = 2, pady = 2)
+sliderName.insert(0, "Cars Number")
+
+slider = Scale(function, from_=0, to=30, orient=HORIZONTAL,
     troughcolor="#90C3D4", bg="#FFFFFF")
 slider.pack(side = LEFT, padx = 2, pady = 2)
 
 screen = Frame(root)
-op = Operation(screen, carText, roadText, slider, world)
+op = Operation(screen, carText, roadText, systemText, slider, world)
 op.pack(fill = "both", expand = True)
 
 function.config(bg = "#90C3D4")

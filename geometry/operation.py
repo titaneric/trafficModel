@@ -10,7 +10,7 @@ import settings
 
 
 class Operation(tk.Frame):
-    def __init__(self, root, carText, roadText, slider, world):
+    def __init__(self, root, carText, roadText, systemText, slider, world):
         tk.Frame.__init__(self, root)
         self.root = root
         self.canvas = tk.Canvas(self, width=settings.setDict["canvas_width"], height=settings.setDict["canvas_height"], background="bisque")
@@ -43,6 +43,7 @@ class Operation(tk.Frame):
         self.world = world
         self.carText = carText
         self.roadText = roadText
+        self.systemText = systemText
         self.selectedRoad = None
         self.slider = slider
         self.slider.set(self.world.carsNumber)
@@ -183,7 +184,20 @@ class Operation(tk.Frame):
             self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3}'.format(self.selectedRoad.id, avgVelocity, density))
 
 
+    def showSystemInfo(self):
+        self.systemText.delete('1.0', tk.END)
+        totalVelocity = 0.0
+        for road in self.world.roads.values():
+            for lane in road.lanes:
+                for carsPosition in lane.carsPositions.values():
+                    totalVelocity += carsPosition.car.speed
 
+        if len(self.world.cars) == 0:
+            avgVelocity = 0.0
+        else:
+            avgVelocity = totalVelocity / len(self.world.cars)
+
+        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.3}'.format(avgVelocity))
 
     @property
     def running(self):
@@ -203,6 +217,7 @@ class Operation(tk.Frame):
             self.visualizer.drawCar(car)
         self.world.carsNumber = self.slider.get()
         self.showRoadInfo()
+        self.showSystemInfo()
         if self.running is True:
             self.animationID = self.root.after(1, self.display)
 
