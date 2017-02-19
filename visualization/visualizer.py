@@ -10,14 +10,14 @@ import settings
 
 
 class Visualizer:
-    def __init__(self, world, canvas, scale, text):
+    def __init__(self, world, canvas, text):
         self.world = world
         self.canvas = canvas
         self.text = text
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
         self.distance = settings.setDict["grid_size"]
-        self.scale = scale
+        self.scale = 1
         self.selectedCar = None
         self.drawGrid()
         self.drawWorld()
@@ -52,7 +52,7 @@ class Visualizer:
         targetSide = road.targetSide
         leftLine = road.leftmostLane.leftBorder
         self.canvas.create_line(leftLine.source.x, leftLine.source.y, leftLine.target.x, leftLine.target.y, 
-            fill=settings.setDict["color"]["road_mark"], dash=(10, 10), width=3)
+            fill=settings.setDict["color"]["road_mark"], dash=(10 * self.scale, 10 * self.scale), width=3)
         rightLine = road.rightmostLane.rightBorder
         self.canvas.create_line(rightLine.source.x, rightLine.source.y, rightLine.target.x, rightLine.target.y, fill=settings.setDict["color"]["grid"])
         self.drawPolyLine([sourceSide.source, sourceSide.target, targetSide.source, targetSide.target])

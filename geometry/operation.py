@@ -49,7 +49,7 @@ class Operation(tk.Frame):
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
-        self.visualizer = Visualizer(self.world, self.canvas, self.scale, self.text)
+        self.visualizer = Visualizer(self.world, self.canvas, self.text)
 
     def scroll_start(self, event):
         coords = (self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -66,12 +66,14 @@ class Operation(tk.Frame):
 
         if self.running is True:
             searchRange = 10
+            searchRange *= self.scale
             rectCoords = (self.canvas.canvasx(event.x) - searchRange, self.canvas.canvasy(event.y) - searchRange, 
             self.canvas.canvasx(event.x) + searchRange, self.canvas.canvasy(event.y) + searchRange)
             itemList = list(self.canvas.find_enclosed(*rectCoords))
             carID_list = [self.canvas.gettags(item)[0] for item in itemList
             if self.canvas.gettags(item)[0] in self.world.cars.keys()]
             if carID_list:
+                self.buildable = False
                 self.showCarInfo(carID_list, Point(coords[0], coords[1]))
 
     def scroll_move(self, event):
@@ -103,12 +105,14 @@ class Operation(tk.Frame):
         self.canvas.scale("all", event.x, event.y, 1.1, 1.1)
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         self.scale *= 1.1
+        self.visualizer.scale = self.scale
         self.update_member()
 
     def zoomerM(self, event):
         self.canvas.scale("all", event.x, event.y, 0.9, 0.9)
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         self.scale *= 0.9
+        self.visualizer.scale = self.scale
         self.update_member()
 
     def update_member(self):
@@ -173,9 +177,9 @@ class Operation(tk.Frame):
         self.display()
 
     def display(self):
+        self.world.onTick(0.001)
         for car in list(self.world.cars.values()):
             self.visualizer.drawCar(car)
-        self.world.onTick(0.001)
         self.world.carsNumber = self.slider.get()
 
         if self.running is True:

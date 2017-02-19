@@ -52,9 +52,9 @@ class World():
         self.cars[car.id] = car
 
     def removeRandomCar(self):
-        car = random.choice(list(self.cars.values))
+        car = random.choice(list(self.cars.values()))
         if car is not None:
-            self.removeCar(car)
+            car.alive = False
 
     def removeCar(self, car):
         self.cars.pop(car.id)
