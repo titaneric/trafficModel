@@ -84,14 +84,16 @@ class World():
                             car.trajectory.current.lane.targetSegment = lane.targetSegment
                             car.trajectory.current.lane.update()
         '''
-                        if car.trajectory.next.lane is not None and car.trajectory.next.lane.id == lane.id:
-                            car.trajectory.next.lane.sourceSegment = lane.sourceSegment
-                            car.trajectory.next.lane.targetSegment = lane.targetSegment
-                            car.trajectory.next.lane.update()
+                        if car.nextLane is not None and car.nextLane.id == lane.id:
+                            car.nextLane.sourceSegment = lane.sourceSegment
+                            car.nextLane.targetSegment = lane.targetSegment
+                            car.nextLane.update()
+                            car.trajectory.next.lane = car.nextLane
         for car in self.cars.values():
             if type(car.trajectory.lane) is Curve:
                 car.trajectory.temp.lane = car.trajectory.getCurve()
         '''
+
 
     def onTick(self, delta):
         self.time += delta

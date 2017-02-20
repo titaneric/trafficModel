@@ -173,16 +173,18 @@ class Operation(tk.Frame):
             self.roadText.delete('1.0', tk.END)
             carsNumber = 0
             totalVelocity = 0.0
+            carsArea = 0.0
             for lane in self.selectedRoad.lanes:
                 carsNumber += len(lane.carsPositions)
                 for carsPosition in lane.carsPositions.values():
                     totalVelocity += carsPosition.car.speed
+                    carsArea += carsPosition.car.length * self.scale 
             if carsNumber == 0:
                 avgVelocity = 0.0
             else:
                 avgVelocity = totalVelocity / carsNumber
-            density = carsNumber / self.selectedRoad.length
-            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3} vehicle/meter'.format(self.selectedRoad.id, avgVelocity, density))
+            density = carsArea / self.selectedRoad.length
+            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id, avgVelocity, density))
 
 
     def showSystemInfo(self):

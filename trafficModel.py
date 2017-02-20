@@ -1,5 +1,5 @@
 from tkinter import *
-from geometry.operation import Operation
+from visualization.operation import Operation
 from model.world import World
 import settings
 
