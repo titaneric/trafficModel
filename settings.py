@@ -5,5 +5,6 @@ setDict = {"canvas_height": 1200,
                 "road": "#808080",
                 "background": "bisque",
                 "road_mark": "yellow",
-                "grid": "#FFFFFF"
+                "grid": "#FFFFFF",
+                'selected': "red"
             }}

@@ -181,7 +181,7 @@ class Operation(tk.Frame):
             else:
                 avgVelocity = totalVelocity / carsNumber
             density = carsNumber / self.selectedRoad.length
-            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3}'.format(self.selectedRoad.id, avgVelocity, density))
+            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3} vehicle/meter'.format(self.selectedRoad.id, avgVelocity, density))
 
 
     def showSystemInfo(self):
@@ -212,12 +212,12 @@ class Operation(tk.Frame):
         self.display()
 
     def display(self):
-        self.world.onTick(0.001)
         for car in list(self.world.cars.values()):
             self.visualizer.drawCar(car)
         self.world.carsNumber = self.slider.get()
         self.showRoadInfo()
         self.showSystemInfo()
+        self.world.onTick(0.001)
         if self.running is True:
             self.animationID = self.root.after(1, self.display)
 

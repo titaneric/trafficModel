@@ -10,5 +10,13 @@ Press on the intersection and release on the non-intersection place can create t
 Mouse wheel can zoom the area.
 
 Mouse click and drag move the area.
+# Known problem
+The sytem and road information will useless when zoom and move the screen.
+
+The car may stop for unknown reason.
+
+The intersection may "eat" the car for unknown reason.
+
+The curve turning of the car will off the trajectory.  
 # Outlook
 Will adjust the kernel of the trafficModel and add the signal control in the future.

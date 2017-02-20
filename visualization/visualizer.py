@@ -93,10 +93,13 @@ class Visualizer:
                 self.world.removeCar(car)
                 self.canvas.delete(ID)
 
-        if self.selectedCar is car and car.alive:
-            self.carText.delete('1.0', tk.END)
-            info = "Car ID: {0}\nCar Speed: {1}".format(car.id, car.speed)
-            self.carText.insert(tk.INSERT, info)
-        elif self.selectedCar is car and not car.alive:
-            self.carText.delete('1.0', tk.END)
+            if self.selectedCar is car and car.alive:
+                self.canvas.itemconfig(ID, outline=settings.setDict['color']['selected'])
+                self.carText.delete('1.0', tk.END)
+                info = "Car ID: {0}\nCar Speed: {1}".format(car.id, car.speed)
+                self.carText.insert(tk.INSERT, info)
+            elif self.selectedCar is car and not car.alive:
+                self.carText.delete('1.0', tk.END)
+            elif self.selectedCar is not car and self.canvas.itemcget(ID, 'outline') == settings.setDict['color']['selected']:
+                    self.canvas.itemconfig(ID, outline=car.color)
 
