@@ -131,6 +131,7 @@ class Operation(tk.Frame):
         for road in self.world.roads.values():
             road.update()
 
+
     def buildIntersection(self, event):
         itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         if self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["background"]:

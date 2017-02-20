@@ -47,10 +47,17 @@ class Road():
         self.lanesNumber = 1
         sourceSplits = self.sourceSide.split(self.lanesNumber, True)
         targetSplits = self.targetSide.split(self.lanesNumber, True)
+
         if self.lanes is not None or len(self.lanes) < self.lanesNumber:
+            copyCarPositionsList = []
+            for lane in self.lanes:
+                copyCarPositionsList.append(lane.carsPositions)
             self.lanes.clear()
             for i in range(self.lanesNumber):
                 self.lanes.append(Lane(sourceSplits[i], targetSplits[i], self))
+                if i < len(copyCarPositionsList):
+                    self.lanes[i].carsPositions = copyCarPositionsList[i]
+
         for i in range(self.lanesNumber):
             self.lanes[i].sourceSegment = sourceSplits[i]
             self.lanes[i].targetSegment = targetSplits[i]
