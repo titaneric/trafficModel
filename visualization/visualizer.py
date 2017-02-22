@@ -10,7 +10,7 @@ import settings
 
 
 class Visualizer:
-    def __init__(self, world, canvas, carText):
+    def __init__(self, world, canvas, carText, debug):
         self.world = world
         self.canvas = canvas
         self.carText = carText
@@ -18,6 +18,7 @@ class Visualizer:
         self.canvas_width = settings.setDict["canvas_width"]
         self.distance = settings.setDict["grid_size"]
         self.scale = 1
+        self.debug = debug
         self.selectedCar = None
         self.drawGrid()
         self.drawWorld()
@@ -53,11 +54,17 @@ class Visualizer:
         targetSide = road.targetSide
         leftLine = road.leftmostLane.leftBorder
         self.canvas.create_line(leftLine.source.x, leftLine.source.y, leftLine.target.x, leftLine.target.y, 
-            fill=settings.setDict["color"]["road_mark"], dash=(10 * self.scale, 10 * self.scale), width=3)
+            fill=settings.setDict["color"]["road_mark"], width=3)
         rightLine = road.rightmostLane.rightBorder
         self.canvas.create_line(rightLine.source.x, rightLine.source.y, rightLine.target.x, rightLine.target.y, fill=settings.setDict["color"]["grid"])
         self.drawPolyLine([sourceSide.source, sourceSide.target, targetSide.source, targetSide.target], road.id)
         self.canvas.create_line(leftLine.source.x, leftLine.source.y, leftLine.target.x, leftLine.target.y, fill=settings.setDict["color"]["road"])
+        
+        for ID, lane in enumerate(road.lanes):
+            if ID > 0:
+                line = lane.rightBorder
+                self.canvas.create_line(line.source.x, line.source.y, line.target.x, line.target.y, fill=settings.setDict['color']['lane_mark'], dash=(10, 10))
+
 
     def drawWorld(self):
         for intersection in self.world.intersections.values():
@@ -102,4 +109,18 @@ class Visualizer:
                 self.carText.delete('1.0', tk.END)
             elif self.selectedCar is not car and self.canvas.itemcget(ID, 'outline') == settings.setDict['color']['selected']:
                     self.canvas.itemconfig(ID, outline=car.color)
+
+        if self.debug is True:
+            if car.trajectory.temp:
+                if car.trajectory.temp.lane:
+                    curve = car.trajectory.temp.lane
+                    self.drawCurve(curve)
+
+    def drawCurve(self, curve):
+        pointsNum = 10
+        prePoint = curve.getPoint(0)
+        for i in range(pointsNum):
+            point = curve.getPoint(i / pointsNum)
+            self.canvas.create_line(prePoint.x, prePoint.y, point.x, point.y, fill=settings.setDict['color']['curve'])
+
 

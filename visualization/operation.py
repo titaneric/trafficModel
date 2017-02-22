@@ -52,7 +52,7 @@ class Operation(tk.Frame):
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
-        self.visualizer = Visualizer(self.world, self.canvas, self.carText)
+        self.visualizer = Visualizer(self.world, self.canvas, self.carText, self.debug)
 
     def scroll_start(self, event):
         coords = (self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -226,6 +226,10 @@ class Operation(tk.Frame):
 
     def stop(self):
         self.running = False
+
+    def debugSwitch(self):
+        if self.running is True:
+            self.debug = True
 
     def refresh(self):
         if self.animationID is not None:

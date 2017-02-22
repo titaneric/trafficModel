@@ -94,7 +94,7 @@ class Trajectory():
     def moveForward(self, distance):
         distance = max(distance, 0)
         self.current.position += distance
-
+        tempRelativePosition = None
         if self.next.position is not None:
             self.next.position += distance
         if self.temp.position is not None:

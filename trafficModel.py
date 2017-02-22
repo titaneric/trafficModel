@@ -39,6 +39,11 @@ refreshPNG = PhotoImage(file = "png/refresh-button.png")
 refresh.config(compound = LEFT, image=refreshPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.refresh())
 refresh.pack(side = LEFT, padx = 2, pady = 2)
 
+debug = Button(function, text = "Debug")
+debugPNG = PhotoImage(file = "png/debug.png")
+debug.config(compound = LEFT, image=debugPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.debugSwitch())
+debug.pack(side = LEFT, padx = 2, pady = 2)
+
 sliderName = Entry(function, width='10')
 sliderName.pack(padx = 2, pady = 2)
 sliderName.insert(0, "Cars Number")

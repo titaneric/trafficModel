@@ -1,6 +1,7 @@
 from model.lane import Lane
 import itertools
 import copy
+import random
 
 
 class Road():
@@ -42,11 +43,9 @@ class Road():
         self.sourceSide = self.source.rect.getSide(self.sourceSideId).subsegment(0.5, 1.0)
         self.targetSideId = self.target.rect.getSectorId(self.source.rect.center()) 
         self.targetSide = self.target.rect.getSide(self.targetSideId).subsegment(0, 0.5)
-        #self.lanesNumber = min(self.sourceSide.length, self.targetSide.length) or 0
-        #self.lanesNumber = max(2, self.lanesNumber // settings.gridSize) or 0
         self.lanesNumber = 1
         sourceSplits = self.sourceSide.split(self.lanesNumber, True)
-        targetSplits = self.targetSide.split(self.lanesNumber, True)
+        targetSplits = self.targetSide.split(self.lanesNumber, False)
 
         if self.lanes is not None or len(self.lanes) < self.lanesNumber:
             copyCarPositionsList = []

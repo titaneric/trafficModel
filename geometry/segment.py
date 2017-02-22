@@ -30,5 +30,5 @@ class Segment():
 
     def split(self, n, reverse):
         order = reversed(list(range(n))) if reverse else list(range(n))
-        splitResult = [self.subsegment(k // n, (k + 1) // n) for k in order]
+        splitResult = [self.subsegment(k / n, (k + 1) / n) for k in order]
         return splitResult
