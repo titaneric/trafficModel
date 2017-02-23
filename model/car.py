@@ -16,8 +16,8 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 60
-        self.maxAcceleration = 5
+        self.maxSpeed = 40
+        self.maxAcceleration = 2
         self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
@@ -54,11 +54,10 @@ class Car():
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
         distanceToNextCar = max(nextCarDistance["distance"], 1)
-
+        
         distanceToStopLine = self.trajectory.distanceToStopLine
         if distanceToStopLine < 30:
             return -1
-
         else:
             a = self.maxAcceleration
             b = self.maxDeceleration
@@ -73,18 +72,6 @@ class Car():
             intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2
             coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
             return self.maxAcceleration * coeff
-        '''
-        elif self.speed + 1 <= self.maxSpeed and distanceToNextCar > (self.speed + 1):
-            return 1
-        elif distanceToNextCar <= self.speed:
-            return self.speed - distanceToNextCar - 1
-        elif random.random() < self.slowProb:
-            return -1
-        else:
-            return 0
-        '''
-
-
 
     def move(self, delta):
         acce = self.getAcceleration()

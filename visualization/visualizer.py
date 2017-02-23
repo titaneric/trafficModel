@@ -111,7 +111,7 @@ class Visualizer:
                     self.canvas.itemconfig(ID, outline=car.color)
 
         if self.debug is True:
-            if car.trajectory.temp:
+            if car.trajectory.temp and not self.canvas.find_withtag(car.id + '_curve'):
                 if car.trajectory.temp.lane:
                     curve = car.trajectory.temp.lane
                     self.drawCurve(curve, car.id)
