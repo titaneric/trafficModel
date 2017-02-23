@@ -52,8 +52,15 @@ slider = Scale(function, from_=0, to=30, orient=HORIZONTAL,
     troughcolor="#90C3D4", bg="#FFFFFF")
 slider.pack(side = LEFT, padx = 2, pady = 2)
 
+toolDict = dict()
+toolDict['carText'] = carText
+toolDict['roadText'] = roadText
+toolDict['systemText'] = systemText
+toolDict['slider'] = slider
+toolDict['debugBtn'] = debug
+
 screen = Frame(root)
-op = Operation(screen, carText, roadText, systemText, slider, world)
+op = Operation(screen, toolDict, world)
 op.pack(fill = "both", expand = True)
 
 function.config(bg = "#90C3D4")

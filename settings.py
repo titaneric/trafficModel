@@ -8,5 +8,7 @@ setDict = {"canvas_height": 1200,
                 "grid": "#FFFFFF",
                 'selected': "red",
                 'lane_mark':'#FFFFFF',
-                'curve':'red'
+                'curve':'red',
+                'debugBtn_on':'red',
+                'debugBtn_off':'#FFFFFF'
             }}

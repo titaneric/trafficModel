@@ -10,7 +10,7 @@ import settings
 
 
 class Visualizer:
-    def __init__(self, world, canvas, carText, debug):
+    def __init__(self, world, canvas, carText):
         self.world = world
         self.canvas = canvas
         self.carText = carText
@@ -18,7 +18,7 @@ class Visualizer:
         self.canvas_width = settings.setDict["canvas_width"]
         self.distance = settings.setDict["grid_size"]
         self.scale = 1
-        self.debug = debug
+        self.debug = False
         self.selectedCar = None
         self.drawGrid()
         self.drawWorld()
@@ -114,13 +114,21 @@ class Visualizer:
             if car.trajectory.temp:
                 if car.trajectory.temp.lane:
                     curve = car.trajectory.temp.lane
-                    self.drawCurve(curve)
+                    self.drawCurve(curve, car.id)
 
-    def drawCurve(self, curve):
+            if self.canvas.find_withtag(car.id + '_curve') and \
+                car.trajectory.isChangingLanes is False:
+                ID = self.canvas.find_withtag(car.id + '_curve')
+                for subId in ID:
+                    self.canvas.delete(subId)
+
+
+
+    def drawCurve(self, curve, ID):
         pointsNum = 10
         prePoint = curve.getPoint(0)
         for i in range(pointsNum):
             point = curve.getPoint(i / pointsNum)
-            self.canvas.create_line(prePoint.x, prePoint.y, point.x, point.y, fill=settings.setDict['color']['curve'])
-
+            self.canvas.create_line(prePoint.x, prePoint.y, point.x, point.y, fill=settings.setDict['color']['curve'], tag=ID + '_curve')
+            prePoint = point
 

@@ -16,15 +16,14 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 50
-        self.maxAcceleration = 1
+        self.maxSpeed = 60
+        self.maxAcceleration = 5
         self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
         self.alive = True
         self.preferedLane = None
         self.nextLane = None
-        self.prePosition = None
 
         self.timeHeadway = 1.5
         self.s0 = 2
@@ -55,9 +54,11 @@ class Car():
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
         distanceToNextCar = max(nextCarDistance["distance"], 1)
+
         distanceToStopLine = self.trajectory.distanceToStopLine
         if distanceToStopLine < 30:
             return -1
+
         else:
             a = self.maxAcceleration
             b = self.maxDeceleration
@@ -88,7 +89,7 @@ class Car():
     def move(self, delta):
         acce = self.getAcceleration()
         self.speed += acce * delta
-
+        '''
         if not self.trajectory.isChangingLanes and self.nextLane:
             currentLane = self.trajectory.current.lane
             turnNumber = currentLane.getTurnDirection(self.nextLane)
@@ -102,7 +103,7 @@ class Car():
                 self.trajectory.changeLane(preferedLane)
 
         self.prePosition = self.coords
-
+        '''
         step = self.speed * delta + 0.5 * acce * delta ** 2
         if self.trajectory.timeToMakeTurn(step):
             if not self.nextLane:

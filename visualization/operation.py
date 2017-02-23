@@ -10,7 +10,7 @@ import settings
 
 
 class Operation(tk.Frame):
-    def __init__(self, root, carText, roadText, systemText, slider, world):
+    def __init__(self, root, toolDict, world):
         tk.Frame.__init__(self, root)
         self.root = root
         self.canvas = tk.Canvas(self, width=settings.setDict["canvas_width"], height=settings.setDict["canvas_height"], background="bisque")
@@ -41,18 +41,19 @@ class Operation(tk.Frame):
         self._running = False
         self.scale = 1
         self.world = world
-        self.carText = carText
-        self.roadText = roadText
-        self.systemText = systemText
+        self.carText = toolDict['carText']
+        self.roadText = toolDict['roadText']
+        self.systemText = toolDict['systemText']
+        self.debugBtn = toolDict['debugBtn']
         self.selectedRoad = None
-        self.slider = slider
+        self.slider = toolDict['slider']
         self.slider.set(self.world.carsNumber)
         self.debug = False
         self.animationID = None
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
-        self.visualizer = Visualizer(self.world, self.canvas, self.carText, self.debug)
+        self.visualizer = Visualizer(self.world, self.canvas, self.carText)
 
     def scroll_start(self, event):
         coords = (self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
@@ -75,7 +76,7 @@ class Operation(tk.Frame):
             self.canvas.canvasx(event.x) + searchRange, self.canvas.canvasy(event.y) + searchRange)
             itemList = list(self.canvas.find_enclosed(*rectCoords))
             carID_list = [self.canvas.gettags(item)[0] for item in itemList
-            if self.canvas.gettags(item)[0] in self.world.cars.keys()]
+            if self.canvas.gettags(item) and self.canvas.gettags(item)[0] in self.world.cars.keys()]
             if carID_list:
                 self.buildable = False
                 self.showCarInfo(carID_list, Point(coords[0], coords[1]))
@@ -228,8 +229,15 @@ class Operation(tk.Frame):
         self.running = False
 
     def debugSwitch(self):
-        if self.running is True:
+        if self.running is True and self.debug is False:
             self.debug = True
+            self.visualizer.debug = True
+            self.debugBtn.configure(bg=settings.setDict['color']['debugBtn_on'])
+        elif self.running is True and self.debug is True:
+            self.debug = False
+            self.visualizer.debug = False
+            self.debugBtn.configure(bg=settings.setDict['color']['debugBtn_off'])
+
 
     def refresh(self):
         if self.animationID is not None:
