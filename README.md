@@ -15,6 +15,8 @@ The car may stop for unknown reason.
 
 The intersection may "eat" the car for unknown reason.
 
-The curve turning of the car will off the trajectory when the curve is on the intersection and then zooming.  
+The curve turning of the car will off the trajectory when the curve is on the intersection and then zooming. 
+
+Car moving trajectory problem when zooming. 
 # Outlook
 Will adjust the kernel of the trafficModel and add the signal control in the future.

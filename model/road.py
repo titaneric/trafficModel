@@ -43,7 +43,7 @@ class Road():
         self.sourceSide = self.source.rect.getSide(self.sourceSideId).subsegment(0.5, 1.0)
         self.targetSideId = self.target.rect.getSectorId(self.source.rect.center()) 
         self.targetSide = self.target.rect.getSide(self.targetSideId).subsegment(0, 0.5)
-        self.lanesNumber = 1
+        self.lanesNumber = 2
         sourceSplits = self.sourceSide.split(self.lanesNumber, True)
         targetSplits = self.targetSide.split(self.lanesNumber, False)
 

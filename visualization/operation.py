@@ -191,15 +191,17 @@ class Operation(tk.Frame):
     def showSystemInfo(self):
         self.systemText.delete('1.0', tk.END)
         totalVelocity = 0.0
+        carsNumber = 0
         for road in self.world.roads.values():
             for lane in road.lanes:
+                carsNumber += len(lane.carsPositions)
                 for carsPosition in lane.carsPositions.values():
                     totalVelocity += carsPosition.car.speed
 
-        if len(self.world.cars) == 0:
+        if carsNumber == 0:
             avgVelocity = 0.0
         else:
-            avgVelocity = totalVelocity / len(self.world.cars)
+            avgVelocity = totalVelocity / carsNumber
 
         self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.3}'.format(avgVelocity))
 

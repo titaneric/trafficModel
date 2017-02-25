@@ -44,7 +44,7 @@ class Trajectory():
     def distanceToStopLine(self):
         if not self.canEnterIntersection():
             return self.getDistanceToIntersection()
-        return self.lane.length - self.absolutePosition
+        return self.current.lane.length - self.absolutePosition# self.lane.length - self.absolutePosition
 
     @property
     def nextIntersection(self):
@@ -92,6 +92,8 @@ class Trajectory():
         return self.getDistanceToIntersection() <= plannedStep
 
     def moveForward(self, distance):
+        if distance < 0:
+            print(self.car.id, self.car.getAcceleration(), self.car.trajectory.distanceToStopLine)
         distance = max(distance, 0)
         self.current.position += distance
         tempRelativePosition = None

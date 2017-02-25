@@ -53,9 +53,9 @@ class Car():
 
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
-        distanceToNextCar = max(nextCarDistance["distance"], 1)
-        
+        distanceToNextCar = max(nextCarDistance["distance"], 0.0001)
         distanceToStopLine = self.trajectory.distanceToStopLine
+        
         if distanceToStopLine < 30:
             return -1
         else:
@@ -76,7 +76,7 @@ class Car():
     def move(self, delta):
         acce = self.getAcceleration()
         self.speed += acce * delta
-        '''
+        
         if not self.trajectory.isChangingLanes and self.nextLane:
             currentLane = self.trajectory.current.lane
             turnNumber = currentLane.getTurnDirection(self.nextLane)
@@ -88,9 +88,9 @@ class Car():
                 preferedLane = currentLane
             if preferedLane is not currentLane:
                 self.trajectory.changeLane(preferedLane)
-
-        self.prePosition = self.coords
-        '''
+        
+        # self.prePosition = self.coords
+        
         step = self.speed * delta + 0.5 * acce * delta ** 2
         if self.trajectory.timeToMakeTurn(step):
             if not self.nextLane:
