@@ -65,9 +65,9 @@ class Trajectory():
             turnNumber = sourceLane.getTurnDirection(nextLane)
             if turnNumber is 3:
                 print('no U-turns are allowed')
-            if turnNumber is 0 and not sourceLane.isLeftmost:
+            if turnNumber is 2 and not sourceLane.isLeftmost:
                 print('no left turns from this lane')
-            if turnNumber is 2 and not sourceLane.isRightmost:
+            if turnNumber is 0 and not sourceLane.isRightmost:
                 print('no right turns from this lane')
             return True
 
@@ -92,8 +92,10 @@ class Trajectory():
         return self.getDistanceToIntersection() <= plannedStep
 
     def moveForward(self, distance):
+        '''
         if distance < 0:
             print(self.car.id, self.car.getAcceleration(), self.car.trajectory.distanceToStopLine)
+        '''
         distance = max(distance, 0)
         self.current.position += distance
         tempRelativePosition = None

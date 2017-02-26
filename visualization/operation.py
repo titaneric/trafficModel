@@ -41,6 +41,9 @@ class Operation(tk.Frame):
         self._running = False
         self.scale = 1
         self.world = world
+        self.playBtn = toolDict['playBtn']
+        self.playPNG = toolDict['playPNG']
+        self.pausePNG = toolDict['pausePNG']
         self.carText = toolDict['carText']
         self.roadText = toolDict['roadText']
         self.systemText = toolDict['systemText']
@@ -89,7 +92,6 @@ class Operation(tk.Frame):
             self.movePath.append((self.canvas.canvasx(event.x), self.canvas.canvasy(event.y)))
 
     def ready2CreateRoad(self, event):
-        #itemID  = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         if self.buildable is False:
             return
         else:
@@ -180,12 +182,10 @@ class Operation(tk.Frame):
                 for carsPosition in lane.carsPositions.values():
                     totalVelocity += carsPosition.car.speed
                     carsArea += carsPosition.car.length * self.scale 
-            if carsNumber == 0:
-                avgVelocity = 0.0
-            else:
-                avgVelocity = totalVelocity / carsNumber
+
             density = carsArea / self.selectedRoad.length
-            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id, avgVelocity, density))
+            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
+            , totalVelocity / carsNumber if carsNumber != 0 else 0.0, density))
 
 
     def showSystemInfo(self):
@@ -198,12 +198,7 @@ class Operation(tk.Frame):
                 for carsPosition in lane.carsPositions.values():
                     totalVelocity += carsPosition.car.speed
 
-        if carsNumber == 0:
-            avgVelocity = 0.0
-        else:
-            avgVelocity = totalVelocity / carsNumber
-
-        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.3}'.format(avgVelocity))
+        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.3}'.format(totalVelocity / carsNumber if carsNumber != 0 else 0.0))
 
     @property
     def running(self):
@@ -215,6 +210,7 @@ class Operation(tk.Frame):
 
     def runModel(self):
         self.running = True
+        self.playBtn.config(image=self.pausePNG, text = "Pause", command=lambda : self.stop())
         self.display()
 
     def display(self):
@@ -229,6 +225,7 @@ class Operation(tk.Frame):
 
     def stop(self):
         self.running = False
+        self.playBtn.config(image=self.playPNG, text = "Action", command=lambda : self.runModel())
 
     def debugSwitch(self):
         if self.running is True and self.debug is False:

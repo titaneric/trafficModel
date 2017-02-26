@@ -26,13 +26,9 @@ roadText.pack(side=LEFT)
 
 play = Button(function, text = "Action")
 playPNG = PhotoImage(file = "png/play-button.png")
+pausePNG = PhotoImage(file = "png/pause.png")
 play.config(compound = LEFT, image=playPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.runModel())
 play.pack(side = LEFT, padx = 2, pady = 2)
-
-pause = Button(function, text = "Pause")
-pausePNG = PhotoImage(file = "png/pause.png")
-pause.config(compound = LEFT, image=pausePNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.stop())
-pause.pack(side = LEFT, padx = 2, pady = 2)
 
 refresh = Button(function, text = "Reload")
 refreshPNG = PhotoImage(file = "png/refresh-button.png")
@@ -53,6 +49,9 @@ slider = Scale(function, from_=0, to=30, orient=HORIZONTAL,
 slider.pack(side = LEFT, padx = 2, pady = 2)
 
 toolDict = dict()
+toolDict['playBtn'] = play
+toolDict['playPNG'] = playPNG
+toolDict['pausePNG'] = pausePNG
 toolDict['carText'] = carText
 toolDict['roadText'] = roadText
 toolDict['systemText'] = systemText

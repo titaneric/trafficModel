@@ -8,8 +8,6 @@ class Lane():
         self.targetSegment = targetSegment
         self.road = road
         self.id = road.id + '_' + 'lane'
-        # self.leftAdjacent = None
-        # self.rightAdjacent = None
         self.leftmostAdjacent = None
         self.rightmostAdjacent = None
         self.carsPositions = {}

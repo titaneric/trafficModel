@@ -33,7 +33,7 @@ class Road():
         assert self.target is other.source
         side1 = self.targetSideId
         side2 = other.sourceSideId
-        # 0 - left, 1 - forward, 2 - right
+        # 0 - right, 1 - forward, 2 - left
         turnNumber = (side2 - side1 - 1 + 8) % 3
         return turnNumber
 
@@ -60,8 +60,6 @@ class Road():
         for i in range(self.lanesNumber):
             self.lanes[i].sourceSegment = sourceSplits[i]
             self.lanes[i].targetSegment = targetSplits[i]
-            #self.lanes[i].leftAdjacent = self.lanes[i + 1]
-            #self.lanes[i].rightAdjacent = self.lanes[i - 1]
             self.lanes[i].leftmostAdjacent = self.lanes[-1]
             self.lanes[i].rightmostAdjacent = self.lanes[0]
             self.lanes[i].id += str(i + 1)

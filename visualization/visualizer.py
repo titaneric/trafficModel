@@ -76,7 +76,6 @@ class Visualizer:
     def drawCar(self, car):
         angle = car.direction
         center = car.coords
-        # prePosition = car.prePosition
         rect = Rect(0, 0, car.length * self.scale, car.width * self.scale)
         rect.center(Point(0, 0))
         coords = [Point(center.x + rect.left(), center.y + rect.top()),
@@ -89,7 +88,6 @@ class Visualizer:
         for point in coords:
             otherCoords.append(point.x)
             otherCoords.append(point.y)
-        # self.canvas.create_line(prePosition.x, prePosition.y, center.x, center.y, fill="red")
         if not self.canvas.find_withtag(car.id):
             self.canvas.create_polygon(splitCoords, fill=car.color, tag=car.id)
         else:
