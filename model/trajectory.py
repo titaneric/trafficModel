@@ -1,5 +1,4 @@
 from model.lane_position import LanePosition
-#import math
 from geometry.curve import Curve
 
 
@@ -44,7 +43,7 @@ class Trajectory():
     def distanceToStopLine(self):
         if not self.canEnterIntersection():
             return self.getDistanceToIntersection()
-        return self.current.lane.length - self.absolutePosition# self.lane.length - self.absolutePosition
+        return self.current.lane.length - self.absolutePosition
 
     @property
     def nextIntersection(self):
@@ -152,7 +151,7 @@ class Trajectory():
         self.next.position = nextPosition
         curve = self.getCurve()
         self.temp.lane = curve
-        self.temp.position = 0  # @current.lane.length - @current.position
+        self.temp.position = 0
         self.next.position -= self.temp.lane.length
 
     def _finishChangingLanes(self):
@@ -166,7 +165,6 @@ class Trajectory():
         self.next.position = None
         self.temp.lane = None
         self.temp.position = None
-        # self.current.lane
 
     def release(self):
         self.current.release()

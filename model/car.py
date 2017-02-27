@@ -23,6 +23,7 @@ class Car():
         self.trajectory = Trajectory(self, lane, position)
         self.alive = True
         self.preferedLane = None
+        self.prePosition = None
         self.nextLane = None
         self.timeHeadway = 1.5
         self.s0 = 2
@@ -92,6 +93,7 @@ class Car():
         if self.trajectory.timeToMakeTurn(step):
             if not self.nextLane:
                 self.alive = False
+        self.prePosition = self.coords
         self.trajectory.moveForward(step)
 
     def pickNextRoad(self):
