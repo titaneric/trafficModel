@@ -80,18 +80,23 @@ class World():
                 for lane in road.lanes:
                     if type(car.trajectory.lane) is not Curve:
                         if car.trajectory.lane.id == lane.id:
+                            relativePos = car.trajectory.current.relativePosition
                             car.trajectory.current.lane.sourceSegment = lane.sourceSegment
                             car.trajectory.current.lane.targetSegment = lane.targetSegment
                             car.trajectory.current.lane.update()
+                            car.trajectory.current.position = car.trajectory.current.lane.length * relativePos
         '''
                         if car.nextLane is not None and car.nextLane.id == lane.id:
                             car.nextLane.sourceSegment = lane.sourceSegment
                             car.nextLane.targetSegment = lane.targetSegment
                             car.nextLane.update()
                             car.trajectory.next.lane = car.nextLane
+        
         for car in self.cars.values():
             if type(car.trajectory.lane) is Curve:
+                relativePos = car.trajectory.temp.relativePosition
                 car.trajectory.temp.lane = car.trajectory.getCurve()
+                car.trajectory.temp.position = relativePos * car.trajectory.temp.lane.length
         '''
 
 

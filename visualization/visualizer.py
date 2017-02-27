@@ -76,16 +76,14 @@ class Visualizer:
 
     def drawCar(self, car):
         angle = car.direction
-        prePosition = car.prePosition
         center = car.coords
-        newCenter = prePosition + Segment(prePosition, center).vector * self.scale
         rect = Rect(0, 0, car.length * self.scale, car.width * self.scale)
         rect.center(Point(0, 0))
-        coords = [Point(newCenter.x + rect.left(), newCenter.y + rect.top()),
-            Point(newCenter.x + rect.left(), newCenter.y + rect.bottom()),
-            Point(newCenter.x + rect.right(), newCenter.y + rect.bottom()),
-            Point(newCenter.x + rect.right(), newCenter.y + rect.top())]
-        self.rotate(angle, coords, newCenter)
+        coords = [Point(center.x + rect.left(), center.y + rect.top()),
+            Point(center.x + rect.left(), center.y + rect.bottom()),
+            Point(center.x + rect.right(), center.y + rect.bottom()),
+            Point(center.x + rect.right(), center.y + rect.top())]
+        self.rotate(angle, coords, center)
         splitCoords = [(point.x, point.y) for point in coords]
         otherCoords = []
         for point in coords:
@@ -104,7 +102,7 @@ class Visualizer:
             if self.selectedCar is car and car.alive:
                 self.canvas.itemconfig(ID, outline=settings.setDict['color']['selected'])
                 self.carText.delete('1.0', tk.END)
-                info = "Car ID: {0} Car Speed: {1:.3}\nCar coords: {2:.4},{3:.4}".format(car.id, car.speed if car.speed != 0 else 0.0, newCenter.x, newCenter.y)
+                info = "Car ID: {0} Car Speed: {1:.3}\nCar coords: {2:.4},{3:.4}".format(car.id, car.speed if car.speed != 0 else 0.0, center.x, center.y)
                 self.carText.insert(tk.INSERT, info)
             elif self.selectedCar is car and not car.alive:
                 self.carText.delete('1.0', tk.END)

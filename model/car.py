@@ -16,14 +16,13 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 40
-        self.maxAcceleration = 2
+        self.maxSpeed = 20
+        self.maxAcceleration = 1
         self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
         self.alive = True
         self.preferedLane = None
-        self.prePosition = None
         self.nextLane = None
         self.timeHeadway = 1.5
         self.s0 = 2
@@ -93,7 +92,7 @@ class Car():
         if self.trajectory.timeToMakeTurn(step):
             if not self.nextLane:
                 self.alive = False
-        self.prePosition = self.coords
+
         self.trajectory.moveForward(step)
 
     def pickNextRoad(self):

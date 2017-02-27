@@ -8,6 +8,7 @@ class Trajectory():
         assert position is not None
         self.current = LanePosition(self.car, lane, position)
         self.current.acquire()
+        self.relativeCur = 0.0
         self.next = LanePosition(self.car)
         self.temp = LanePosition(self.car)
         self.isChangingLanes = False
