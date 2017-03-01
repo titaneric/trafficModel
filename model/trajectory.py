@@ -106,7 +106,7 @@ class Trajectory():
         if self.timeToMakeTurn() and self.canEnterIntersection() and self.isValidTurn():
             self._startChangingLanes(self.car.popNextLane(), 0)
         if self.temp.position is not None:
-            tempRelativePosition = self.temp.position / self.temp.lane.length
+            tempRelativePosition = self.temp.relativePosition
         gap = 2 * self.car.length
         if self.isChangingLanes and self.temp.position is not None and \
         (self.temp.position > gap) and not self.current.free:

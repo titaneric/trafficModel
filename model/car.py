@@ -16,8 +16,8 @@ class Car():
         self._speed = 0
         self.width = 4
         self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 20
-        self.maxAcceleration = 1
+        self.maxSpeed = 33.3
+        self.maxAcceleration = 2
         self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
@@ -52,25 +52,27 @@ class Car():
 
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
-        distanceToNextCar = max(nextCarDistance["distance"], 0.0001)
+        distanceToNextCar = max(nextCarDistance["distance"], 0)
+        distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 else float('inf')
         distanceToStopLine = self.trajectory.distanceToStopLine
-
+        '''
         if distanceToStopLine < 30:
             return -1
         else:
-            a = self.maxAcceleration
-            b = self.maxDeceleration
-            deltaSpeed = (self.speed - nextCarDistance["car"].speed) if nextCarDistance["car"] is not None else 0
-            freeRoadCoeff = (self.speed / self.maxSpeed) ** 4
-            distanceGap = self.s0
-            timeGap = self.speed * self.timeHeadway
-            breakGap = self.speed * deltaSpeed / (2 * math.sqrt(a * b))
-            safeDistance = distanceGap + timeGap + breakGap
-            busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2
-            safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
-            intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2
-            coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
-            return self.maxAcceleration * coeff
+        '''
+        a = self.maxAcceleration
+        b = self.maxDeceleration
+        deltaSpeed = (self.speed - nextCarDistance["car"].speed) if nextCarDistance["car"] is not None else 0
+        freeRoadCoeff = (self.speed / self.maxSpeed) ** 4
+        distanceGap = self.s0
+        timeGap = self.speed * self.timeHeadway
+        breakGap = self.speed * deltaSpeed / (2 * math.sqrt(a * b))
+        safeDistance = distanceGap + timeGap + breakGap
+        busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 if nextCarDistance["car"] is not None else 0
+        # safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
+        # intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2
+        coeff = 1 - freeRoadCoeff - busyRoadCoeff# - intersectionCoeff
+        return self.maxAcceleration * coeff
 
     def move(self, delta):
         acce = self.getAcceleration()
@@ -112,11 +114,11 @@ class Car():
             return None
         turnNumber = self.trajectory.current.lane.road.getTurnDirection(nextRoad)
         if turnNumber == 0:
-            laneNumber = -1
+            laneNumber = 0
         elif turnNumber == 1:
             laneNumber = random.randint(0, nextRoad.lanesNumber - 1)
         elif turnNumber == 2:
-            laneNumber = 0
+            laneNumber = -1
         self.nextLane = nextRoad.lanes[laneNumber]
         assert self.nextLane is not None
         return self.nextLane

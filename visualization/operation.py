@@ -242,6 +242,7 @@ class Operation(tk.Frame):
         if self.animationID is not None:
             self.carText.delete('1.0', tk.END)
             self.roadText.delete('1.0', tk.END)
+            self.visualizer.clearPath()
             self.root.after_cancel(self.animationID)
             self.animationID = None
             for car in list(self.world.cars.values()):

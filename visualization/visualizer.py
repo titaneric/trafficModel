@@ -102,7 +102,7 @@ class Visualizer:
             if self.selectedCar is car and car.alive:
                 self.canvas.itemconfig(ID, outline=settings.setDict['color']['selected'])
                 self.carText.delete('1.0', tk.END)
-                info = "Car ID: {0} Car Speed: {1:.3}\nCar coords: {2:.4},{3:.4}".format(car.id, car.speed if car.speed != 0 else 0.0, center.x, center.y)
+                info = "Car ID: {0}, Car Speed: {1:.3}\nCar coords: {2:.4},{3:.4}".format(car.id, car.speed if car.speed != 0 else 0.0, center.x, center.y)
                 self.carText.insert(tk.INSERT, info)
             elif self.selectedCar is car and not car.alive:
                 self.carText.delete('1.0', tk.END)
@@ -113,7 +113,11 @@ class Visualizer:
             if car.trajectory.temp and not self.canvas.find_withtag(car.id + '_curve'):
                 if car.trajectory.temp.lane:
                     curve = car.trajectory.temp.lane
-                    self.drawCurve(curve, car.id)
+                    # self.drawCurve(curve, car.id)
+                    if curve.O:
+                        self.drawCircle(curve.O, 1 * self.scale, car.id)
+                    if curve.Q:
+                        self.drawCircle(curve.Q, 1 * self.scale, car.id)
 
             if self.canvas.find_withtag(car.id + '_curve') and \
                 car.trajectory.isChangingLanes is False:
@@ -131,3 +135,13 @@ class Visualizer:
             self.canvas.create_line(prePoint.x, prePoint.y, point.x, point.y, fill=settings.setDict['color']['curve'], tag=ID + '_curve')
             prePoint = point
 
+    def drawCircle(self, center, delimeter, ID):
+        self.canvas.create_oval(center.x - delimeter, center.y - delimeter, 
+            center.x + delimeter, center.y + delimeter, fill=settings.setDict['color']['curve'], tag=ID + '_curve')
+
+    def clearPath(self):
+        for car in self.world.cars.values():
+            if self.canvas.find_withtag(car.id + '_curve'):
+                ID = self.canvas.find_withtag(car.id + '_curve')
+                for subId in ID:
+                    self.canvas.delete(subId)
