@@ -3,10 +3,18 @@ from visualization.operation import Operation
 from model.world import World
 import settings
 
-
 root = Tk()
-#menu = Menu(root)
-#root.config(menu = menu)
+img = PhotoImage(file='png/sports-car.png')
+root.tk.call('wm','iconphoto',root._w,img)
+menu = Menu(root)
+
+
+
+subMenu = Menu(menu)
+menu.add_cascade(label='Test', menu=subMenu)
+subMenu.add_command(label='Collect Data', command=lambda :op.collectData())
+
+root.config(menu=menu)
 toolbar = Frame(root)
 function = Frame(toolbar)
 info = Frame(toolbar)

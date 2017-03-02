@@ -1,4 +1,5 @@
 import tkinter as tk
+import pandas as pd
 from model.world import World
 from model.intersection import Intersection
 from model.road import Road
@@ -7,6 +8,7 @@ from geometry.rect import Rect
 from geometry.point import Point
 from visualization.visualizer import Visualizer
 import settings
+import csv
 
 
 class Operation(tk.Frame):
@@ -52,6 +54,7 @@ class Operation(tk.Frame):
         self.slider = toolDict['slider']
         self.slider.set(self.world.carsNumber)
         self.debug = False
+        self.collect = False
         self.animationID = None
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
@@ -198,6 +201,15 @@ class Operation(tk.Frame):
                 for carsPosition in lane.carsPositions.values():
                     totalVelocity += carsPosition.car.speed
 
+        if self.collect is True and self.world.time < 60:
+            with open('data/data.csv', 'a', encoding='utf8') as f:
+                fwriter = csv.writer(f, delimiter=',')
+                fwriter.writerow([self.world.time, totalVelocity / carsNumber])
+            f.close()
+        elif self.collect is True and self.world.time > 60:
+            print('Finish collecting')
+            self.collect = False
+
         self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.3}'.format(totalVelocity / carsNumber if carsNumber != 0 else 0.0))
 
     @property
@@ -252,6 +264,9 @@ class Operation(tk.Frame):
             self.runModel()
         else:
             self.runModel()
+
+    def collectData(self):
+        self.collect = True
 
 
 
