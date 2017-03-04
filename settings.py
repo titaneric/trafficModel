@@ -1,6 +1,6 @@
-setDict = {"canvas_height": 1200,
-            "canvas_width": 1200,
-            "grid_size": 30,
+setDict = {"canvas_height": 1600,
+            "canvas_width": 1600,
+            "grid_size": 12,
             "color": {
                 "road": "#808080",
                 "background": "bisque",

@@ -24,7 +24,7 @@ world.load()
 carText = Text(info, height=2, width=35)
 carText.pack(side=RIGHT)
 
-systemText = Text(info, height=2, width=15)
+systemText = Text(info, height=2, width=35)
 systemText.pack(side=LEFT)
 
 roadText = Text(info, height=2, width=35)

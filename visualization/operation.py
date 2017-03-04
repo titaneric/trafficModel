@@ -187,7 +187,7 @@ class Operation(tk.Frame):
                     carsArea += carsPosition.car.length * self.scale 
 
             density = carsArea / self.selectedRoad.length
-            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3}\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
+            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.2}\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
             , totalVelocity / carsNumber if carsNumber != 0 else 0.0, density))
 
 
@@ -210,7 +210,7 @@ class Operation(tk.Frame):
             print('Finish collecting')
             self.collect = False
 
-        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.3}'.format(totalVelocity / carsNumber if carsNumber != 0 else 0.0))
+        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.2}'.format(totalVelocity / carsNumber if carsNumber != 0 else 0.0))
 
     @property
     def running(self):

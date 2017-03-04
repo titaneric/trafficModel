@@ -3,6 +3,6 @@
 "road_1": {"source": "intersection_1", "id": "road_1", "target": "intersection_2", "dual": "road_2"},
 "road_3": {"source": "intersection_2", "id": "road_3", "target": "intersection_3", "dual": "road_4"}, 
 "road_4": {"source": "intersection_3", "id": "road_4", "target": "intersection_2", "dual": "road_3"}}, 
-"intersections": {"intersection_1": {"position": {"height": 30.0, "width": 30.0, "x": 0.0, "y": 0.0}, "id": "intersection_1"}, 
-"intersection_2": {"position": {"height": 30.0, "width": 30.0, "x": 180.0, "y": 0.0}, "id": "intersection_2"},
-"intersection_3": {"position": {"height": 30.0, "width": 30.0, "x": 180.0, "y": 180.0}, "id": "intersection_3"}}}
+"intersections": {"intersection_1": {"position": {"height": 12.0, "width": 12.0, "x": 0.0, "y": 0.0}, "id": "intersection_1"}, 
+"intersection_2": {"position": {"height": 12.0, "width": 12.0, "x": 180.0, "y": 0.0}, "id": "intersection_2"},
+"intersection_3": {"position": {"height": 12.0, "width": 12.0, "x": 180.0, "y": 180.0}, "id": "intersection_3"}}}

@@ -10,15 +10,16 @@ class Car():
 
     def __init__(self, lane, position):
         self.id = "car_" + str(next(self.id_generator))
+        self.timeScale = 1000
         self.start = 0
         self.end = 0
         self.color = colors.rgb2hex((random.random(), random.random(), random.random()))
         self._speed = 0
-        self.width = 4
-        self.length = 10 + random.randint(0, 5)
-        self.maxSpeed = 33.3
-        self.maxAcceleration = 2
-        self.maxDeceleration = 3
+        self.width = 1.5
+        self.length = 3 + random.randint(0, 3)
+        self.maxSpeed = 33.3 * self.timeScale
+        self.maxAcceleration = 0.3 * self.timeScale
+        self.maxDeceleration = 3 * self.timeScale
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
         self.alive = True
