@@ -44,7 +44,10 @@ class Operation(tk.Frame):
         self.scale = 1
         self.world = world
         self.fps = 50
+<<<<<<< HEAD
         self.timeInterval = 1
+=======
+>>>>>>> 1a42a691cd53c259a780aa4e02becbc3ab6486de
         self.timeScale = 20
         self.playBtn = toolDict['playBtn']
         self.playPNG = toolDict['playPNG']
@@ -57,7 +60,11 @@ class Operation(tk.Frame):
         self.selectedRoad = None
         self.carSlider = toolDict['carSlider']
         self.carSlider.set(self.world.carsNumber)
+<<<<<<< HEAD
         self.timeSlider.set(1)
+=======
+        self.timeSlider.set(20)
+>>>>>>> 1a42a691cd53c259a780aa4e02becbc3ab6486de
         self.debug = False
         self.collect = False
         self.animationID = None
@@ -236,7 +243,11 @@ class Operation(tk.Frame):
             self.canvas.tag_raise(car.id)
         self.world.carsNumber = self.carSlider.get()
         self.timeScale = self.timeSlider.get()
+<<<<<<< HEAD
         self.timeInterval = self.timeScale
+=======
+        self.fps = 1000 // self.timeScale
+>>>>>>> 1a42a691cd53c259a780aa4e02becbc3ab6486de
         self.showRoadInfo()
         self.showSystemInfo()
         self.world.onTick(self.timeInterval)
