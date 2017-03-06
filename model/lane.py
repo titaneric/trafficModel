@@ -51,6 +51,9 @@ class Lane():
     def getPoint(self, a):
         return self.middleLine.getPoint(a)
 
+    def getRelativePosition(self, point):
+        return self.middleLine.getRelativePoint(point)
+
     def addCarPosition(self, carPosition):
         assert carPosition.id not in self.carsPositions.keys()
         self.carsPositions[carPosition.id] = carPosition

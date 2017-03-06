@@ -43,6 +43,9 @@ class Operation(tk.Frame):
         self._running = False
         self.scale = 1
         self.world = world
+        self.fps = 50
+        self.timeInterval = 1
+        self.timeScale = 20
         self.playBtn = toolDict['playBtn']
         self.playPNG = toolDict['playPNG']
         self.pausePNG = toolDict['pausePNG']
@@ -50,9 +53,11 @@ class Operation(tk.Frame):
         self.roadText = toolDict['roadText']
         self.systemText = toolDict['systemText']
         self.debugBtn = toolDict['debugBtn']
+        self.timeSlider = toolDict['timeSlider']
         self.selectedRoad = None
-        self.slider = toolDict['slider']
-        self.slider.set(self.world.carsNumber)
+        self.carSlider = toolDict['carSlider']
+        self.carSlider.set(self.world.carsNumber)
+        self.timeSlider.set(1)
         self.debug = False
         self.collect = False
         self.animationID = None
@@ -210,7 +215,7 @@ class Operation(tk.Frame):
             print('Finish collecting')
             self.collect = False
 
-        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.1} km/hr'.format(totalVelocity / carsNumber * 3.6 if carsNumber != 0 else 0.0))
+        self.systemText.insert(tk.INSERT, 'Avg Speed: {0:.1} km/hr'.format(totalVelocity / carsNumber * 3.6 if carsNumber != 0 else 0.0))
 
     @property
     def running(self):
@@ -229,12 +234,14 @@ class Operation(tk.Frame):
         for car in list(self.world.cars.values()):
             self.visualizer.drawCar(car)
             self.canvas.tag_raise(car.id)
-        self.world.carsNumber = self.slider.get()
+        self.world.carsNumber = self.carSlider.get()
+        self.timeScale = self.timeSlider.get()
+        self.timeInterval = self.timeScale
         self.showRoadInfo()
         self.showSystemInfo()
-        self.world.onTick(1)
+        self.world.onTick(self.timeInterval)
         if self.running is True:
-            self.animationID = self.root.after(50, self.display)
+            self.animationID = self.root.after(self.fps, self.display)
 
     def stop(self):
         self.running = False

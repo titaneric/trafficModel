@@ -127,7 +127,7 @@ class Trajectory():
         assert nextLane is not self.lane, 'next lane == current lane'
         assert self.lane.road is nextLane.road, 'not neighboring lanes'
         nextPosition = self.current.position + 3 * self.car.length
-        assert (nextPosition < self.lane.length), 'too late to change lane'
+        # assert (nextPosition < self.lane.length), 'too late to change lane'
         self._startChangingLanes(nextLane, nextPosition)
 
     def _getAdjacentLaneChangeCurve(self):

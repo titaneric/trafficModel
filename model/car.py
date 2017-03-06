@@ -65,7 +65,7 @@ class Car():
         safeDistance = distanceGap + timeGap + breakGap
         busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 if nextCarDistance["car"] is not None else 0
         safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
-        intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2
+        intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2 if self.trajectory.distanceToStopLine != 0 else 0
         coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff if self.pickNextLane() is not None and nextCarDistance["car"] is not None else 1
         return self.maxAcceleration * coeff
 

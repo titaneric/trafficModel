@@ -78,28 +78,33 @@ class World():
         for car in self.cars.values():
             for road in self.roads.values():
                 for lane in road.lanes:
-                    if type(car.trajectory.lane) is not Curve and car.trajectory.lane.id == lane.id:
+                    if car.trajectory.current.lane.id == lane.id:
                         relativePos = car.trajectory.current.relativePosition
                         car.trajectory.current.lane.sourceSegment = lane.sourceSegment
                         car.trajectory.current.lane.targetSegment = lane.targetSegment
                         car.trajectory.current.lane.update()
                         car.trajectory.current.position = car.trajectory.current.lane.length * relativePos
 
-                    if car.trajectory.next.lane is not None and car.trajectory.next.lane.id == lane.id:
-                        relativePos = car.trajectory.next.relativePosition
+                    if car.trajectory.isChangingLanes and car.trajectory.next.lane is not None and car.trajectory.next.lane.id == lane.id:
                         car.trajectory.next.lane.sourceSegment = lane.sourceSegment
                         car.trajectory.next.lane.targetSegment = lane.targetSegment
                         car.trajectory.next.lane.update()
-                        car.trajectory.next.position = car.trajectory.next.lane.length * relativePos  
-
-        # self.syncCurve()                         
+                    
                         
     def syncCurve(self):
         for car in self.cars.values():
-            if car.trajectory.isChangingLanes:
+            if car.trajectory.timeToMakeTurn() and car.trajectory.canEnterIntersection() and car.trajectory.isValidTurn():
                 relativePos = car.trajectory.temp.relativePosition
-                car.trajectory.temp.lane =  car.trajectory.getCurve()
+                previousA = car.trajectory.temp.lane.A
+                previousB = car.trajectory.temp.lane.B
+                relativeA = car.trajectory.current.lane.getRelativePosition(previousA)
+                relativeB = car.trajectory.next.lane.getRelativePosition(previousB)
+                car.trajectory.current.position = relativeA * car.trajectory.current.lane.length
+                car.trajectory.next.position = relativeB * car.trajectory.next.lane.length
+                car.trajectory.temp.lane = car.trajectory.getCurve()
                 car.trajectory.temp.position = car.trajectory.temp.lane.length * relativePos
+                
+
 
 
 
@@ -107,6 +112,7 @@ class World():
         self.time += delta
         self.refreshCar()
         self.syncLane()
+        self.syncCurve()
         for car in list(self.cars.values()):
             car.move(delta)
 

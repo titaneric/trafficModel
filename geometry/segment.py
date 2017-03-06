@@ -22,6 +22,11 @@ class Segment():
     def getPoint(self, scale):
         return self.source + (self.vector * scale)
 
+    def getRelativePoint(self, point):
+        diff = point - self.source
+        return diff.x / self.vector.x if self.vector.x != 0 else 0
+
+
     def subsegment(self, a, b):
         offset = self.vector
         start = self.source + (offset * a)
