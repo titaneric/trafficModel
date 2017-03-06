@@ -10,16 +10,15 @@ class Car():
 
     def __init__(self, lane, position):
         self.id = "car_" + str(next(self.id_generator))
-        self.timeScale = 1000
         self.start = 0
         self.end = 0
         self.color = colors.rgb2hex((random.random(), random.random(), random.random()))
         self._speed = 0
         self.width = 1.5
         self.length = 3 + random.randint(0, 3)
-        self.maxSpeed = 33.3 * self.timeScale
-        self.maxAcceleration = 0.3 * self.timeScale
-        self.maxDeceleration = 3 * self.timeScale
+        self.maxSpeed = 20
+        self.maxAcceleration = 0.3
+        self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
         self.alive = True
@@ -56,11 +55,6 @@ class Car():
         distanceToNextCar = max(nextCarDistance["distance"], 0)
         distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 else float('inf')
         distanceToStopLine = self.trajectory.distanceToStopLine
-        '''
-        if distanceToStopLine < 30:
-            return -1
-        else:
-        '''
         a = self.maxAcceleration
         b = self.maxDeceleration
         deltaSpeed = (self.speed - nextCarDistance["car"].speed) if nextCarDistance["car"] is not None else 0
@@ -70,9 +64,9 @@ class Car():
         breakGap = self.speed * deltaSpeed / (2 * math.sqrt(a * b))
         safeDistance = distanceGap + timeGap + breakGap
         busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 if nextCarDistance["car"] is not None else 0
-        # safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
-        # intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2
-        coeff = 1 - freeRoadCoeff - busyRoadCoeff# - intersectionCoeff
+        safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
+        intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2
+        coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff if self.pickNextLane() is not None and nextCarDistance["car"] is not None else 1
         return self.maxAcceleration * coeff
 
     def move(self, delta):

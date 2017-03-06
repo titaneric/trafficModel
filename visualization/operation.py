@@ -187,8 +187,8 @@ class Operation(tk.Frame):
                     carsArea += carsPosition.car.length * self.scale 
 
             density = carsArea / self.selectedRoad.length
-            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.2}\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
-            , totalVelocity / carsNumber if carsNumber != 0 else 0.0, density))
+            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.1} km/hr\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
+            , totalVelocity / carsNumber * 3.6 if carsNumber != 0 else 0.0, density))
 
 
     def showSystemInfo(self):
@@ -204,13 +204,13 @@ class Operation(tk.Frame):
         if self.collect is True and self.world.time < 60:
             with open('data/data.csv', 'a', encoding='utf8') as f:
                 fwriter = csv.writer(f, delimiter=',')
-                fwriter.writerow([self.world.time, totalVelocity / carsNumber])
+                fwriter.writerow([self.world.time, totalVelocity / carsNumber * 3.6])
             f.close()
         elif self.collect is True and self.world.time > 60:
             print('Finish collecting')
             self.collect = False
 
-        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.2}'.format(totalVelocity / carsNumber if carsNumber != 0 else 0.0))
+        self.systemText.insert(tk.INSERT, '    System\nAvg Speed: {0:.1} km/hr'.format(totalVelocity / carsNumber * 3.6 if carsNumber != 0 else 0.0))
 
     @property
     def running(self):
@@ -228,12 +228,13 @@ class Operation(tk.Frame):
     def display(self):
         for car in list(self.world.cars.values()):
             self.visualizer.drawCar(car)
+            self.canvas.tag_raise(car.id)
         self.world.carsNumber = self.slider.get()
         self.showRoadInfo()
         self.showSystemInfo()
-        self.world.onTick(0.001)
+        self.world.onTick(1)
         if self.running is True:
-            self.animationID = self.root.after(1, self.display)
+            self.animationID = self.root.after(50, self.display)
 
     def stop(self):
         self.running = False

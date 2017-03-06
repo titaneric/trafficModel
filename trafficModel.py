@@ -21,13 +21,13 @@ info = Frame(toolbar)
 world = World()
 world.load()
 
-carText = Text(info, height=2, width=35)
+carText = Text(info, height=2, width=40)
 carText.pack(side=RIGHT)
 
-systemText = Text(info, height=2, width=35)
+systemText = Text(info, height=2, width=40)
 systemText.pack(side=LEFT)
 
-roadText = Text(info, height=2, width=35)
+roadText = Text(info, height=2, width=45)
 roadText.pack(side=LEFT)
 
 
