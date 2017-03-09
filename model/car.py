@@ -53,7 +53,7 @@ class Car():
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
         distanceToNextCar = max(nextCarDistance["distance"], 0)
-        distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 else float('inf')
+        # distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 else float('inf')
         distanceToStopLine = self.trajectory.distanceToStopLine
         a = self.maxAcceleration
         b = self.maxDeceleration
@@ -65,9 +65,10 @@ class Car():
         safeDistance = distanceGap + timeGap + breakGap
         busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 if nextCarDistance["car"] is not None else 0
         safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
-        intersectionCoeff = (safeIntersectionDistance / self.trajectory.distanceToStopLine) ** 2 if self.trajectory.distanceToStopLine != 0 else 0
-        coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff if self.pickNextLane() is not None and nextCarDistance["car"] is not None else 1
-        return self.maxAcceleration * coeff
+        intersectionCoeff = (safeIntersectionDistance / distanceToStopLine) ** 2 if distanceToStopLine != 0 else 0
+        coeff = 1  - freeRoadCoeff - busyRoadCoeff - intersectionCoeff if nextCarDistance["car"] is not None and self.pickNextLane() is not None else 1
+        newAcc = self.maxAcceleration * coeff if self.maxAcceleration * coeff > -b else -b
+        return newAcc
 
     def move(self, delta):
         acce = self.getAcceleration()

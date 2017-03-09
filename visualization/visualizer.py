@@ -102,7 +102,7 @@ class Visualizer:
             if self.selectedCar is car and car.alive:
                 self.canvas.itemconfig(ID, outline=settings.setDict['color']['selected'])
                 self.carText.delete('1.0', tk.END)
-                info = "Car ID: {0}\nCar Speed: {1} km/hr".format(car.id, car.speed * 3.6)
+                info = "Car ID: {0}, Car Speed: {1:.3} km/hr\n".format(car.id, car.speed * 3.6)
                 self.carText.insert(tk.INSERT, info)
             elif self.selectedCar is car and not car.alive:
                 self.carText.delete('1.0', tk.END)
@@ -110,6 +110,14 @@ class Visualizer:
                     self.canvas.itemconfig(ID, outline=car.color)
 
         if self.debug is True:
+            nextCarDistance = car.trajectory.nextCarDistance
+            carID = nextCarDistance["car"].id if nextCarDistance["car"] is not None else None
+            if carID is not None and carID in self.world.cars.keys() and self.selectedCar is car and car.alive:
+                info = "Front carID: {0}, distance: {1}".format(carID, nextCarDistance["distance"])
+                self.carText.insert(tk.INSERT, info)
+            elif self.selectedCar is car and not car.alive:
+                self.carText.delete('1.0', tk.END)
+
             if car.trajectory.temp and not self.canvas.find_withtag(car.id + '_curve'):
                 if car.trajectory.temp.lane:
                     curve = car.trajectory.temp.lane
