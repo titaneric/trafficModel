@@ -30,7 +30,7 @@ class Road():
         return self.lanes[0]
 
     def getTurnDirection(self, other):
-        assert self.target is other.source
+        # assert self.target is other.source
         side1 = self.targetSideId
         side2 = other.sourceSideId
         # 0 - right, 1 - forward, 2 - left

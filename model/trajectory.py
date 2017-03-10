@@ -98,6 +98,9 @@ class Trajectory():
         '''
         distance = max(distance, 0)
         self.current.position += distance
+        if self.nextCarDistance["car"] and self.current.lane.id == self.nextCarDistance["car"].trajectory.current.lane.id:
+            assert self.current.position < self.nextCarDistance["car"].trajectory.current.position, "Move Error"
+
         tempRelativePosition = None
         if self.next.position is not None:
             self.next.position += distance

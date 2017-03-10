@@ -19,7 +19,7 @@ class World():
         self.time = 0
 
     def load(self):
-        with open('map.json') as data_file:
+        with open('map2.json') as data_file:
             map = json.load(data_file)
         self.carsNumber = map["carsNumber"]
         for info in map["intersections"].values():
@@ -103,8 +103,10 @@ class World():
                 car.trajectory.next.position = relativeB * car.trajectory.next.lane.length
                 car.trajectory.temp.lane = car.trajectory.getCurve()
                 car.trajectory.temp.position = car.trajectory.temp.lane.length * relativePos
-                
 
+    def generateMap(self):
+        self.set()
+        
 
 
 
