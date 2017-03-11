@@ -17,6 +17,7 @@ class World():
         self.cars = {}
         self.carsNumber = 0
         self.time = 0
+        self.graphList = {}
 
     def load(self):
         with open('map2.json') as data_file:
@@ -44,9 +45,10 @@ class World():
     def addRandomCar(self):
         road = random.choice(list(self.roads.values()))
         if road is not None:
-            lane = random.choice(list(road.lanes))
+            lane = random.choice(road.lanes)
             if lane is not None:
-                self.addCar(Car(lane, 0))
+                # self.addCar(Car(lane=lane, position=0))
+                self.addCar(Car(graphList=self.graphList))
 
     def addCar(self, car):
         self.cars[car.id] = car
@@ -64,9 +66,11 @@ class World():
 
     def addIntersection(self, intersection):
         self.intersections[intersection.id] = intersection
+        self.graphList[intersection.id] = dict()
 
     def addRoad(self, road):
         self.roads[road.id] = road
+        self.graphList[road.source.id][road.target.id] = road
         road.source.roads.append(road)
         road.target.inRoads.append(road)
         road.update()
