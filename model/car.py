@@ -8,10 +8,16 @@ import math
 class Car():
     id_generator = itertools.count(1)
 
-    def __init__(self, lane, position):
+    def __init__(self, *args, **kwargs):
         self.id = "car_" + str(next(self.id_generator))
-        self.start = 0
-        self.end = 0
+        self.source = None
+        self.target = None
+        self.path = []
+        self.graph = kwargs.get('graphList', None)
+        if self.graph is not None:
+            self.setPath()
+        lane = kwargs.get('lane', random.choice(self.path.pop().lanes) if self.path else None)
+        position = kwargs.get('position', 0)
         self.color = colors.rgb2hex((random.random(), random.random(), random.random()))
         self._speed = 0
         self.width = 1.5
@@ -47,13 +53,23 @@ class Car():
     def direction(self):
         return self.trajectory.direction
 
+    def setPath(self):
+        self.source = random.choice(list(self.graph.keys()))
+        self.target = random.choice(list(self.graph.keys()))
+        while self.source == self.target:
+            self.target = random.choice(list(self.graph.keys()))
+            if self.source != self.target:
+                break
+
+        self.dijkstra()
+
     def release(self):
         self.trajectory.release()
 
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
         distanceToNextCar = max(nextCarDistance["distance"], 0)
-        # distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 else float('inf')
+        distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 else float('inf')
         distanceToStopLine = self.trajectory.distanceToStopLine
         a = self.maxAcceleration
         b = self.maxDeceleration
@@ -66,9 +82,10 @@ class Car():
         busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 if nextCarDistance["car"] is not None else 0
         safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
         intersectionCoeff = (safeIntersectionDistance / distanceToStopLine) ** 2 if distanceToStopLine != 0 else 0
-        coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff if nextCarDistance["car"] is not None and self.pickNextLane() is not None else 1
-        newAcc = self.maxAcceleration * coeff if self.maxAcceleration * coeff > -b else -b
-        return newAcc
+        # coeff = 1 if nextCarDistance["car"] is None and self.pickNextLane() is None else 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
+        coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
+        # newAcc = self.maxAcceleration * coeff if self.maxAcceleration * coeff > -b else -b
+        return self.maxAcceleration * coeff
 
     def move(self, delta):
         acce = self.getAcceleration()
@@ -87,9 +104,11 @@ class Car():
                 self.trajectory.changeLane(preferedLane)
 
         step = self.speed * delta + 0.5 * acce * delta ** 2
-        if self.trajectory.timeToMakeTurn(step):
-            if not self.nextLane:
-                self.alive = False
+        if self.trajectory.timeToMakeTurn(step) and self.pickNextLane() is None:
+            self.alive = False
+            self.trajectory.current.release()
+
+
 
         self.trajectory.moveForward(step)
 
@@ -102,9 +121,12 @@ class Car():
         nextRoad = random.choice(possibleRoads)
         return nextRoad
 
+    def popNextRoad(self):
+        return self.path.pop() if self.path else None
+
     def pickNextLane(self):
         self.nextLane = None
-        nextRoad = self.pickNextRoad()
+        nextRoad = self.pickNextRoad() if not self.graph else self.popNextRoad()
         if not nextRoad:
             self.nextLane = None
             return None
@@ -125,5 +147,45 @@ class Car():
         self.preferedLane = None
         return nextLane
 
+    def dijkstra(self):
+        vertex = set()
+        prev = dict()
+        shortRange = dict()
+        intersectionList = []
+        for i in self.graph.keys():
+            shortRange[i] = math.inf
+            vertex.add(i)
+            prev[i] = 0
+
+        shortRange[self.source] = 0
+        Z = set()
+        while Z != vertex:
+            vzdiff = vertex - Z
+            u = vzdiff.pop()
 
 
+            vzdiff.add(u)
+            min = shortRange[u]
+
+            for i in vzdiff:
+                if shortRange[i] < min:
+                    min = shortRange[i]
+                    u = i
+
+            Z.add(u)
+
+            for target, road in self.graph[u].items():
+                if shortRange[target] > shortRange[u] + road.length:
+                    shortRange[target] = shortRange[u] + road.length
+                    prev[target] = u
+
+            if u == self.target:
+                while prev[u] != 0:
+                    intersectionList.append(u)
+                    u = prev[u]
+
+                intersectionList.append(u)
+                intersectionList.reverse()
+                self.path = [self.graph[source][target] for source, target in zip(intersectionList, intersectionList[1:])]
+                self.path.reverse()
+                break

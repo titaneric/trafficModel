@@ -11,6 +11,7 @@ Mouse wheel can zoom the area.
 
 Mouse click and drag move the area.
 # Known problem
-Car mechanizm problem.
+Car turning trajetory problem.
+Car turning mechanizm problem.
 # Outlook
 Will adjust the kernel of the trafficModel and add the signal control in the future.

@@ -49,3 +49,11 @@ class LanePosition():
         result = {"car": None,
                   "distance": float("inf")}
         return result
+
+    @property
+    def isLeadingCar(self):
+        nextCar = self.nextCarDistance["car"]
+        if nextCar is None:
+            return True
+        else:
+            return False
