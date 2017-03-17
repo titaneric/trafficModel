@@ -5,6 +5,7 @@ setDict = {"canvas_height": 1600,
             "timeMax": 3,
             "timeMin": 1,
             "grid_size": 12,
+            "lightsFlipInterval": 160,
             "collecting_time": 20000,
             "fps": 100,
             "color": {

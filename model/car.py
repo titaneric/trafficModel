@@ -107,6 +107,8 @@ class Car():
         if self.trajectory.timeToMakeTurn(step) and self.pickNextLane() is None:
             self.alive = False
             self.trajectory.current.release()
+        elif not self.trajectory.timeToMakeTurn(step) and self.pickNextLane() is None:
+            print(self.id, self.trajectory.getDistanceToIntersection(), step)
 
 
 
