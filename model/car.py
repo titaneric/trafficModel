@@ -91,9 +91,9 @@ class Car():
         acce = self.getAcceleration()
         self.speed += acce * delta
 
-        if not self.trajectory.isChangingLanes and self.nextLane:
+        if not self.trajectory.isChangingLanes and self.pickNextLane():
             currentLane = self.trajectory.current.lane
-            turnNumber = currentLane.getTurnDirection(self.nextLane)
+            turnNumber = currentLane.getTurnDirection(self.pickNextLane())
             if turnNumber == 2:
                 preferedLane = currentLane.leftmostAdjacent
             elif turnNumber == 0:
@@ -107,8 +107,10 @@ class Car():
         if self.trajectory.timeToMakeTurn(step) and self.pickNextLane() is None:
             self.alive = False
             self.trajectory.current.release()
+        '''
         elif not self.trajectory.timeToMakeTurn(step) and self.pickNextLane() is None:
             print(self.id, self.trajectory.getDistanceToIntersection(), step)
+        '''
 
 
 

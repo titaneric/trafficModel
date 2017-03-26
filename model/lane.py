@@ -43,7 +43,18 @@ class Lane():
         self.direction = self.middleLine.direction
 
     def getTurnDirection(self, other):
-        return self.road.getTurnDirection(other.road)
+        directionSegment = Segment(self.middleLine.target, other.middleLine.source)
+        turnVector = directionSegment.vector
+        carVector = self.middleLine.vector
+        dot = (-turnVector.y) * carVector.x + turnVector.x * carVector.y
+        if dot > 0:
+            return 0  # right
+        elif dot < 0:
+            return 2  # left
+        else:
+            return 1
+
+        # return self.road.getTurnDirection(other.road)
 
     def getDirection(self, pos=None):
         return self.direction

@@ -61,10 +61,9 @@ class Visualizer:
         self.drawPolyLine([sourceSide.source, sourceSide.target, targetSide.source, targetSide.target], road.id)
         self.canvas.create_line(leftLine.source.x, leftLine.source.y, leftLine.target.x, leftLine.target.y, fill=settings.setDict["color"]["road"])
         
-        for ID, lane in enumerate(road.lanes):
-            if ID > 0:
-                line = lane.rightBorder
-                self.canvas.create_line(line.source.x, line.source.y, line.target.x, line.target.y, fill=settings.setDict['color']['lane_mark'], dash=(10, 10))
+        for lane in road.lanes[1:]:
+            line = lane.rightBorder
+            self.canvas.create_line(line.source.x, line.source.y, line.target.x, line.target.y, fill=settings.setDict['color']['lane_mark'], dash=(10, 10))
 
 
     def drawWorld(self):
