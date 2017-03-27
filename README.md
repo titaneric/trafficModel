@@ -14,10 +14,6 @@ Mouse click and drag move the area.
 
 So far the model haven't any problem. If notice some bugs, please generously report to me, thank you. 
 
-Car turning trajetory problem.
-
-Car turning mechanizm problem.
-
 # Outlook
 Will add the multiple lane in single road and the multiple roads in single intersection function.
 
