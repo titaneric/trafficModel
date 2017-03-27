@@ -93,7 +93,7 @@ class Car():
         acce = self.getAcceleration()
         self.speed += acce * delta
 
-        if not self.trajectory.isChangingLanes and self.nextLane:
+        if not self.trajectory.isChangingLanes and self.pickNextLane():
             currentLane = self.trajectory.current.lane
             turnNumber = currentLane.getTurnDirection(self.nextLane)
             if turnNumber is Direction.LEFT:
@@ -110,6 +110,7 @@ class Car():
             and self.nextLane is None:
             self.alive = False
             self.trajectory.current.release()
+
 
 
 
