@@ -48,8 +48,8 @@ class World():
             lane = random.choice(road.lanes)
             if lane is not None:
 
-                self.addCar(Car(lane=lane, position=0))
-                # self.addCar(Car(graphList=self.graphList))
+                # self.addCar(Car(lane=lane, position=0))
+                self.addCar(Car(graphList=self.graphList))
 
 
     def addCar(self, car):

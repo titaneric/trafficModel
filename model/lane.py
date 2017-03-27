@@ -1,5 +1,6 @@
 import math
 from geometry.segment import Segment
+from model.direction import Direction
 
 
 class Lane():
@@ -43,7 +44,18 @@ class Lane():
         self.direction = self.middleLine.direction
 
     def getTurnDirection(self, other):
-        return self.road.getTurnDirection(other.road)
+        directionSegment = Segment(self.middleLine.target, other.middleLine.source)
+        turnVector = directionSegment.vector
+        carVector = self.middleLine.vector
+        dot = (-turnVector.y) * carVector.x + turnVector.x * carVector.y
+        if dot > 0:
+            return Direction.RIGHT  # right
+        elif dot < 0:
+            return Direction.LEFT  # left
+        else:
+            return Direction.STRAIGHT
+
+        # return self.road.getTurnDirection(other.road)
 
     def getDirection(self, pos=None):
         return self.direction
@@ -63,12 +75,12 @@ class Lane():
         del self.carsPositions[carPosition.id]
 
     def getNext(self, carPosition):
-        next = None
+        nextCar = None
         bestDistance = float("inf")
         for other in self.carsPositions.values():
             if other is not carPosition:
                 distance = other.position - carPosition.position
                 if not other.free and 0 < distance < bestDistance:
                     bestDistance = distance
-                    next = other
-        return next
+                    nextCar = other
+        return nextCar

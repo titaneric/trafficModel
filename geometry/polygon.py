@@ -44,5 +44,8 @@ class Polygon():
 
         return inside
 
+    def getSide(self, i):
+        return self.getSides()[i]
+
 
 

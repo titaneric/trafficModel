@@ -1,5 +1,6 @@
 from model.lane_position import LanePosition
 from geometry.curve import Curve
+from model.direction import Direction
 
 
 class Trajectory():
@@ -63,11 +64,13 @@ class Trajectory():
             return False
         if nextLane is not None:
             turnNumber = sourceLane.getTurnDirection(nextLane)
+            '''
             if turnNumber is 3:
                 print('no U-turns are allowed')
-            if turnNumber is 2 and not sourceLane.isLeftmost:
+            '''
+            if turnNumber is Direction.LEFT and not sourceLane.isLeftmost:
                 print('no left turns from this lane')
-            if turnNumber is 0 and not sourceLane.isRightmost:
+            if turnNumber is Direction.RIGHT and not sourceLane.isRightmost:
                 print('no right turns from this lane')
             return True
 
@@ -90,6 +93,12 @@ class Trajectory():
 
     def timeToMakeTurn(self, plannedStep=0):
         return self.getDistanceToIntersection() <= plannedStep
+
+    def reachDestination(self):
+        if self.current.position + self.car.length / 2 > self.current.lane.length:
+            return True
+        else:
+            return False
 
     def moveForward(self, distance):
         '''

@@ -3,6 +3,7 @@ import random
 import itertools
 import matplotlib.colors as colors
 import math
+from model.direction import Direction
 
 
 class Car():
@@ -82,8 +83,9 @@ class Car():
         busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 if nextCarDistance["car"] is not None else 0
         safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
         intersectionCoeff = (safeIntersectionDistance / distanceToStopLine) ** 2 if distanceToStopLine != 0 else 0
-        # coeff = 1 if nextCarDistance["car"] is None and self.pickNextLane() is None else 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
-        coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
+        coeff = (1 - freeRoadCoeff) if nextCarDistance["car"] is None and self.nextLane is None \
+            else 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
+        # coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
         # newAcc = self.maxAcceleration * coeff if self.maxAcceleration * coeff > -b else -b
         return self.maxAcceleration * coeff
 
@@ -94,21 +96,20 @@ class Car():
         if not self.trajectory.isChangingLanes and self.nextLane:
             currentLane = self.trajectory.current.lane
             turnNumber = currentLane.getTurnDirection(self.nextLane)
-            if turnNumber == 2:
+            if turnNumber is Direction.LEFT:
                 preferedLane = currentLane.leftmostAdjacent
-            elif turnNumber == 0:
+            elif turnNumber is Direction.RIGHT:
                 preferedLane = currentLane.rightmostAdjacent
-            else:
+            elif turnNumber is Direction.STRAIGHT:
                 preferedLane = currentLane
             if preferedLane is not currentLane:
                 self.trajectory.changeLane(preferedLane)
 
         step = self.speed * delta + 0.5 * acce * delta ** 2
-        if self.trajectory.timeToMakeTurn(step) and self.pickNextLane() is None:
+        if (self.trajectory.timeToMakeTurn(step)) \
+            and self.nextLane is None:
             self.alive = False
             self.trajectory.current.release()
-        elif not self.trajectory.timeToMakeTurn(step) and self.pickNextLane() is None:
-            print(self.id, self.trajectory.getDistanceToIntersection(), step)
 
 
 
@@ -132,14 +133,14 @@ class Car():
         if not nextRoad:
             self.nextLane = None
             return None
-        turnNumber = self.trajectory.current.lane.road.getTurnDirection(nextRoad)
-        if turnNumber == 0:
-            laneNumber = 0
-        elif turnNumber == 1:
-            laneNumber = random.randint(0, nextRoad.lanesNumber - 1)
-        elif turnNumber == 2:
-            laneNumber = -1
-        self.nextLane = nextRoad.lanes[laneNumber]
+        laneNumber = random.randint(0, nextRoad.lanesNumber - 1)
+        turnNumber = self.trajectory.current.lane.getTurnDirection(nextRoad.lanes[laneNumber])
+        if turnNumber is Direction.RIGHT:
+            self.nextLane = nextRoad.rightmostLane
+        elif turnNumber is Direction.STRAIGHT:
+            self.nextLane = nextRoad.lanes[laneNumber]
+        elif turnNumber is Direction.LEFT:
+            self.nextLane = nextRoad.leftmostLane
         assert self.nextLane is not None
         return self.nextLane
 
