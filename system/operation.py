@@ -6,10 +6,10 @@ from model.road import Road
 from model.car import Car
 from geometry.rect import Rect
 from geometry.point import Point
-from visualization.visualizer import Visualizer
-from visualization.functionThread import SystemInfoThread
-from visualization.functionThread import RoadInfoThread
-from visualization.functionThread import CollectDataThread
+from system.visualizer import Visualizer
+from system.functionThread import SystemInfoThread
+from system.functionThread import RoadInfoThread
+from system.functionThread import CollectDataThread
 import settings
 import queue
 import pickle

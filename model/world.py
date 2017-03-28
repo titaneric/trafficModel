@@ -20,7 +20,7 @@ class World():
         self.graphList = {}
 
     def load(self):
-        with open('map2.json') as data_file:
+        with open('data/map2.json') as data_file:
             map = json.load(data_file)
         self.carsNumber = map["carsNumber"]
         for info in map["intersections"].values():

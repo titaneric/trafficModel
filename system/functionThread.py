@@ -3,6 +3,7 @@ import csv
 import settings
 import tkinter as tk
 import pickle
+import os
 
 
 class SystemInfoThread(threading.Thread):
@@ -12,7 +13,6 @@ class SystemInfoThread(threading.Thread):
         self.world = world
         self.systemText = systemText
         self.stateQueue = stateQueue
-        # self.collect = collect
 
     def run(self):
             while True:
@@ -78,9 +78,13 @@ class CollectDataThread(threading.Thread):
 
     def run(self):
         print("Start collecting")
+        dataFile = "data/data.csv"
+        if os.path.isfile(dataFile):
+            os.remove(dataFile)
+
         while True:
             if self.world.time < settings.setDict["collecting_time"]:
-                with open('data/data.csv', 'a', encoding='utf8') as f:
+                with open(dataFile, 'a', encoding='utf8') as f:
                     fwriter = csv.writer(f, delimiter=',')
                     text = self.systemText.get("1.0", tk.END)
                     avgSpeed = text[len("Avg Speed: "): -len(" km/hr")].strip()

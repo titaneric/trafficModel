@@ -1,21 +1,22 @@
 from tkinter import *
-from visualization.operation import Operation
+from system.operation import Operation
+from system.map import buildMapJSON
 from model.world import World
 import settings
 
- 
+
 root = Tk()
 img = PhotoImage(file='png/sports-car.png')
-root.tk.call('wm','iconphoto',root._w,img)
+root.tk.call('wm', 'iconphoto', root._w, img)
 menu = Menu(root)
 
 
 subMenu = Menu(menu)
 menu.add_cascade(label='Experiment', menu=subMenu)
-subMenu.add_command(label='Collect Data', command=lambda :op.collectData())
+subMenu.add_command(label='Collect Data', command=lambda: op.collectData())
 
 root.config(menu=menu)
-root.protocol("WM_DELETE_WINDOW", lambda : op.terminate(root))
+root.protocol("WM_DELETE_WINDOW", lambda: op.terminate(root))
 toolbar = Frame(root)
 function = Frame(toolbar)
 info = Frame(toolbar)
@@ -26,21 +27,21 @@ buttonGroup = Frame(function)
 sliderGroup = Frame(function)
 
 
-play = Button(buttonGroup, text = "Action")
-playPNG = PhotoImage(file = "png/play-button.png")
-pausePNG = PhotoImage(file = "png/pause.png")
-play.config(compound = LEFT, image=playPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.runModel())
-play.pack(side = LEFT, padx = 2, pady = 2)
+play = Button(buttonGroup, text="Action")
+playPNG = PhotoImage(file="png/play-button.png")
+pausePNG = PhotoImage(file="png/pause.png")
+play.config(compound=LEFT, image=playPNG, width="55", height="24", bg="#FFFFFF", command=lambda: op.runModel())
+play.pack(side=LEFT, padx=2, pady=2)
 
-refresh = Button(buttonGroup, text = "Reload")
-refreshPNG = PhotoImage(file = "png/refresh-button.png")
-refresh.config(compound = LEFT, image=refreshPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.refresh())
-refresh.pack(side = LEFT, padx = 2, pady = 2)
+refresh = Button(buttonGroup, text="Reload")
+refreshPNG = PhotoImage(file="png/refresh-button.png")
+refresh.config(compound=LEFT, image=refreshPNG, width="55", height="24", bg="#FFFFFF", command=lambda: op.refresh())
+refresh.pack(side=LEFT, padx=2, pady=2)
 
-debug = Button(buttonGroup, text = "Debug")
-debugPNG = PhotoImage(file = "png/debug.png")
-debug.config(compound = LEFT, image=debugPNG, width="55", height="24", bg = "#FFFFFF", command = lambda : op.debugSwitch())
-debug.pack(side = LEFT, padx = 2, pady = 2)
+debug = Button(buttonGroup, text="Debug")
+debugPNG = PhotoImage(file="png/debug.png")
+debug.config(compound=LEFT, image=debugPNG, width="55", height="24", bg="#FFFFFF", command=lambda: op.debugSwitch())
+debug.pack(side=LEFT, padx=2, pady=2)
 
 timeSliderName = Entry(sliderGroup, width='10')
 timeSliderName.grid(row=0, column=0)
