@@ -7,8 +7,12 @@ from model.car import Car
 from geometry.rect import Rect
 from geometry.point import Point
 from visualization.visualizer import Visualizer
+from visualization.functionThread import SystemInfoThread
+from visualization.functionThread import RoadInfoThread
+from visualization.functionThread import CollectDataThread
 import settings
-import csv
+import queue
+import pickle
 
 
 class Operation(tk.Frame):
@@ -42,6 +46,7 @@ class Operation(tk.Frame):
         self.movePath = []
         self._running = False
         self.scale = 1
+        self.scaleMap = {"scale": self.scale}
         self.world = world
         self.fps = settings.setDict["fps"]
         self.timeInterval = 1
@@ -59,8 +64,12 @@ class Operation(tk.Frame):
         self.carSlider.set(self.world.carsNumber)
         self.timeSlider.set(self.timeInterval)
         self.debug = False
-        self.collect = False
         self.animationID = None
+        self.systemThread = None
+        self.roadThread = None
+        self.firstActivate = False
+        self.systemQueue = queue.Queue()
+        self.roadQueue = queue.Queue()
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
@@ -78,6 +87,7 @@ class Operation(tk.Frame):
         elif len(tag) > 0 and tag[0] in self.world.intersections.keys():
             self.buildable = True
         elif len(tag) > 0 and tag[0] in self.world.roads.keys():
+            # print("change selected road to " + tag[0])
             self.selectedRoad = self.world.roads[tag[0]]
 
         if self.running is True:
@@ -120,6 +130,7 @@ class Operation(tk.Frame):
         self.canvas.scale("all", event.x, event.y, 1.1, 1.1)
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         self.scale *= 1.1
+        self.scaleMap["scale"] = self.scale
         self.visualizer.scale = self.scale
         self.update_member()
 
@@ -127,6 +138,7 @@ class Operation(tk.Frame):
         self.canvas.scale("all", event.x, event.y, 0.9, 0.9)
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         self.scale *= 0.9
+        self.scaleMap["scale"] = self.scale
         self.visualizer.scale = self.scale
         self.update_member()
 
@@ -196,27 +208,6 @@ class Operation(tk.Frame):
             , totalVelocity / carsNumber * 3.6 if carsNumber != 0 else 0.0, density))
 
 
-    def showSystemInfo(self):
-        self.systemText.delete('1.0', tk.END)
-        totalVelocity = 0.0
-        carsNumber = 0
-        for road in self.world.roads.values():
-            for lane in road.lanes:
-                carsNumber += len(lane.carsPositions)
-                for carsPosition in lane.carsPositions.values():
-                    totalVelocity += carsPosition.car.speed
-
-        if self.collect is True and self.world.time < settings.setDict["collecting_time"]:
-            with open('data/data.csv', 'a', encoding='utf8') as f:
-                fwriter = csv.writer(f, delimiter=',')
-                fwriter.writerow([self.world.time, totalVelocity / carsNumber * 3.6])
-            f.close()
-        elif self.collect is True and self.world.time > settings.setDict["collecting_time"]:
-            print('Finish collecting')
-            self.collect = False
-
-        self.systemText.insert(tk.INSERT, 'Avg Speed: {0:.3} km/hr'.format(totalVelocity / carsNumber * 3.6 if carsNumber != 0 else 0.0))
-
     @property
     def running(self):
         return self._running
@@ -227,6 +218,7 @@ class Operation(tk.Frame):
 
     def runModel(self):
         self.running = True
+        self.firstActivate = True
         self.playBtn.config(image=self.pausePNG, text = "Pause", command=lambda : self.stop())
         self.display()
 
@@ -237,14 +229,26 @@ class Operation(tk.Frame):
         self.world.carsNumber = self.carSlider.get()
         self.timeScale = self.timeSlider.get()
         self.timeInterval = self.timeScale
-        self.showRoadInfo()
-        self.showSystemInfo()
+        self.systemQueue.put(True)
+        self.roadQueue.put(pickle.dumps({"state": True, "selectedRoad": self.selectedRoad}))
+
+        if self.firstActivate is True:
+            self.systemThread = SystemInfoThread(self.systemText, self.world, self.systemQueue)
+            self.systemThread.daemon = True
+            self.systemThread.start()
+            self.roadThread = RoadInfoThread(self.scaleMap, self.roadText, self.roadQueue)
+            self.roadThread.daemon = True
+            self.roadThread.start()
+            self.firstActivate = False
+
         self.world.onTick(self.timeInterval)
         if self.running is True:
             self.animationID = self.root.after(self.fps, self.display)
 
     def stop(self):
         self.running = False
+        self.systemQueue.put(False)
+        self.roadQueue.put(pickle.dumps({"state": False, "selectedRoad": self.selectedRoad}))
         self.playBtn.config(image=self.playPNG, text = "Action", command=lambda : self.runModel())
 
     def debugSwitch(self):
@@ -274,7 +278,20 @@ class Operation(tk.Frame):
             self.runModel()
 
     def collectData(self):
-        self.collect = True
+        collectThread = CollectDataThread(self.world, self.systemText)
+        collectThread.daemon = True
+        collectThread.start()
+        if not collectThread.is_alive():
+            collectThread.join()
+
+    def terminate(self, mainRoot):
+        self.stop()
+        if self.systemThread is not None or self.roadThread is not None:
+            self.systemThread.join()
+            self.roadThread.join()
+        mainRoot.destroy()
+
+
 
 
 
