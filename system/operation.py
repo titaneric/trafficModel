@@ -10,6 +10,7 @@ from system.visualizer import Visualizer
 from system.functionThread import SystemInfoThread
 from system.functionThread import RoadInfoThread
 from system.functionThread import CollectDataThread
+from system.functionThread import CarInfoThread
 import settings
 import queue
 import pickle
@@ -60,6 +61,7 @@ class Operation(tk.Frame):
         self.debugBtn = toolDict['debugBtn']
         self.timeSlider = toolDict['timeSlider']
         self.selectedRoad = None
+        self.selectedCar = None
         self.carSlider = toolDict['carSlider']
         self.carSlider.set(self.world.carsNumber)
         self.timeSlider.set(self.timeInterval)
@@ -67,9 +69,11 @@ class Operation(tk.Frame):
         self.animationID = None
         self.systemThread = None
         self.roadThread = None
+        self.carThread = None
         self.firstActivate = False
         self.systemQueue = queue.Queue()
         self.roadQueue = queue.Queue()
+        self.carQueue = queue.Queue()
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
@@ -189,23 +193,7 @@ class Operation(tk.Frame):
             car = self.world.cars[carID]
             if (car.coords - coords).length < distance:
                 distance = (car.coords - coords).length
-                self.visualizer.selectedCar = car
-
-    def showRoadInfo(self):
-        if self.selectedRoad is not None:
-            self.roadText.delete('1.0', tk.END)
-            carsNumber = 0
-            totalVelocity = 0.0
-            carsArea = 0.0
-            for lane in self.selectedRoad.lanes:
-                carsNumber += len(lane.carsPositions)
-                for carsPosition in lane.carsPositions.values():
-                    totalVelocity += carsPosition.car.speed
-                    carsArea += carsPosition.car.length * self.scale 
-
-            density = carsArea / self.selectedRoad.length
-            self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3} km/hr\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
-            , totalVelocity / carsNumber * 3.6 if carsNumber != 0 else 0.0, density))
+                self.selectedCar = car
 
 
     @property
@@ -230,15 +218,18 @@ class Operation(tk.Frame):
         self.timeScale = self.timeSlider.get()
         self.timeInterval = self.timeScale
         self.systemQueue.put(True)
-        self.roadQueue.put(pickle.dumps({"state": True, "selectedRoad": self.selectedRoad}))
-
+        self.roadQueue.put(pickle.dumps({"state": True, "selectedRoad": self.selectedRoad, "scale": self.scale}))
+        self.carQueue.put(pickle.dumps({"state": True, "selectedCar": self.selectedCar, "debug": self.debug}))
         if self.firstActivate is True:
             self.systemThread = SystemInfoThread(self.systemText, self.world, self.systemQueue)
             self.systemThread.daemon = True
             self.systemThread.start()
-            self.roadThread = RoadInfoThread(self.scaleMap, self.roadText, self.roadQueue)
+            self.roadThread = RoadInfoThread(self.roadText, self.roadQueue)
             self.roadThread.daemon = True
             self.roadThread.start()
+            self.carThread = CarInfoThread(self.canvas, self.carText, self.carQueue, self.world)
+            self.carThread.daemon = True
+            self.carThread.start()
             self.firstActivate = False
 
         self.world.onTick(self.timeInterval)
@@ -248,7 +239,8 @@ class Operation(tk.Frame):
     def stop(self):
         self.running = False
         self.systemQueue.put(False)
-        self.roadQueue.put(pickle.dumps({"state": False, "selectedRoad": self.selectedRoad}))
+        self.roadQueue.put(pickle.dumps({"state": False, "selectedRoad": self.selectedRoad, "scale": self.scale}))
+        self.carQueue.put(pickle.dumps({"state": False, "selectedCar": self.selectedCar, "debug": self.debug}))        
         self.playBtn.config(image=self.playPNG, text = "Action", command=lambda : self.runModel())
 
     def debugSwitch(self):
@@ -286,9 +278,10 @@ class Operation(tk.Frame):
 
     def terminate(self, mainRoot):
         self.stop()
-        if self.systemThread is not None or self.roadThread is not None:
+        if self.systemThread is not None or self.roadThread is not None or self.carThread is not None:
             self.systemThread.join()
             self.roadThread.join()
+            self.carThread.join()
         mainRoot.destroy()
 
 
