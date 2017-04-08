@@ -284,6 +284,12 @@ class Operation(tk.Frame):
             self.carThread.join()
         mainRoot.destroy()
 
+    def generateMap(self):
+        self.canvas.delete("all")
+        self.world.generateMap()
+        self.visualizer.drawGrid()
+        self.visualizer.drawWorld()
+
 
 
 

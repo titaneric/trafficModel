@@ -45,7 +45,7 @@ debug.pack(side=LEFT, padx=2, pady=2)
 
 gridMap = Button(buttonGroup, text="New Map")
 mapPNG = PhotoImage(file="png/map.png")
-gridMap.config(compound=LEFT, image=mapPNG, width="70", height="24", bg="#FFFFFF", command=lambda: buildMapJSON())
+gridMap.config(compound=LEFT, image=mapPNG, width="70", height="24", bg="#FFFFFF", command=lambda: op.generateMap())
 gridMap.pack(side=LEFT, padx=2, pady=2)
 
 timeSliderName = Entry(sliderGroup, width='10')

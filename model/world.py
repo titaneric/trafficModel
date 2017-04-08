@@ -1,5 +1,6 @@
 import random
 import json
+import settings
 from model.car import Car
 from model.road import Road
 from model.intersection import Intersection
@@ -111,9 +112,44 @@ class World():
                 car.trajectory.temp.lane = car.trajectory.getCurve()
                 car.trajectory.temp.position = car.trajectory.temp.lane.length * relativePos
 
-    def generateMap(self):
+    def generateMap(self, maxX=2, maxY=2, minX=-2, minY=-2):
         self.set()
-        
+        intersectionNumber = 20
+        myMap = dict()
+        self.carsNumber = 50
+        gridSize = settings.setDict["grid_size"]
+        step = 5* gridSize
+        while intersectionNumber > 0:
+            x = random.randint(minX, maxX)
+            y = random.randint(minY, maxY)
+            if not myMap.get((x, y)):
+                rect = Rect(step * x, step * y, gridSize, gridSize)
+                intersection = Intersection(rect)
+                self.addIntersection(intersection)
+                myMap[(x, y)] = intersection
+                intersectionNumber -= 1
+
+        for x in range(minX, maxX + 1, 1):
+            previous = None
+            for y in range(minY, maxY + 1, 1):
+                intersection = myMap.get((x, y))
+                if intersection:
+                    if random.random() < 0.9 and previous:
+                        self.addRoad(Road(intersection, previous))
+                        self.addRoad(Road(previous, intersection))
+                    previous = intersection
+
+        for y in range(minY, maxY + 1, 1):
+            previous = None
+            for x in range(minX, maxX + 1, 1):
+                intersection = myMap.get((x, y))
+                if intersection:
+                    if random.random() < 0.9 and previous:
+                        self.addRoad(Road(intersection, previous))
+                        self.addRoad(Road(previous, intersection))
+                    previous = intersection
+
+
 
 
 
