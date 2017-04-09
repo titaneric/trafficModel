@@ -1,7 +1,7 @@
 setDict = {"canvas_height": 1600,
             "canvas_width": 1600,
             "carMin": 0,
-            "carMax": 30,
+            "carMax": 100,
             "timeMax": 3,
             "timeMin": 1,
             "grid_size": 12,

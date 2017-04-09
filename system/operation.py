@@ -66,14 +66,17 @@ class Operation(tk.Frame):
         self.carSlider.set(self.world.carsNumber)
         self.timeSlider.set(self.timeInterval)
         self.debug = False
+        self.collect = False
         self.animationID = None
         self.systemThread = None
         self.roadThread = None
         self.carThread = None
+        self.collectThread = None
         self.firstActivate = False
         self.systemQueue = queue.Queue()
         self.roadQueue = queue.Queue()
         self.carQueue = queue.Queue()
+        self.dataQueue = queue.Queue()
         self.distance = settings.setDict["grid_size"]
         self.canvas_height = settings.setDict["canvas_height"]
         self.canvas_width = settings.setDict["canvas_width"]
@@ -207,6 +210,8 @@ class Operation(tk.Frame):
     def runModel(self):
         self.running = True
         self.firstActivate = True
+        if self.collect and not self.collectThread.is_alive:
+            self.collectData()
         self.playBtn.config(image=self.pausePNG, text = "Pause", command=lambda : self.stop())
         self.display()
 
@@ -217,14 +222,15 @@ class Operation(tk.Frame):
         self.world.carsNumber = self.carSlider.get()
         self.timeScale = self.timeSlider.get()
         self.timeInterval = self.timeScale
-        self.systemQueue.put(True)
+        self.systemQueue.put(pickle.dumps({"state": True, "scale": self.scale}))
         self.roadQueue.put(pickle.dumps({"state": True, "selectedRoad": self.selectedRoad, "scale": self.scale}))
         self.carQueue.put(pickle.dumps({"state": True, "selectedCar": self.selectedCar, "debug": self.debug}))
+        self.dataQueue.put(pickle.dumps({"state": True, "scale": self.scale}))
         if self.firstActivate is True:
             self.systemThread = SystemInfoThread(self.systemText, self.world, self.systemQueue)
             self.systemThread.daemon = True
             self.systemThread.start()
-            self.roadThread = RoadInfoThread(self.roadText, self.roadQueue)
+            self.roadThread = RoadInfoThread(self.roadText, self.world, self.roadQueue)
             self.roadThread.daemon = True
             self.roadThread.start()
             self.carThread = CarInfoThread(self.canvas, self.carText, self.carQueue, self.world)
@@ -238,9 +244,10 @@ class Operation(tk.Frame):
 
     def stop(self):
         self.running = False
-        self.systemQueue.put(False)
+        self.systemQueue.put(pickle.dumps({"state": False, "scale": self.scale}))
         self.roadQueue.put(pickle.dumps({"state": False, "selectedRoad": self.selectedRoad, "scale": self.scale}))
         self.carQueue.put(pickle.dumps({"state": False, "selectedCar": self.selectedCar, "debug": self.debug}))        
+        self.dataQueue.put(pickle.dumps({"state": False, "scale": self.scale}))
         self.playBtn.config(image=self.playPNG, text = "Action", command=lambda : self.runModel())
 
     def debugSwitch(self):
@@ -270,18 +277,22 @@ class Operation(tk.Frame):
             self.runModel()
 
     def collectData(self):
-        collectThread = CollectDataThread(self.world, self.systemText)
-        collectThread.daemon = True
-        collectThread.start()
-        if not collectThread.is_alive():
-            collectThread.join()
-
+        self.collectThread = CollectDataThread(self.world, self.dataQueue)
+        self.collectThread.daemon = True
+        self.collectThread.start()
+        self.collect = True
+    
     def terminate(self, mainRoot):
         self.stop()
-        if self.systemThread is not None or self.roadThread is not None or self.carThread is not None:
+        if self.systemThread is not None or self.roadThread is not None \
+            or self.carThread is not None:
             self.systemThread.join()
             self.roadThread.join()
             self.carThread.join()
+        
+        if self.collectThread is not None:
+            self.collectThread.join()
+
         mainRoot.destroy()
 
     def generateMap(self):

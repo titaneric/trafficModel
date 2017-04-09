@@ -18,6 +18,7 @@ class World():
         self.cars = {}
         self.carsNumber = 0
         self.time = 0
+        self.trafficFlow = 0
         self.graphList = {}
 
     def load(self):
@@ -36,6 +37,35 @@ class World():
             road.id = info['id']
             self.addRoad(road)
 
+    def systemInfo(self, scale):
+        totalVelocity = 0.0
+        carsNumber = 0
+        roadArea = 0.0
+        carsArea = 0.0
+        for road in self.roads.values():
+            roadArea += road.length
+            for lane in road.lanes:
+                carsNumber += len(lane.carsPositions)
+                for carsPosition in lane.carsPositions.values():
+                    totalVelocity += carsPosition.car.speed
+                    carsArea += carsPosition.car.length * scale
+        avgDensity = carsArea / roadArea
+        avgSpeed = totalVelocity / carsNumber if carsNumber != 0 else 0.0
+        return avgSpeed, avgDensity
+
+    def roadInfo(self, road, scale):
+        carsNumber = 0
+        totalVelocity = 0.0
+        carsArea = 0.0
+        for lane in road.lanes:
+            carsNumber += len(lane.carsPositions)
+            for carsPosition in lane.carsPositions.values():
+                totalVelocity += carsPosition.car.speed
+                carsArea += carsPosition.car.length * scale
+
+        density = carsArea / road.length
+        avgSpeed = totalVelocity / carsNumber if carsNumber != 0 else 0.0
+        return avgSpeed, density
 
     def refreshCar(self):
         if len(self.cars) < self.carsNumber:
@@ -52,7 +82,6 @@ class World():
                 # self.addCar(Car(lane=lane, position=0))
                 self.addCar(Car(graphList=self.graphList))
 
-
     def addCar(self, car):
         self.cars[car.id] = car
 
@@ -63,6 +92,7 @@ class World():
 
     def removeCar(self, car):
         self.cars.pop(car.id)
+        self.trafficFlow += 1
 
     def getIntersection(self, ID):
         return self.intersections[ID]
@@ -96,8 +126,7 @@ class World():
                         car.trajectory.next.lane.sourceSegment = lane.sourceSegment
                         car.trajectory.next.lane.targetSegment = lane.targetSegment
                         car.trajectory.next.lane.update()
-                    
-                        
+
     def syncCurve(self):
         for car in self.cars.values():
             if car.trajectory.timeToMakeTurn() and car.trajectory.canEnterIntersection() \
@@ -112,13 +141,13 @@ class World():
                 car.trajectory.temp.lane = car.trajectory.getCurve()
                 car.trajectory.temp.position = car.trajectory.temp.lane.length * relativePos
 
-    def generateMap(self, maxX=2, maxY=2, minX=-2, minY=-2):
+    def generateMap(self, maxX=10, maxY=10, minX=0, minY=0):
         self.set()
         intersectionNumber = 20
         myMap = dict()
-        self.carsNumber = 50
+        self.carsNumber = 30
         gridSize = settings.setDict["grid_size"]
-        step = 5* gridSize
+        step = 5 * gridSize
         while intersectionNumber > 0:
             x = random.randint(minX, maxX)
             y = random.randint(minY, maxY)
@@ -148,10 +177,6 @@ class World():
                         self.addRoad(Road(intersection, previous))
                         self.addRoad(Road(previous, intersection))
                     previous = intersection
-
-
-
-
 
     def onTick(self, delta):
         self.time += delta
