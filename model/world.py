@@ -31,7 +31,6 @@ class World():
             intersection.id = info['id']
             self.addIntersection(intersection)
 
-
         for info in map["roads"].values():
             road = Road(self.intersections[info["source"]], self.intersections[info["target"]])
             road.id = info['id']
@@ -78,7 +77,6 @@ class World():
         if road is not None:
             lane = random.choice(road.lanes)
             if lane is not None:
-
                 # self.addCar(Car(lane=lane, position=0))
                 self.addCar(Car(graphList=self.graphList))
 
@@ -89,6 +87,7 @@ class World():
         car = random.choice(list(self.cars.values()))
         if car is not None:
             car.alive = False
+            self.trafficFlow -= 1
 
     def removeCar(self, car):
         self.cars.pop(car.id)
@@ -130,7 +129,7 @@ class World():
     def syncCurve(self):
         for car in self.cars.values():
             if car.trajectory.timeToMakeTurn() and car.trajectory.canEnterIntersection() \
-                and car.trajectory.isValidTurn() and car.trajectory.temp.lane is not None:
+                    and car.trajectory.isValidTurn() and car.trajectory.temp.lane is not None:
                 relativePos = car.trajectory.temp.relativePosition
                 previousA = car.trajectory.temp.lane.A
                 previousB = car.trajectory.temp.lane.B

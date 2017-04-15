@@ -11,9 +11,9 @@ Mouse wheel can zoom the area.
 
 Mouse click and drag move the area.
 # Known problem
+So far the model haven't any problem. 
 
-So far the model haven't any problem. If notice some bugs, please generously report to me, thank you. 
-
+If notice some bugs, please generously report to me, thank you. 
 # Outlook
 Will add the multiple lane in single road and the multiple roads in single intersection function.
 

@@ -1,6 +1,5 @@
 from tkinter import *
 from system.operation import Operation
-from system.map import buildMapJSON
 from model.world import World
 import settings
 

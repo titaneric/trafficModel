@@ -16,18 +16,18 @@ class SystemInfoThread(threading.Thread):
         self.stateQueue = stateQueue
 
     def run(self):
-            while True:
-                try:
-                    d = pickle.loads(self.stateQueue.get())
-                    state = d["state"]
-                    if state is False:
-                        break
-                    scale = d["scale"]
-                    self.systemText.delete('1.0', tk.END)
-                    avgSpeed, avgDensity = self.world.systemInfo(scale)
-                    self.systemText.insert(tk.INSERT, 'Avg Speed: {0:.3} km/hr'.format(avgSpeed * 3.6))
-                finally:
-                    self.stateQueue.task_done()
+        while True:
+            try:
+                d = pickle.loads(self.stateQueue.get())
+                state = d["state"]
+                if state is False:
+                    break
+                scale = d["scale"]
+                self.systemText.delete('1.0', tk.END)
+                avgSpeed, avgDensity = self.world.systemInfo(scale)
+                self.systemText.insert(tk.INSERT, 'Avg Speed: {0:.3} km/hr'.format(avgSpeed * 3.6))
+            finally:
+                self.stateQueue.task_done()
 
 
 class RoadInfoThread(threading.Thread):
@@ -67,21 +67,31 @@ class CollectDataThread(threading.Thread):
     def run(self):
         print("Start collecting")
         dataFile = "data/data.csv"
+        '''
         if os.path.isfile(dataFile):
             os.remove(dataFile)
-
+        '''
         while True:
             try:
                 d = pickle.loads(self.stateQueue.get())
                 state = d["state"]
                 if state is False:
+                    '''
+                    with open(dataFile, 'a+', encoding='utf8') as f:
+                        lines = f.readlines()
+                        lines = lines[:-1]
+                        fwriter = csv.writer(f, delimiter=',')
+                        for row in lines:
+                            fwriter.writerow(row)
+                    f.close()
+                    '''
                     break
                 if self.world.time < settings.setDict["collecting_time"]:
                     scale = d["scale"]
                     avgSpeed, density = self.world.systemInfo(scale)
                     with open(dataFile, 'a', encoding='utf8') as f:
                         fwriter = csv.writer(f, delimiter=',')
-                        fwriter.writerow([self.world.time, avgSpeed, self.world.trafficFlow / self.world.time, density])
+                        fwriter.writerow([self.world.time, avgSpeed * 3.6, self.world.trafficFlow / self.world.time, density])
                     f.close()
                 else:
                     print('Finish collecting')
