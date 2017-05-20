@@ -9,8 +9,11 @@ from geometry.curve import Curve
 
 
 class World():
-    def __init__(self):
+    def __init__(self, exp=None):
         self.set()
+        self.exp = None
+        if exp is not None:
+            self.exp = True
 
     def set(self):
         self.intersections = {}
@@ -36,21 +39,21 @@ class World():
             road.id = info['id']
             self.addRoad(road)
 
-    def systemInfo(self, scale):
+    def systemInfo(self, scale=1):
         totalVelocity = 0.0
-        carsNumber = 0
+        # carsNumber = 0
         roadArea = 0.0
         carsArea = 0.0
         for road in self.roads.values():
-            roadArea += road.length
+            roadArea += road.length * settings.setDict["grid_size"] / 2 * scale
             for lane in road.lanes:
-                carsNumber += len(lane.carsPositions)
+                # carsNumber += len(lane.carsPositions)
                 for carsPosition in lane.carsPositions.values():
                     totalVelocity += carsPosition.car.speed
-                    carsArea += carsPosition.car.length * scale
+                    carsArea += carsPosition.car.length * scale * carsPosition.car.width
         avgDensity = carsArea / roadArea
-        avgSpeed = totalVelocity / carsNumber if carsNumber != 0 else 0.0
-        return avgSpeed, avgDensity
+        avgSpeed = totalVelocity / len(self.cars)
+        return avgSpeed, avgDensity, self.trafficFlow
 
     def roadInfo(self, road, scale):
         carsNumber = 0
@@ -60,9 +63,9 @@ class World():
             carsNumber += len(lane.carsPositions)
             for carsPosition in lane.carsPositions.values():
                 totalVelocity += carsPosition.car.speed
-                carsArea += carsPosition.car.length * scale
+                carsArea += carsPosition.car.length * scale * carsPosition.car.width
 
-        density = carsArea / road.length
+        density = carsArea / (road.length * settings.setDict["grid_size"] / 2 * scale)
         avgSpeed = totalVelocity / carsNumber if carsNumber != 0 else 0.0
         return avgSpeed, density
 
@@ -92,6 +95,7 @@ class World():
     def removeCar(self, car):
         self.cars.pop(car.id)
         self.trafficFlow += 1
+        self.addRandomCar()
 
     def getIntersection(self, ID):
         return self.intersections[ID]
@@ -179,11 +183,17 @@ class World():
 
     def onTick(self, delta):
         self.time += delta
+        self.trafficFlow = 0
+
         self.refreshCar()
-        self.syncLane()
-        self.syncCurve()
+
+        if self.exp is None:
+            self.syncLane()
+            self.syncCurve()
         for car in list(self.cars.values()):
             car.move(delta)
+            if self.exp is not None and not car.alive:
+                self.removeCar(car)
 
 
 

@@ -97,23 +97,23 @@ toolDict['debugBtn'] = debug
 
 screen = Frame(root)
 op = Operation(screen, toolDict, world)
-op.pack(fill = "both", expand = True)
+op.pack(fill="both", expand=True)
 
-buttonGroup.config(bg = "#90C3D4")
+buttonGroup.config(bg="#90C3D4")
 buttonGroup.pack(side=LEFT)
 
-sliderGroup.config(bg = "#90C3D4")
+sliderGroup.config(bg="#90C3D4")
 sliderGroup.pack(side=LEFT)
 
-function.config(bg = "#90C3D4")
+function.config(bg="#90C3D4")
 function.pack(side=LEFT)
 
 info.config(bg="#90C3D4")
 info.pack(side=RIGHT)
 
-toolbar.config(bg = "#90C3D4")
-toolbar.pack(side = TOP, fill = X)
+toolbar.config(bg="#90C3D4")
+toolbar.pack(side=TOP, fill=X)
 
-screen.pack(side = BOTTOM, fill = X)
+screen.pack(side=BOTTOM, fill=X)
 
 root.mainloop()

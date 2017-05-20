@@ -24,7 +24,7 @@ class SystemInfoThread(threading.Thread):
                     break
                 scale = d["scale"]
                 self.systemText.delete('1.0', tk.END)
-                avgSpeed, avgDensity = self.world.systemInfo(scale)
+                avgSpeed, avgDensity, trafficFlow = self.world.systemInfo(scale)
                 self.systemText.insert(tk.INSERT, 'Avg Speed: {0:.3} km/hr'.format(avgSpeed * 3.6))
             finally:
                 self.stateQueue.task_done()
@@ -88,7 +88,7 @@ class CollectDataThread(threading.Thread):
                     break
                 if self.world.time < settings.setDict["collecting_time"]:
                     scale = d["scale"]
-                    avgSpeed, density = self.world.systemInfo(scale)
+                    avgSpeed, density, flow = self.world.systemInfo(scale)
                     with open(dataFile, 'a', encoding='utf8') as f:
                         fwriter = csv.writer(f, delimiter=',')
                         fwriter.writerow([self.world.time, avgSpeed * 3.6, self.world.trafficFlow / self.world.time, density])
