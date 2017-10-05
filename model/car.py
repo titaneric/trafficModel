@@ -1,8 +1,10 @@
-from model.trajectory import Trajectory
+import math
 import random
 import itertools
+
 import matplotlib.colors as colors
-import math
+
+from model.trajectory import Trajectory
 from model.direction import Direction
 
 

@@ -1,5 +1,9 @@
+import queue
+import pickle
+
 import tkinter as tk
 import pandas as pd
+
 from model.world import World
 from model.intersection import Intersection
 from model.road import Road
@@ -9,11 +13,8 @@ from geometry.point import Point
 from system.visualizer import Visualizer
 from system.functionThread import SystemInfoThread
 from system.functionThread import RoadInfoThread
-from system.functionThread import CollectDataThread
 from system.functionThread import CarInfoThread
 import settings
-import queue
-import pickle
 
 
 class Operation(tk.Frame):
@@ -208,8 +209,6 @@ class Operation(tk.Frame):
     def runModel(self):
         self.running = True
         self.firstActivate = True
-        if self.collect and self.collectThread is None:
-            self.collectData()
         self.playBtn.config(image=self.pausePNG, text = "Pause", command=lambda : self.stop())
         self.display()
 
@@ -271,12 +270,6 @@ class Operation(tk.Frame):
             self.runModel()
         else:
             self.runModel()
-
-    def collectData(self):
-        self.collectThread = CollectDataThread(self.world, self.dataQueue)
-        self.collectThread.daemon = True
-        self.collectThread.start()
-        self.collect = True
 
     def terminate(self, mainRoot):
         self.disableThread()

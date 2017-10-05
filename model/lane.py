@@ -1,4 +1,5 @@
 import math
+
 from geometry.segment import Segment
 from model.direction import Direction
 

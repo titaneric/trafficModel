@@ -1,4 +1,5 @@
 import copy
+
 from geometry.point import Point
 from geometry.segment import Segment
 

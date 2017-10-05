@@ -1,6 +1,9 @@
 import math
 import itertools
+
 from model.lane import Lane
+
+
 class LanePosition():
     id_generator = itertools.count(1)
     def __init__(self, car, lane = None, position = None):

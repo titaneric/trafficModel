@@ -1,4 +1,6 @@
 from geometry.segment import Segment
+
+
 class Curve():
     def __init__(self, A, B, O, Q):
         self.A = A

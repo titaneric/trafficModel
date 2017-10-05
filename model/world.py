@@ -1,11 +1,11 @@
 import random
 import json
+
 import settings
 from model.car import Car
 from model.road import Road
 from model.intersection import Intersection
 from geometry.rect import Rect
-from geometry.curve import Curve
 
 
 class World():

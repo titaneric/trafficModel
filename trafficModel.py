@@ -1,87 +1,88 @@
-from tkinter import *
+import tkinter as tk
 from system.operation import Operation
 from model.world import World
 import settings
 
 
-root = Tk()
-img = PhotoImage(file='png/sports-car.png')
+root = tk.Tk()
+img = tk.PhotoImage(file='png/sports-car.png')
 root.tk.call('wm', 'iconphoto', root._w, img)
-menu = Menu(root)
-
-
-subMenu = Menu(menu)
-menu.add_cascade(label='Experiment', menu=subMenu)
-subMenu.add_command(label='Collect Data', command=lambda: op.collectData())
+menu = tk.Menu(root)
 
 root.config(menu=menu)
 root.protocol("WM_DELETE_WINDOW", lambda: op.terminate(root))
-toolbar = Frame(root)
-function = Frame(toolbar)
-info = Frame(toolbar)
+toolbar = tk.Frame(root)
+function = tk.Frame(toolbar)
+info = tk.Frame(toolbar)
 world = World()
 world.load()
 
-buttonGroup = Frame(function)
-sliderGroup = Frame(function)
+buttonGroup = tk.Frame(function)
+sliderGroup = tk.Frame(function)
 
 
-play = Button(buttonGroup, text="Action")
-playPNG = PhotoImage(file="png/play-button.png")
-pausePNG = PhotoImage(file="png/pause.png")
-play.config(compound=LEFT, image=playPNG, width="70", height="24", bg="#FFFFFF", command=lambda: op.runModel())
-play.pack(side=LEFT, padx=2, pady=2)
+play = tk.Button(buttonGroup, text="Action")
+playPNG = tk.PhotoImage(file="png/play-button.png")
+pausePNG = tk.PhotoImage(file="png/pause.png")
+play.config(compound=tk.LEFT, image=playPNG, width="70", 
+            height="24", bg="#FFFFFF", command=lambda: op.runModel())
+play.pack(side=tk.LEFT, padx=2, pady=2)
 
-refresh = Button(buttonGroup, text="Reload")
-refreshPNG = PhotoImage(file="png/refresh-button.png")
-refresh.config(compound=LEFT, image=refreshPNG, width="70", height="24", bg="#FFFFFF", command=lambda: op.refresh())
-refresh.pack(side=LEFT, padx=2, pady=2)
+refresh = tk.Button(buttonGroup, text="Reload")
+refreshPNG = tk.PhotoImage(file="png/refresh-button.png")
+refresh.config(compound=tk.LEFT, image=refreshPNG, width="70", 
+               height="24", bg="#FFFFFF", command=lambda: op.refresh())
+refresh.pack(side=tk.LEFT, padx=2, pady=2)
 
-debug = Button(buttonGroup, text="Debug")
-debugPNG = PhotoImage(file="png/debug.png")
-debug.config(compound=LEFT, image=debugPNG, width="70", height="24", bg="#FFFFFF", command=lambda: op.debugSwitch())
-debug.pack(side=LEFT, padx=2, pady=2)
+debug = tk.Button(buttonGroup, text="Debug")
+debugPNG = tk.PhotoImage(file="png/debug.png")
+debug.config(compound=tk.LEFT, image=debugPNG, width="70", 
+             height="24", bg="#FFFFFF", command=lambda: op.debugSwitch())
+debug.pack(side=tk.LEFT, padx=2, pady=2)
 
-gridMap = Button(buttonGroup, text="New Map")
-mapPNG = PhotoImage(file="png/map.png")
-gridMap.config(compound=LEFT, image=mapPNG, width="70", height="24", bg="#FFFFFF", command=lambda: op.generateMap())
-gridMap.pack(side=LEFT, padx=2, pady=2)
+gridMap = tk.Button(buttonGroup, text="New Map")
+mapPNG = tk.PhotoImage(file="png/map.png")
+gridMap.config(compound=tk.LEFT, image=mapPNG, width="70", 
+               height="24", bg="#FFFFFF", command=lambda: op.generateMap())
+gridMap.pack(side=tk.LEFT, padx=2, pady=2)
 
-timeSliderName = Entry(sliderGroup, width='10')
+timeSliderName = tk.Entry(sliderGroup, width='10')
 timeSliderName.grid(row=0, column=0)
 timeSliderName.insert(0, "Time scale")
 
-timeSlider = Scale(sliderGroup, from_=settings.setDict["timeMin"], to=settings.setDict["timeMax"], orient=HORIZONTAL,
-    troughcolor="#90C3D4", bg="#FFFFFF")
+timeSlider = tk.Scale(sliderGroup, from_=settings.setDict["timeMin"], 
+                      to=settings.setDict["timeMax"], orient=tk.HORIZONTAL,
+                      troughcolor="#90C3D4", bg="#FFFFFF")
 timeSlider.grid(row=1, column=0)
 
-carSliderName = Entry(sliderGroup, width='10')
+carSliderName = tk.Entry(sliderGroup, width='10')
 carSliderName.grid(row=0, column=1)
 carSliderName.insert(0, "Cars Number")
 
-carSlider = Scale(sliderGroup, from_=settings.setDict["carMin"], to=settings.setDict["carMax"], orient=HORIZONTAL,
-    troughcolor="#90C3D4", bg="#FFFFFF")
+carSlider = tk.Scale(sliderGroup, from_=settings.setDict["carMin"], 
+                     to=settings.setDict["carMax"], orient=tk.HORIZONTAL,
+                     troughcolor="#90C3D4", bg="#FFFFFF")
 carSlider.grid(row=1, column=1)
 
-systemName = Entry(info, width='10')
+systemName = tk.Entry(info, width='10')
 systemName.grid(row=0, column=0)
 systemName.insert(0, "System")
 
-systemText = Text(info, height=2, width=40)
+systemText = tk.Text(info, height=2, width=40)
 systemText.grid(row=1, column=0)
 
-roadName = Entry(info, width='10')
+roadName = tk.Entry(info, width='10')
 roadName.grid(row=0, column=1)
 roadName.insert(0, "Road info")
 
-roadText = Text(info, height=2, width=45)
+roadText = tk.Text(info, height=2, width=45)
 roadText.grid(row=1, column=1)
 
-carName = Entry(info, width='10')
+carName = tk.Entry(info, width='10')
 carName.grid(row=0, column=2)
 carName.insert(0, "Car info")
 
-carText = Text(info, height=2, width=40)
+carText = tk.Text(info, height=2, width=40)
 carText.grid(row=1, column=2)
 
 toolDict = dict()
@@ -95,25 +96,25 @@ toolDict['carSlider'] = carSlider
 toolDict['timeSlider'] = timeSlider
 toolDict['debugBtn'] = debug
 
-screen = Frame(root)
+screen = tk.Frame(root)
 op = Operation(screen, toolDict, world)
 op.pack(fill="both", expand=True)
 
 buttonGroup.config(bg="#90C3D4")
-buttonGroup.pack(side=LEFT)
+buttonGroup.pack(side=tk.LEFT)
 
 sliderGroup.config(bg="#90C3D4")
-sliderGroup.pack(side=LEFT)
+sliderGroup.pack(side=tk.LEFT)
 
 function.config(bg="#90C3D4")
-function.pack(side=LEFT)
+function.pack(side=tk.LEFT)
 
 info.config(bg="#90C3D4")
-info.pack(side=RIGHT)
+info.pack(side=tk.RIGHT)
 
 toolbar.config(bg="#90C3D4")
-toolbar.pack(side=TOP, fill=X)
+toolbar.pack(side=tk.TOP, fill=tk.X)
 
-screen.pack(side=BOTTOM, fill=X)
+screen.pack(side=tk.BOTTOM, fill=tk.X)
 
 root.mainloop()

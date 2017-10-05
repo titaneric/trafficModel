@@ -1,12 +1,7 @@
 import numpy as np
-import tkinter as tk
-from model.world import World
-from model.intersection import Intersection
-from model.road import Road
-from model.car import Car
+
 from geometry.rect import Rect
 from geometry.point import Point
-from geometry.segment import Segment
 import settings
 
 

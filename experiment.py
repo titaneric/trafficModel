@@ -1,7 +1,10 @@
-from model.world import World
-from settings import setDict
 import csv
 import sys
+
+from model.world import World
+from settings import setDict
+
+
 START_DENSITY = 0.005
 TERMINATE_DENSITY = 0.9
 STEP = 0.005

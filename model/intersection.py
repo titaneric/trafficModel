@@ -1,7 +1,8 @@
-#from control_signal import ControlSignals
 import copy
 import itertools
+
 from geometry.rect import Rect
+
 
 class Intersection():
     id_generator = itertools.count(1)

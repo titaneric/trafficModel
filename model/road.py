@@ -1,7 +1,7 @@
-from model.lane import Lane
 import itertools
 import copy
-import random
+
+from model.lane import Lane
 
 
 class Road():

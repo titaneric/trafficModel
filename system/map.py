@@ -1,5 +1,6 @@
 import json
-import os
+
+
 S = 5
 intersectionNum = S * S
 interHi = 12.0

@@ -1,9 +1,9 @@
 import threading
-import csv
-import settings
-import tkinter as tk
 import pickle
-import os
+
+import tkinter as tk
+
+import settings
 from model.car import Car
 
 
@@ -53,49 +53,6 @@ class RoadInfoThread(threading.Thread):
                     avgSpeed, density = self.world.roadInfo(self.selectedRoad, scale)
                     self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3} km/hr\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
                     , avgSpeed * 3.6, density))
-            finally:
-                self.stateQueue.task_done()
-
-
-class CollectDataThread(threading.Thread):
-
-    def __init__(self, world, stateQueue):
-        threading.Thread.__init__(self)
-        self.world = world
-        self.stateQueue = stateQueue
-
-    def run(self):
-        print("Start collecting")
-        dataFile = "data/data.csv"
-        '''
-        if os.path.isfile(dataFile):
-            os.remove(dataFile)
-        '''
-        while True:
-            try:
-                d = pickle.loads(self.stateQueue.get())
-                state = d["state"]
-                if state is False:
-                    '''
-                    with open(dataFile, 'a+', encoding='utf8') as f:
-                        lines = f.readlines()
-                        lines = lines[:-1]
-                        fwriter = csv.writer(f, delimiter=',')
-                        for row in lines:
-                            fwriter.writerow(row)
-                    f.close()
-                    '''
-                    break
-                if self.world.time < settings.setDict["collecting_time"]:
-                    scale = d["scale"]
-                    avgSpeed, density, flow = self.world.systemInfo(scale)
-                    with open(dataFile, 'a', encoding='utf8') as f:
-                        fwriter = csv.writer(f, delimiter=',')
-                        fwriter.writerow([self.world.time, avgSpeed * 3.6, self.world.trafficFlow / self.world.time, density])
-                    f.close()
-                else:
-                    print('Finish collecting')
-                    break
             finally:
                 self.stateQueue.task_done()
 
