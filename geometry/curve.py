@@ -1,8 +1,9 @@
 from geometry.segment import Segment
+from geometry.point import Point
 
 
 class Curve():
-    def __init__(self, A, B, O, Q):
+    def __init__(self, A: Point, B: Point, O: Point, Q: Point):
         self.A = A
         self.B = B
         self.O = O
@@ -17,14 +18,13 @@ class Curve():
     def length(self):
         if self._length is None:
             pointsNumber = 10
-            prevoiusPoint = None
+            previousPoint = None
             self._length = 0
             for i in range(pointsNumber):
                 point = self.getPoint(i / pointsNumber)
-                if prevoiusPoint is not None:
-                    self._length += (point - prevoiusPoint).length
-
-                prevoiusPoint = point
+                if previousPoint is not None:
+                    self._length += (point - previousPoint).length
+                previousPoint = point
         return self._length
 
     def getPoint(self, a):

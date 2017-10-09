@@ -64,7 +64,7 @@ class Car():
             if self.source != self.target:
                 break
 
-        self.dijkstra()
+        self.Dijkstra()
 
     def release(self):
         self.trajectory.release()
@@ -72,19 +72,23 @@ class Car():
     def getAcceleration(self):
         nextCarDistance = self.trajectory.nextCarDistance
         distanceToNextCar = max(nextCarDistance["distance"], 0)
-        distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 else float('inf')
+        distanceToNextCar = distanceToNextCar if distanceToNextCar != 0 \
+                            else float('inf')
         distanceToStopLine = self.trajectory.distanceToStopLine
         a = self.maxAcceleration
         b = self.maxDeceleration
-        deltaSpeed = (self.speed - nextCarDistance["car"].speed) if nextCarDistance["car"] is not None else 0
+        deltaSpeed = (self.speed - nextCarDistance["car"].speed) \
+                     if nextCarDistance["car"] is not None else 0
         freeRoadCoeff = (self.speed / self.maxSpeed) ** 4
         distanceGap = self.s0
         timeGap = self.speed * self.timeHeadway
         breakGap = self.speed * deltaSpeed / (2 * math.sqrt(a * b))
         safeDistance = distanceGap + timeGap + breakGap
-        busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 if nextCarDistance["car"] is not None else 0
+        busyRoadCoeff = (safeDistance / distanceToNextCar) ** 2 \
+                        if nextCarDistance["car"] is not None else 0
         safeIntersectionDistance = 1 + timeGap + self.speed ** 2 / (2 * b)
-        intersectionCoeff = (safeIntersectionDistance / distanceToStopLine) ** 2 if distanceToStopLine != 0 else 0
+        intersectionCoeff = ((safeIntersectionDistance / distanceToStopLine) ** 2) \
+                            if distanceToStopLine != 0 else 0
         coeff = (1 - freeRoadCoeff) if nextCarDistance["car"] is None and self.nextLane is None \
             else 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
         # coeff = 1 - freeRoadCoeff - busyRoadCoeff - intersectionCoeff
@@ -113,15 +117,13 @@ class Car():
             self.alive = False
             self.trajectory.current.release()
 
-
-
-
         self.trajectory.moveForward(step)
 
     def pickNextRoad(self):
         intersection = self.trajectory.nextIntersection
         currentLane = self.trajectory.current.lane
-        possibleRoads = [road for road in intersection.roads if road.target is not currentLane.road.source]
+        possibleRoads = [road for road in intersection.roads \
+                        if road.target is not currentLane.road.source]
         if not possibleRoads:
             return None
         nextRoad = random.choice(possibleRoads)
@@ -132,7 +134,8 @@ class Car():
 
     def pickNextLane(self):
         self.nextLane = None
-        nextRoad = self.pickNextRoad() if not self.graph else self.popNextRoad()
+        nextRoad = self.pickNextRoad() if not self.graph \
+                   else self.popNextRoad()
         if not nextRoad:
             self.nextLane = None
             return None
@@ -153,7 +156,7 @@ class Car():
         self.preferedLane = None
         return nextLane
 
-    def dijkstra(self):
+    def Dijkstra(self):
         vertex = set()
         prev = dict()
         shortRange = dict()

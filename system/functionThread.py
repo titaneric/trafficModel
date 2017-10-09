@@ -82,7 +82,7 @@ class CarInfoThread(threading.Thread):
 
             if state is False:
                 break
-            if type(self.selectedCar) is Car and self.selectedCar.alive:
+            if isinstance(self.selectedCar, Car) and self.selectedCar.alive:
                 ID = self.canvas.find_withtag(self.selectedCar.id)
                 self.canvas.itemconfig(ID, outline=settings.setDict['color']['selected'])
                 self.carText.delete('1.0', tk.END)
@@ -95,7 +95,7 @@ class CarInfoThread(threading.Thread):
                         info = "Front carID: {0}, distance: {1}".format(carID, nextCarDistance["distance"])
                         self.carText.insert(tk.INSERT, info)
 
-            elif type(self.selectedCar) is Car and not self.selectedCar.alive:
+            elif isinstance(self.selectedCar, Car) and not self.selectedCar.alive:
                 self.carText.delete('1.0', tk.END)
 
 

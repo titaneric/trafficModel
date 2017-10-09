@@ -2,11 +2,12 @@ import itertools
 import copy
 
 from model.lane import Lane
+from model.intersection import Intersection
 
 
 class Road():
     id_generator = itertools.count(1)
-    def __init__(self, source, target):
+    def __init__(self, source: Intersection, target: Intersection):
         self.id = "road_" + str(next(self.id_generator))
         self.source = source
         self.target = target
@@ -29,7 +30,7 @@ class Road():
     def rightmostLane(self):
         return self.lanes[0]
 
-    def getTurnDirection(self, other):
+    def getTurnDirection(self, other: Intersection):
         assert self.target is other.source
         side1 = self.targetSideId
         side2 = other.sourceSideId

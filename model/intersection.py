@@ -6,7 +6,7 @@ from geometry.rect import Rect
 
 class Intersection():
     id_generator = itertools.count(1)
-    def __init__(self, rect):
+    def __init__(self, rect: Rect):
         self.id = "intersection_" + str(next(self.id_generator))
         self.roads = []
         self.inRoads = []

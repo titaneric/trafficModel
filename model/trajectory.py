@@ -1,10 +1,11 @@
-from model.lane_position import LanePosition
 from geometry.curve import Curve
+from model.lane_position import LanePosition
 from model.direction import Direction
+from model.lane import Lane
 
 
 class Trajectory():
-    def __init__(self, car, lane, position):
+    def __init__(self, car: "Car", lane: Lane, position):
         self.car = car
         assert position is not None
         self.current = LanePosition(self.car, lane, position)

@@ -5,7 +5,7 @@ from model.direction import Direction
 
 
 class Lane():
-    def __init__(self, sourceSegment, targetSegment, road):
+    def __init__(self, sourceSegment: Segment, targetSegment: Segment, road: "Road"):
         self.sourceSegment = sourceSegment
         self.targetSegment = targetSegment
         self.road = road
@@ -44,7 +44,7 @@ class Lane():
         self.length = self.middleLine.length
         self.direction = self.middleLine.direction
 
-    def getTurnDirection(self, other):
+    def getTurnDirection(self, other: Segment):
         directionSegment = Segment(self.middleLine.target, other.middleLine.source)
         turnVector = directionSegment.vector
         carVector = self.middleLine.vector
