@@ -29,4 +29,3 @@ class Point():
 
     def __div__(self, other: float) -> "Point":
         return Point(self.x / other, self.y / other)
-

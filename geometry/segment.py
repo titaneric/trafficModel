@@ -29,7 +29,6 @@ class Segment():
         diff = point - self.source
         return diff.x / self.vector.x if self.vector.x != 0 else 0
 
-
     def subsegment(self, a, b):
         offset = self.vector
         start = self.source + (offset * a)

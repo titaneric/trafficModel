@@ -37,7 +37,7 @@ for car in range(15, 220, 5):
                 break
             if time > START_COLLECT:
                 expList.append({'time': time, 'avgSpeed': avgSpeed,
-                    'flow': flow, 'avgDensity': avgDensity, 'carsNum': len(world.cars)})
+                                'flow': flow, 'avgDensity': avgDensity, 'carsNum': len(world.cars)})
                 sys.stdout.write("\r%d%%" % ((time - START_COLLECT) / 100))
                 sys.stdout.flush()
             time += 1
@@ -51,9 +51,3 @@ for car in range(15, 220, 5):
                 i += 1
             print()
     print('--------------------------------------------')
-
-
-
-
-
-

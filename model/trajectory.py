@@ -109,7 +109,8 @@ class Trajectory():
         distance = max(distance, 0)
         self.current.position += distance
         if self.nextCarDistance["car"] and self.current.lane.id == self.nextCarDistance["car"].trajectory.current.lane.id:
-            assert self.current.position < self.nextCarDistance["car"].trajectory.current.position, "Move Error"
+            assert self.current.position < self.nextCarDistance[
+                "car"].trajectory.current.position, "Move Error"
 
         tempRelativePosition = None
         if self.next.position is not None:
@@ -122,13 +123,13 @@ class Trajectory():
             tempRelativePosition = self.temp.relativePosition
         gap = 2 * self.car.length
         if self.isChangingLanes and self.temp.position is not None and \
-        (self.temp.position > gap) and not self.current.free:
+                (self.temp.position > gap) and not self.current.free:
             self.current.release()
         if self.isChangingLanes and self.next.free and self.temp.position is not None \
-            and ((self.temp.position + gap) > self.temp.lane.length):
+                and ((self.temp.position + gap) > self.temp.lane.length):
             self.next.acquire()
         if self.isChangingLanes and tempRelativePosition is not None and \
-            (tempRelativePosition >= 1):
+                (tempRelativePosition >= 1):
             self._finishChangingLanes()
 
         if self.current.lane and not self.isChangingLanes and not self.car.nextLane:
@@ -147,9 +148,11 @@ class Trajectory():
         p1 = self.current.lane.getPoint(self.current.relativePosition)
         p2 = self.next.lane.getPoint(self.next.relativePosition)
         distance = (p2 - p1).length
-        direction1 = self.current.lane.middleLine.vector.normalized * (distance * 0.3)
+        direction1 = self.current.lane.middleLine.vector.normalized * \
+            (distance * 0.3)
         control1 = p1 + direction1
-        direction2 = self.next.lane.middleLine.vector.normalized * (distance * 0.3)
+        direction2 = self.next.lane.middleLine.vector.normalized * \
+            (distance * 0.3)
         control2 = p2 - direction2
         curve = Curve(p1, p2, control1, control2)
         return curve

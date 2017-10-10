@@ -50,8 +50,8 @@ class Rect():
             and self.top() <= rect.top() and rect.bottom() <= self.bottom()
 
     def getVertices(self):
-        return [Point(self.left(), self.top()), Point(self.right(), self.top()), 
-            Point(self.right(), self.bottom()), Point(self.left(), self.bottom())]
+        return [Point(self.left(), self.top()), Point(self.right(), self.top()),
+                Point(self.right(), self.bottom()), Point(self.left(), self.bottom())]
 
     def getSide(self, i):
         vertices = self.getVertices()

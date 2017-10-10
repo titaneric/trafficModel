@@ -24,8 +24,10 @@ class SystemInfoThread(threading.Thread):
                     break
                 scale = d["scale"]
                 self.systemText.delete('1.0', tk.END)
-                avgSpeed, avgDensity, trafficFlow = self.world.systemInfo(scale)
-                self.systemText.insert(tk.INSERT, 'Avg Speed: {0:.3} km/hr'.format(avgSpeed * 3.6))
+                avgSpeed, avgDensity, trafficFlow = self.world.systemInfo(
+                    scale)
+                self.systemText.insert(
+                    tk.INSERT, 'Avg Speed: {0:.3} km/hr'.format(avgSpeed * 3.6))
             finally:
                 self.stateQueue.task_done()
 
@@ -50,9 +52,10 @@ class RoadInfoThread(threading.Thread):
                 if self.selectedRoad is not None:
                     # print(self.selectedRoad.id)
                     self.roadText.delete('1.0', tk.END)
-                    avgSpeed, density = self.world.roadInfo(self.selectedRoad, scale)
-                    self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3} km/hr\n Density: {2:.3} car length/meter'.format(self.selectedRoad.id
-                    , avgSpeed * 3.6, density))
+                    avgSpeed, density = self.world.roadInfo(
+                        self.selectedRoad, scale)
+                    self.roadText.insert(tk.INSERT, ' Road ID: {0}, Avg Speed: {1:.3} km/hr\n Density: {2:.3} car length/meter'.format(
+                        self.selectedRoad.id, avgSpeed * 3.6, density))
             finally:
                 self.stateQueue.task_done()
 
@@ -60,7 +63,7 @@ class RoadInfoThread(threading.Thread):
 class CarInfoThread(threading.Thread):
 
     def __init__(self, canvas, carText, stateQueue, world):
-        threading.Thread.__init__(self)        
+        threading.Thread.__init__(self)
         self.canvas = canvas
         self.carText = carText
         self.world = world
@@ -74,7 +77,7 @@ class CarInfoThread(threading.Thread):
             state = d["state"]
             debug = d["debug"]
             if self.selectedCar is not None:
-                self.preCar = self.selectedCar 
+                self.preCar = self.selectedCar
             self.selectedCar = d["selectedCar"]
             if self.preCar is not None and self.selectedCar is not self.preCar:
                 ID = self.canvas.find_withtag(self.preCar.id)
@@ -84,21 +87,19 @@ class CarInfoThread(threading.Thread):
                 break
             if isinstance(self.selectedCar, Car) and self.selectedCar.alive:
                 ID = self.canvas.find_withtag(self.selectedCar.id)
-                self.canvas.itemconfig(ID, outline=settings.setDict['color']['selected'])
+                self.canvas.itemconfig(
+                    ID, outline=settings.setDict['color']['selected'])
                 self.carText.delete('1.0', tk.END)
-                info = "Car ID: {0}, Car Speed: {1:.3} km/hr\n".format(self.selectedCar.id, self.selectedCar.speed * 3.6)
+                info = "Car ID: {0}, Car Speed: {1:.3} km/hr\n".format(
+                    self.selectedCar.id, self.selectedCar.speed * 3.6)
                 self.carText.insert(tk.INSERT, info)
                 if debug is True:
                     nextCarDistance = self.selectedCar.trajectory.nextCarDistance
                     carID = nextCarDistance["car"].id if nextCarDistance["car"] is not None else None
                     if carID is not None and carID in self.world.cars.keys() and self.selectedCar.alive:
-                        info = "Front carID: {0}, distance: {1}".format(carID, nextCarDistance["distance"])
+                        info = "Front carID: {0}, distance: {1}".format(
+                            carID, nextCarDistance["distance"])
                         self.carText.insert(tk.INSERT, info)
 
             elif isinstance(self.selectedCar, Car) and not self.selectedCar.alive:
                 self.carText.delete('1.0', tk.END)
-
-
-
-
-

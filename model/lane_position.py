@@ -48,8 +48,8 @@ class LanePosition():
             rearPosition = next_car.position - next_car.car.length / 2
             frontPosition = self.position + self.car.length / 2
             result = {"car": next_car.car,
-                      "distance": rearPosition - frontPosition 
-                      if rearPosition > frontPosition 
+                      "distance": rearPosition - frontPosition
+                      if rearPosition > frontPosition
                       else next_car.position - self.position}
             return result
         result = {"car": None,

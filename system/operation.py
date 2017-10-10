@@ -18,13 +18,17 @@ import settings
 
 
 class Operation(tk.Frame):
-    def __init__(self, root, toolDict, world):
+    def __init__(self, root, toolDict, world: World):
         tk.Frame.__init__(self, root)
         self.root = root
-        self.canvas = tk.Canvas(self, width=settings.setDict["canvas_width"], height=settings.setDict["canvas_height"], background="bisque")
-        self.xsb = tk.Scrollbar(self, orient="horizontal", command=self.canvas.xview)
-        self.ysb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
-        self.canvas.configure(yscrollcommand=self.ysb.set, xscrollcommand=self.xsb.set)
+        self.canvas = tk.Canvas(
+            self, width=settings.setDict["canvas_width"], height=settings.setDict["canvas_height"], background="bisque")
+        self.xsb = tk.Scrollbar(self, orient="horizontal",
+                                command=self.canvas.xview)
+        self.ysb = tk.Scrollbar(self, orient="vertical",
+                                command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.ysb.set,
+                              xscrollcommand=self.xsb.set)
         self.canvas.configure(scrollregion=(0, 0, 3000, 3000))
 
         self.xsb.grid(row=1, column=0, sticky="ew")
@@ -101,11 +105,11 @@ class Operation(tk.Frame):
         if self.running is True:
             searchRange = 10
             searchRange *= self.scale
-            rectCoords = (self.canvas.canvasx(event.x) - searchRange, self.canvas.canvasy(event.y) - searchRange, 
-            self.canvas.canvasx(event.x) + searchRange, self.canvas.canvasy(event.y) + searchRange)
+            rectCoords = (self.canvas.canvasx(event.x) - searchRange, self.canvas.canvasy(event.y) - searchRange,
+                          self.canvas.canvasx(event.x) + searchRange, self.canvas.canvasy(event.y) + searchRange)
             itemList = list(self.canvas.find_enclosed(*rectCoords))
             carID_list = [self.canvas.gettags(item)[0] for item in itemList
-            if self.canvas.gettags(item) and self.canvas.gettags(item)[0] in self.world.cars.keys()]
+                          if self.canvas.gettags(item) and self.canvas.gettags(item)[0] in self.world.cars.keys()]
             if carID_list:
                 self.buildable = False
                 self.showCarInfo(carID_list, Point(coords[0], coords[1]))
@@ -115,7 +119,8 @@ class Operation(tk.Frame):
             self.canvas.scan_dragto(event.x, event.y, gain=1)
             self.update_member()
         else:
-            self.movePath.append((self.canvas.canvasx(event.x), self.canvas.canvasy(event.y)))
+            self.movePath.append((self.canvas.canvasx(
+                event.x), self.canvas.canvasy(event.y)))
 
     def ready2CreateRoad(self, event):
         if self.buildable is False:
@@ -163,10 +168,12 @@ class Operation(tk.Frame):
             road.update()
 
     def buildIntersection(self, event):
-        itemID = self.canvas.find_closest(self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
+        itemID = self.canvas.find_closest(
+            self.canvas.canvasx(event.x), self.canvas.canvasy(event.y))
         if self.canvas.itemcget(itemID, "fill") == settings.setDict["color"]["background"]:
             coords = self.canvas.coords(itemID)
-            rect = Rect(coords[0], coords[1], self.distance * self.scale, self.distance * self.scale)
+            rect = Rect(coords[0], coords[1], self.distance *
+                        self.scale, self.distance * self.scale)
             intersection = Intersection(rect)
             self.visualizer.drawIntersection(intersection)
             self.world.addIntersection(intersection)
@@ -175,16 +182,22 @@ class Operation(tk.Frame):
 
     def buildRoad(self, event):
         if len(self.movePath) > 1:
-            itemID = self.canvas.find_closest(self.movePath[0][0], self.movePath[0][1])
+            itemID = self.canvas.find_closest(
+                self.movePath[0][0], self.movePath[0][1])
             sourceID = self.canvas.gettags(itemID)[0]
-            assert sourceID in self.world.intersections.keys(), "SourceID Error where ID is {sourceID}".format(**locals())
-            itemID = self.canvas.find_closest(self.movePath[-1][0], self.movePath[-1][1])
+            assert sourceID in self.world.intersections.keys(
+            ), "SourceID Error where ID is {sourceID}".format(**locals())
+            itemID = self.canvas.find_closest(
+                self.movePath[-1][0], self.movePath[-1][1])
             targetID = self.canvas.gettags(itemID)[0]
-            assert targetID in self.world.intersections.keys(), "TargetID Error where ID is {sourceID}".format(**locals())
-            road = Road(self.world.intersections[sourceID], self.world.intersections[targetID])
+            assert targetID in self.world.intersections.keys(
+            ), "TargetID Error where ID is {sourceID}".format(**locals())
+            road = Road(
+                self.world.intersections[sourceID], self.world.intersections[targetID])
             self.world.addRoad(road)
             self.visualizer.drawRoad(road)
-            road = Road(self.world.intersections[targetID], self.world.intersections[sourceID])
+            road = Road(
+                self.world.intersections[targetID], self.world.intersections[sourceID])
             self.world.addRoad(road)
             self.visualizer.drawRoad(road)
             self.buildable = False
@@ -209,7 +222,8 @@ class Operation(tk.Frame):
     def runModel(self):
         self.running = True
         self.firstActivate = True
-        self.playBtn.config(image=self.pausePNG, text = "Pause", command=lambda : self.stop())
+        self.playBtn.config(image=self.pausePNG, text="Pause",
+                            command=lambda: self.stop())
         self.display()
 
     def display(self):
@@ -221,13 +235,16 @@ class Operation(tk.Frame):
         self.timeInterval = self.timeScale
         self.enableThread()
         if self.firstActivate is True:
-            self.systemThread = SystemInfoThread(self.systemText, self.world, self.systemQueue)
+            self.systemThread = SystemInfoThread(
+                self.systemText, self.world, self.systemQueue)
             self.systemThread.daemon = True
             self.systemThread.start()
-            self.roadThread = RoadInfoThread(self.roadText, self.world, self.roadQueue)
+            self.roadThread = RoadInfoThread(
+                self.roadText, self.world, self.roadQueue)
             self.roadThread.daemon = True
             self.roadThread.start()
-            self.carThread = CarInfoThread(self.canvas, self.carText, self.carQueue, self.world)
+            self.carThread = CarInfoThread(
+                self.canvas, self.carText, self.carQueue, self.world)
             self.carThread.daemon = True
             self.carThread.start()
             self.firstActivate = False
@@ -240,17 +257,20 @@ class Operation(tk.Frame):
         self.running = False
         self.disableThread()
         self.collectThread = None
-        self.playBtn.config(image=self.playPNG, text = "Action", command=lambda : self.runModel())
+        self.playBtn.config(image=self.playPNG, text="Action",
+                            command=lambda: self.runModel())
 
     def debugSwitch(self):
         if self.running is True and self.debug is False:
             self.debug = True
             self.visualizer.debug = True
-            self.debugBtn.configure(bg=settings.setDict['color']['debugBtn_on'])
+            self.debugBtn.configure(
+                bg=settings.setDict['color']['debugBtn_on'])
         elif self.running is True and self.debug is True:
             self.debug = False
             self.visualizer.debug = False
-            self.debugBtn.configure(bg=settings.setDict['color']['debugBtn_off'])
+            self.debugBtn.configure(
+                bg=settings.setDict['color']['debugBtn_off'])
 
     def refresh(self):
         self.collect = False
@@ -293,18 +313,19 @@ class Operation(tk.Frame):
             self.collectThread.join()
 
     def disableThread(self):
-        self.systemQueue.put(pickle.dumps({"state": False, "scale": self.scale}))
-        self.roadQueue.put(pickle.dumps({"state": False, "selectedRoad": self.selectedRoad, "scale": self.scale}))
-        self.carQueue.put(pickle.dumps({"state": False, "selectedCar": self.selectedCar, "debug": self.debug}))        
+        self.systemQueue.put(pickle.dumps(
+            {"state": False, "scale": self.scale}))
+        self.roadQueue.put(pickle.dumps(
+            {"state": False, "selectedRoad": self.selectedRoad, "scale": self.scale}))
+        self.carQueue.put(pickle.dumps(
+            {"state": False, "selectedCar": self.selectedCar, "debug": self.debug}))
         self.dataQueue.put(pickle.dumps({"state": False, "scale": self.scale}))
-        
+
     def enableThread(self):
-        self.systemQueue.put(pickle.dumps({"state": True, "scale": self.scale}))
-        self.roadQueue.put(pickle.dumps({"state": True, "selectedRoad": self.selectedRoad, "scale": self.scale}))
-        self.carQueue.put(pickle.dumps({"state": True, "selectedCar": self.selectedCar, "debug": self.debug}))
+        self.systemQueue.put(pickle.dumps(
+            {"state": True, "scale": self.scale}))
+        self.roadQueue.put(pickle.dumps(
+            {"state": True, "selectedRoad": self.selectedRoad, "scale": self.scale}))
+        self.carQueue.put(pickle.dumps(
+            {"state": True, "selectedCar": self.selectedCar, "debug": self.debug}))
         self.dataQueue.put(pickle.dumps({"state": True, "scale": self.scale}))
-
-
-
-
-

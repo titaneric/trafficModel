@@ -31,21 +31,19 @@ class Polygon():
         return [Segment(source, target) for source, target in zip(self.pointList, [self.pointList[-1]].extend(self.pointList[0: -1]))]
 
     def containPoint(self, point: Point):
-        if not (self.leftMostPoint.x <= point.x <= self.rightMostPoint.x and \
-            self.topPoint.y <= point.y <= self.bottomPoint.y):
+        if not (self.leftMostPoint.x <= point.x <= self.rightMostPoint.x and
+                self.topPoint.y <= point.y <= self.bottomPoint.y):
             return False
 
         inside = False
-        pointPairs = [(segment.source, segment.target) for segment in self.getSides()]
+        pointPairs = [(segment.source, segment.target)
+                      for segment in self.getSides()]
         for source, target in pointPairs:
             if ((source.y > point.y) is not (target.y > point.y)) and \
-                (point.x < (target.x - source.x) * (point.y - source.y) / (target.y - source.x) + source.x):
+                    (point.x < (target.x - source.x) * (point.y - source.y) / (target.y - source.x) + source.x):
                 inside = not inside
 
         return inside
 
     def getSide(self, i):
         return self.getSides()[i]
-
-
-

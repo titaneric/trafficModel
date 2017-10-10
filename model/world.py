@@ -10,12 +10,12 @@ from geometry.rect import Rect
 
 class World():
     def __init__(self, exp=None):
-        self.set()
+        self.world_set()
         self.exp = None
         if exp is not None:
             self.exp = True
 
-    def set(self):
+    def world_set(self):
         self.intersections = {}
         self.roads = {}
         self.cars = {}
@@ -26,16 +26,18 @@ class World():
 
     def load(self):
         with open('data/map2.json') as data_file:
-            map = json.load(data_file)
-        self.carsNumber = map["carsNumber"]
-        for info in map["intersections"].values():
-            rect = Rect(info["position"]["x"], info["position"]["y"], info["position"]["width"], info["position"]["height"])
+            my_map = json.load(data_file)
+        self.carsNumber = my_map["carsNumber"]
+        for info in my_map["intersections"].values():
+            rect = Rect(info["position"]["x"], info["position"]["y"],
+                        info["position"]["width"], info["position"]["height"])
             intersection = Intersection(rect)
             intersection.id = info['id']
             self.addIntersection(intersection)
 
-        for info in map["roads"].values():
-            road = Road(self.intersections[info["source"]], self.intersections[info["target"]])
+        for info in my_map["roads"].values():
+            road = Road(self.intersections[info["source"]],
+                        self.intersections[info["target"]])
             road.id = info['id']
             self.addRoad(road)
 
@@ -65,7 +67,8 @@ class World():
                 totalVelocity += carsPosition.car.speed
                 carsArea += carsPosition.car.length * scale * carsPosition.car.width
 
-        density = carsArea / (road.length * settings.setDict["grid_size"] / 2 * scale)
+        density = carsArea / \
+            (road.length * settings.setDict["grid_size"] / 2 * scale)
         avgSpeed = totalVelocity / carsNumber if carsNumber != 0 else 0.0
         return avgSpeed, density
 
@@ -137,15 +140,17 @@ class World():
                 relativePos = car.trajectory.temp.relativePosition
                 previousA = car.trajectory.temp.lane.A
                 previousB = car.trajectory.temp.lane.B
-                relativeA = car.trajectory.current.lane.getRelativePosition(previousA)
-                relativeB = car.trajectory.next.lane.getRelativePosition(previousB)
+                relativeA = car.trajectory.current.lane.getRelativePosition(
+                    previousA)
+                relativeB = car.trajectory.next.lane.getRelativePosition(
+                    previousB)
                 car.trajectory.current.position = relativeA * car.trajectory.current.lane.length
                 car.trajectory.next.position = relativeB * car.trajectory.next.lane.length
                 car.trajectory.temp.lane = car.trajectory.getCurve()
                 car.trajectory.temp.position = car.trajectory.temp.lane.length * relativePos
 
     def generateMap(self, maxX=10, maxY=10, minX=0, minY=0):
-        self.set()
+        self.world_set()
         intersectionNumber = 20
         myMap = dict()
         self.carsNumber = 30
@@ -184,21 +189,13 @@ class World():
     def onTick(self, delta):
         self.time += delta
         self.trafficFlow = 0
-
         self.refreshCar()
 
         if self.exp is None:
             self.syncLane()
             self.syncCurve()
+
         for car in list(self.cars.values()):
             car.move(delta)
             if self.exp is not None and not car.alive:
                 self.removeCar(car)
-
-
-
-
-
-
-
-

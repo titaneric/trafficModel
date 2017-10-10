@@ -24,25 +24,25 @@ sliderGroup = tk.Frame(function)
 play = tk.Button(buttonGroup, text="Action")
 playPNG = tk.PhotoImage(file="png/play-button.png")
 pausePNG = tk.PhotoImage(file="png/pause.png")
-play.config(compound=tk.LEFT, image=playPNG, width="70", 
+play.config(compound=tk.LEFT, image=playPNG, width="70",
             height="24", bg="#FFFFFF", command=lambda: op.runModel())
 play.pack(side=tk.LEFT, padx=2, pady=2)
 
 refresh = tk.Button(buttonGroup, text="Reload")
 refreshPNG = tk.PhotoImage(file="png/refresh-button.png")
-refresh.config(compound=tk.LEFT, image=refreshPNG, width="70", 
+refresh.config(compound=tk.LEFT, image=refreshPNG, width="70",
                height="24", bg="#FFFFFF", command=lambda: op.refresh())
 refresh.pack(side=tk.LEFT, padx=2, pady=2)
 
 debug = tk.Button(buttonGroup, text="Debug")
 debugPNG = tk.PhotoImage(file="png/debug.png")
-debug.config(compound=tk.LEFT, image=debugPNG, width="70", 
+debug.config(compound=tk.LEFT, image=debugPNG, width="70",
              height="24", bg="#FFFFFF", command=lambda: op.debugSwitch())
 debug.pack(side=tk.LEFT, padx=2, pady=2)
 
 gridMap = tk.Button(buttonGroup, text="New Map")
 mapPNG = tk.PhotoImage(file="png/map.png")
-gridMap.config(compound=tk.LEFT, image=mapPNG, width="70", 
+gridMap.config(compound=tk.LEFT, image=mapPNG, width="70",
                height="24", bg="#FFFFFF", command=lambda: op.generateMap())
 gridMap.pack(side=tk.LEFT, padx=2, pady=2)
 
@@ -50,7 +50,7 @@ timeSliderName = tk.Entry(sliderGroup, width='10')
 timeSliderName.grid(row=0, column=0)
 timeSliderName.insert(0, "Time scale")
 
-timeSlider = tk.Scale(sliderGroup, from_=settings.setDict["timeMin"], 
+timeSlider = tk.Scale(sliderGroup, from_=settings.setDict["timeMin"],
                       to=settings.setDict["timeMax"], orient=tk.HORIZONTAL,
                       troughcolor="#90C3D4", bg="#FFFFFF")
 timeSlider.grid(row=1, column=0)
@@ -59,7 +59,7 @@ carSliderName = tk.Entry(sliderGroup, width='10')
 carSliderName.grid(row=0, column=1)
 carSliderName.insert(0, "Cars Number")
 
-carSlider = tk.Scale(sliderGroup, from_=settings.setDict["carMin"], 
+carSlider = tk.Scale(sliderGroup, from_=settings.setDict["carMin"],
                      to=settings.setDict["carMax"], orient=tk.HORIZONTAL,
                      troughcolor="#90C3D4", bg="#FFFFFF")
 carSlider.grid(row=1, column=1)
