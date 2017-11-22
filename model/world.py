@@ -24,8 +24,8 @@ class World():
         self.trafficFlow = 0
         self.graphList = {}
 
-    def load(self):
-        with open('data/map2.json') as data_file:
+    def load(self, source='data/map2.json'):
+        with open(source) as data_file:
             my_map = json.load(data_file)
         self.carsNumber = my_map["carsNumber"]
         for info in my_map["intersections"].values():
@@ -42,18 +42,13 @@ class World():
             self.addRoad(road)
 
     def systemInfo(self, scale=1):
-        totalVelocity = 0.0
-        # carsNumber = 0
-        roadArea = 0.0
-        carsArea = 0.0
-        for road in self.roads.values():
-            roadArea += road.length * settings.setDict["grid_size"] / 2 * scale
-            for lane in road.lanes:
-                # carsNumber += len(lane.carsPositions)
-                for carsPosition in lane.carsPositions.values():
-                    totalVelocity += carsPosition.car.speed
-                    carsArea += carsPosition.car.length * scale * carsPosition.car.width
+        roadArea = (sum(road.length for road in self.roads.values())
+                    * settings.setDict["grid_size"] / 2 * scale)
+        carsArea = sum(
+            car.length * car.width for car in self.cars.values()) * scale
         avgDensity = carsArea / roadArea
+
+        totalVelocity = sum(car.speed for car in self.cars.values())
         avgSpeed = totalVelocity / len(self.cars)
         return avgSpeed, avgDensity, self.trafficFlow
 
@@ -70,6 +65,7 @@ class World():
         density = carsArea / \
             (road.length * settings.setDict["grid_size"] / 2 * scale)
         avgSpeed = totalVelocity / carsNumber if carsNumber != 0 else 0.0
+
         return avgSpeed, density
 
     def refreshCar(self):
@@ -98,10 +94,15 @@ class World():
     def removeCar(self, car):
         self.cars.pop(car.id)
         self.trafficFlow += 1
-        self.addRandomCar()
+        """
+        for road in self.roads.values():
+            for lane in road.lanes:
+                for carsPosition in lane.carsPositions.values():
+                    if carsPosition.car.id == car.id:
+                        print(id(carsPosition))
+        """
 
-    def getIntersection(self, ID):
-        return self.intersections[ID]
+        self.addRandomCar()
 
     def addIntersection(self, intersection):
         self.intersections[intersection.id] = intersection
@@ -113,9 +114,6 @@ class World():
         road.source.roads.append(road)
         road.target.inRoads.append(road)
         road.update()
-
-    def getRoad(self, ID):
-        return self.roads[ID]
 
     def syncLane(self):
         for car in self.cars.values():

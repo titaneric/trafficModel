@@ -59,7 +59,6 @@ class RoadInfoThread(threading.Thread):
             finally:
                 self.stateQueue.task_done()
 
-
 class CarInfoThread(threading.Thread):
 
     def __init__(self, canvas, carText, stateQueue, world):

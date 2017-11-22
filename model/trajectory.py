@@ -96,10 +96,7 @@ class Trajectory():
         return self.getDistanceToIntersection() <= plannedStep
 
     def reachDestination(self):
-        if self.current.position + self.car.length / 2 > self.current.lane.length:
-            return True
-        else:
-            return False
+        return self.current.position + self.car.length / 2 > self.current.lane.length
 
     def moveForward(self, distance):
         '''

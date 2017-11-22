@@ -6,6 +6,7 @@ import matplotlib.colors as colors
 
 from model.trajectory import Trajectory
 from model.direction import Direction
+from model.road import Road
 
 
 class Car():
@@ -32,7 +33,7 @@ class Car():
         self.maxDeceleration = 3
         self.slowProb = 0.3
         self.trajectory = Trajectory(self, lane, position)
-        self.alive = True
+        self.__alive = True
         self.preferedLane = None
         self.nextLane = None
         self.timeHeadway = 1.5
@@ -49,6 +50,16 @@ class Car():
         if speed > self.maxSpeed:
             speed = self.maxSpeed
         self._speed = speed
+
+    @property
+    def alive(self):
+        return self.__alive
+
+    @alive.setter
+    def alive(self, alive):
+        self.__alive = alive
+        if self.__alive is False:
+            self.release()
 
     @property
     def coords(self):
@@ -116,8 +127,8 @@ class Car():
         step = self.speed * delta + 0.5 * acce * delta ** 2
         if (self.trajectory.timeToMakeTurn(step)) \
                 and self.nextLane is None:
-            self.alive = False
-            self.trajectory.current.release()
+            self.alive = False         
+            return
 
         self.trajectory.moveForward(step)
 
@@ -176,11 +187,11 @@ class Car():
             u = vzdiff.pop()
 
             vzdiff.add(u)
-            min = shortRange[u]
+            minimum = shortRange[u]
 
             for i in vzdiff:
-                if shortRange[i] < min:
-                    min = shortRange[i]
+                if shortRange[i] < minimum:
+                    minimum = shortRange[i]
                     u = i
 
             Z.add(u)

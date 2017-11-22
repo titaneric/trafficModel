@@ -73,6 +73,7 @@ class Lane():
 
     def removeCar(self, carPosition):
         assert carPosition.id in self.carsPositions.keys()
+        # print("Car #{} release from {}, {}".format(carPosition.car.id, carPosition.id, self.id))
         del self.carsPositions[carPosition.id]
 
     def getNext(self, carPosition):
