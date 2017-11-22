@@ -83,5 +83,5 @@ jsonDict["intersections"] = intersectionDict
 jsonDict["roads"] = roadDict
 jsonDict["carsNumber"] = 30
 
-with open('../data/map2.json', 'w') as f:
+with open('../map/grid.json', 'w') as f:
     json.dump(jsonDict, f)

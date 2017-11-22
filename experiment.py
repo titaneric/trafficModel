@@ -1,10 +1,11 @@
 import csv
 import sys
+import os
 
 from model.world import World
 from settings import setDict
 
-
+path = os.path.join(os.getcwd(), "data")
 START_DENSITY = 0.005
 TERMINATE_DENSITY = 0.9
 STEP = 0.005
@@ -41,7 +42,7 @@ for car in range(15, 220, 5):
                 sys.stdout.flush()
             time += 1
         if  time > 20000:
-            with open('exp/car_{0}_id_{1}.csv'.format(car, i), 'w') as f:
+            with open(os.path.join(path, 'car_{0}_id_{1}.csv'.format(car, i)), 'w') as f:
                 colName = ['time', 'avgSpeed', 'flow', 'avgDensity']
                 fwriter = csv.DictWriter(f, fieldnames=colName)
                 fwriter.writeheader()

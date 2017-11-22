@@ -24,7 +24,7 @@ class World():
         self.trafficFlow = 0
         self.graphList = {}
 
-    def load(self, source='data/map2.json'):
+    def load(self, source='map/grid.json'):
         with open(source) as data_file:
             my_map = json.load(data_file)
         self.carsNumber = my_map["carsNumber"]

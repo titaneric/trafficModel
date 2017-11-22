@@ -15,7 +15,7 @@ toolbar = tk.Frame(root)
 function = tk.Frame(toolbar)
 info = tk.Frame(toolbar)
 world = World()
-world.load('data/map.json')
+world.load()
 
 buttonGroup = tk.Frame(function)
 sliderGroup = tk.Frame(function)
